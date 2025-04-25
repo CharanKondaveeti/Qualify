@@ -93,3 +93,131 @@ export async function signupAdmin(email, password, name) {
 
   return user;
 }
+
+// Insert exam data
+export async function createExamInSupabase(exam) {
+  try {
+    const { data, error } = await supabase.from("exams").insert([exam]).select("exam_id"); 
+
+    if (error) {
+      throw new Error(`Failed to insert exam: ${error.message}`);
+    }
+
+    return data; 
+  } catch (error) {
+    console.error("Error creating exam:", error);
+    throw new Error("Failed to create exam");
+  }
+}
+
+
+// Insert questions data
+export async function createQuestionsInSupabase(questions) {
+  try {
+    const { data, error } = await supabase.from("questions").insert(questions);
+
+    if (error) {
+      throw new Error(`Failed to insert questions: ${error.message}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error creating questions:", error);
+    throw new Error("Failed to create questions");
+  }
+}
+
+// Add new question
+export async function addQuestionToSupabase(question) {
+  try {
+    const { data, error } = await supabase.from("questions").insert([question]);
+
+    if (error) {
+      throw new Error(`Failed to add question: ${error.message}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error adding question:", error);
+    throw new Error("Failed to add question");
+  }
+}
+
+// Edit existing question
+export async function editQuestionInSupabase(question) {
+  try {
+    const { data, error } = await supabase
+      .from("questions")
+      .update({
+        question_text: question.question_text,
+        options: question.options,
+        correct_option: question.correct_option,
+        marks: question.marks,
+      })
+      .eq("question_id", question.question_id);
+
+    if (error) {
+      throw new Error(`Failed to update question: ${error.message}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error updating question:", error);
+    throw new Error("Failed to update question");
+  }
+}
+
+// Delete question
+export async function deleteQuestionFromSupabase(question_id) {
+  try {
+    const { data, error } = await supabase
+      .from("questions")
+      .delete()
+      .eq("question_id", question_id);
+
+    if (error) {
+      throw new Error(`Failed to delete question: ${error.message}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error deleting question:", error);
+    throw new Error("Failed to delete question");
+  }
+}
+
+const deleteExam = async (examId) => {
+  try {
+    // Check if the examId is valid
+    if (!examId) {
+      throw new Error("Invalid exam ID");
+    }
+
+    const { data, error } = await supabase
+      .from("exams")
+      .delete()
+      .eq("exam_id", examId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    console.log("Exam deleted:", data);
+
+    const { error: questionsError } = await supabase
+      .from("questions")
+      .delete()
+      .eq("exam_id", examId);
+
+    if (questionsError) {
+      throw new Error(questionsError.message);
+    }
+
+    console.log("Questions related to the exam have been deleted.");
+  } catch (error) {
+    console.error("Error deleting exam:", error);
+    throw error;
+  }
+};
+
+export default deleteExam;

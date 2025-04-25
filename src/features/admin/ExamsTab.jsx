@@ -11,7 +11,7 @@ import "./css/examsTab.css";
 import CreateNewExam from "./CreateNewExam";
 import axios from "axios";
 import ExamReportView from "./ExamReportView";
-import { getExams } from "../../services/admin";
+import deleteExam, { getExams } from "../../services/admin";
 
 const ExamsTab = () => {
   const [exams, setExams] = useState([]);
@@ -75,13 +75,7 @@ const formatDate = (dateString) => {
       "Are you sure you want to delete this exam?"
     );
     if (!confirmDelete) return;
-
-    try {
-      await axios.delete(`http://localhost:5001/Exams/${id}`);
-      setExams((prevExams) => prevExams.filter((exam) => exam.exam_id !== id));
-    } catch (error) {
-      console.error("Error deleting exam:", error);
-    }
+    await deleteExam(id);
   };
 
   const handleEdit = async (exam) => {

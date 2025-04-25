@@ -3,12 +3,14 @@ import { FaTrash, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { FiEdit2 } from "react-icons/fi";
 import QuestionList from "../../ui/QuestionList";
 import "./css/upcomingExamDetails.css";
+import { deleteQuestionFromSupabase, editQuestionInSupabase } from "../../services/admin";
 
 const UpcomingExamDetails = ({
   questions,
   setQuestions,
   students,
   setStudents,
+  examId,
 }) => {
   const [activeMenu, setActiveMenu] = useState("questions");
 
@@ -41,9 +43,14 @@ const UpcomingExamDetails = ({
     setStudents(updated);
   };
 
+  const onUpdate = async (newQ) => {
+      await editQuestionInSupabase(newQ);
+  };
+
+  deleteQuestionFromSupabase;
+
   return (
     <div className="upcoming-exam-details">
-      {/* Menu for selecting between questions and students */}
       <div className="menu">
         <button
           className={activeMenu === "questions" ? "active" : ""}
@@ -67,11 +74,8 @@ const UpcomingExamDetails = ({
             onDelete={(id) => {
               setQuestions((prev) => prev.filter((q) => q.id !== id));
             }}
-            onUpdate={(updatedQ) => {
-              setQuestions((prev) =>
-                prev.map((q) => (q.id === updatedQ.id ? updatedQ : q))
-              );
-            }}
+            onUpdate={onUpdate}
+            examId={examId}
           />
         </div>
       )}

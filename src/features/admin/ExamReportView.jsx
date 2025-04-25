@@ -43,7 +43,6 @@ const ExamReportView = ({ exam, onBack }) => {
     const fetchQuestions = async () => {
       try {
         const response = await getQuestions(exam.exam_id);
-        console.log("Fetched questions:", response);
         setQuestions(response);
       } catch (error) {
         console.error("Error fetching exams:", error);
@@ -158,6 +157,7 @@ const ExamReportView = ({ exam, onBack }) => {
               questions={questions}
               setQuestions={setQuestions}
               students={students}
+              examId={exam.exam_id}
             />
           </>
         ) : (

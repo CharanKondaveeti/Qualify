@@ -1,13 +1,8 @@
 import React, { useState } from "react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import "./css/questionList.css";
-import {
-  addQuestionToSupabase,
-  editQuestionInSupabase,
-  deleteQuestionFromSupabase,
-} from "../services/admin";
 
-const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
+const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [expandedIds, setExpandedIds] = useState([]);
   const [newQuestion, setNewQuestion] = useState({
@@ -18,46 +13,36 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
   });
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
- const handleAddClick = async () => {
-   const { question_text, options, correct_option } = newQuestion;
+  const handleAddClick = () => {
+    const { question_text, options, correct_option } = newQuestion;
 
-   if (
-     !question_text.trim() ||
-     options.some((opt) => !opt.trim()) ||
-     correct_option === null
-   ) {
-     alert("Please complete all fields.");
-     return;
-   }
+    if (
+      !question_text.trim() ||
+      options.some((opt) => !opt.trim()) ||
+      correct_option === null
+    ) {
+      alert("Please complete all fields.");
+      return;
+    }
 
-   try {
-     const newQ = {
-       ...newQuestion,
-       exam_id: examId,
-     };
+    // Add question to state
+    onAdd({ ...newQuestion, id: Date.now() });
 
-     await addQuestionToSupabase(newQ);
-     onAdd?.(newQ);
-
-     setNewQuestion({
-       question_text: "",
-       options: ["", "", "", ""],
-       correct_option: null,
-       marks: 1,
-     });
-     setIsAddModalOpen(false);
-     alert("Question added successfully!");
-   } catch (error) {
-     console.error("Error adding question:", error);
-     alert("Error adding question. Please try again.");
-   }
- };
+    setNewQuestion({
+      question_text: "",
+      options: ["", "", "", ""],
+      correct_option: null,
+      marks: 1,
+    });
+    setIsAddModalOpen(false);
+    alert("Question added successfully!");
+  };
 
   const handleEdit = (question) => {
     setEditingQuestion({ ...question });
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     const { question_text, options, correct_option } = editingQuestion;
 
     if (
@@ -69,26 +54,16 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
       return;
     }
 
-    try {
-      await editQuestionInSupabase(editingQuestion);
-      onUpdate(editingQuestion);
-      setEditingQuestion(null);
-      alert("Question updated successfully!");
-    } catch (error) {
-      console.error(error);
-      alert("Error updating question. Please try again.");
-    }
+    // Update the question in state
+    onUpdate(editingQuestion);
+    setEditingQuestion(null);
+    alert("Question updated successfully!");
   };
 
-  const handleDelete = async (question_id) => {
-    try {
-      await deleteQuestionFromSupabase(question_id);
-      onDelete(question_id);
-      alert("Question deleted successfully!");
-    } catch (error) {
-      console.error(error);
-      alert("Error deleting question. Please try again.");
-    }
+  const handleDelete = (question_id) => {
+    // Remove the question from state
+    onDelete(question_id);
+    alert("Question deleted successfully!");
   };
 
   const toggleExpand = (id) => {
@@ -101,11 +76,8 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
     <>
       <div className="questions-list">
         {questions.map((q, index) => (
-          <div key={q.question_id} className="question-card">
-            <div
-              className="question-header"
-              onClick={() => toggleExpand(q.question_id)}
-            >
+          <div key={q.id} className="question-card">
+            <div className="question-header" onClick={() => toggleExpand(q.id)}>
               <span className="question-number">{index + 1}</span>
               <span className="question-text">{q.question_text}</span>
               <div className="question-actions">
@@ -122,7 +94,7 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
                   className="delete-btn"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDelete(q.question_id); // Call delete function
+                    handleDelete(q.id); // Call delete function
                   }}
                 >
                   <FiTrash2 />
@@ -130,7 +102,7 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
               </div>
             </div>
 
-            {expandedIds.includes(q.question_id) && (
+            {expandedIds.includes(q.id) && (
               <div className="options-list">
                 {q.options.map((opt, i) => (
                   <div
@@ -279,4 +251,4 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
   );
 };
 
-export default QuestionList;
+export default UploadQuestions;
