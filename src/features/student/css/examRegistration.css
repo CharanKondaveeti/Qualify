@@ -1,0 +1,88 @@
+.exam-reg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.exam-reg-card {
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.exam-reg-card h2 {
+  margin-bottom: 10px;
+  color: #512da8;
+  text-align: center;
+}
+
+.exam-id-info {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.exam-reg-card label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.exam-reg-card input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.exam-reg-card input:focus {
+  border-color: #673ab7;
+}
+
+.exam-reg-card button {
+  width: 100%;
+  padding: 12px;
+  background-color: #673ab7;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.exam-reg-card button:hover {
+  background-color: #512da8;
+}
+
+.message {
+  margin-top: 20px;
+  background-color: #e0f2f1;
+  padding: 12px;
+  border-left: 4px solid #00796b;
+  color: #004d40;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

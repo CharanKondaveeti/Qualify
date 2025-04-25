@@ -1,0 +1,252 @@
+import React, { useState } from "react";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import "./css/questionList.css";
+
+const QuestionList = ({ questions, onDelete, onUpdate, onAdd }) => {
+  const [editingQuestion, setEditingQuestion] = useState(null);
+  const [expandedIds, setExpandedIds] = useState([]);
+  const [newQuestion, setNewQuestion] = useState({
+    question_text: "",
+    options: ["", "", "", ""],
+    correct_option: null,
+    marks: 1,
+  });
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleAddClick = () => {
+    const { question_text, options, correct_option } = newQuestion;
+
+    if (
+      !question_text.trim() ||
+      options.some((opt) => !opt.trim()) ||
+      correct_option === null
+    ) {
+      alert("Please complete all fields.");
+      return;
+    }
+
+    const newQ = {
+      ...newQuestion,
+      id: Date.now(),
+    };
+
+    onAdd?.(newQ);
+
+    setNewQuestion({
+      question_text: "",
+      options: ["", "", "", ""],
+      correct_option: null,
+      marks: 1,
+    });
+    setIsAddModalOpen(false);
+  };
+
+  const handleEdit = (question) => {
+    setEditingQuestion({ ...question });
+  };
+
+  const handleSave = () => {
+    const { question_text, options, correct_option } = editingQuestion;
+
+    if (
+      !question_text.trim() ||
+      options.some((opt) => !opt.trim()) ||
+      correct_option === null
+    ) {
+      alert("Please complete all fields.");
+      return;
+    }
+
+    onUpdate?.(editingQuestion);
+    setEditingQuestion(null);
+  };
+
+  const toggleExpand = (id) => {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((qid) => qid !== id) : [...prev, id]
+    );
+  };
+
+  return (
+    <>
+      <div className="questions-list">
+        {questions.map((q, index) => (
+          <div key={q.question_id} className="question-card">
+            <div
+              className="question-header"
+              onClick={() => toggleExpand(q.question_id)}
+            >
+              <span className="question-number">{index + 1}</span>
+              <span className="question-text">{q.question_text}</span>
+              <div className="question-actions">
+                <button
+                  className="edit-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEdit(q);
+                  }}
+                >
+                  <FiEdit2 />
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(q.question_id);
+                  }}
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            </div>
+
+            {expandedIds.includes(q.question_id) && (
+              <div className="options-list">
+                {q.options.map((opt, i) => (
+                  <div
+                    key={i}
+                    className={`option ${
+                      i === q.correct_option - 1 ? "correct" : ""
+                    }`} 
+                  >
+                    {opt}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <button
+        className="add-question-btn"
+        onClick={() => setIsAddModalOpen(true)}
+      >
+        Add New Question
+      </button>
+
+      {/* Add Question Modal */}
+      {isAddModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h4>Add New Question</h4>
+            <div className="form-group">
+              <label>Question Text</label>
+              <input
+                type="text"
+                value={newQuestion.question_text}
+                onChange={(e) =>
+                  setNewQuestion({
+                    ...newQuestion,
+                    question_text: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="form-group">
+              <label>Options</label>
+              {newQuestion.options.map((opt, i) => (
+                <div key={i} className="option-edit">
+                  <input
+                    type="text"
+                    value={opt}
+                    onChange={(e) => {
+                      const newOptions = [...newQuestion.options];
+                      newOptions[i] = e.target.value;
+                      setNewQuestion({ ...newQuestion, options: newOptions });
+                    }}
+                  />
+                  <button
+                    className={`option-select ${
+                      i === newQuestion.correct_option ? "selected" : ""
+                    }`}
+                    onClick={() =>
+                      setNewQuestion({ ...newQuestion, correct_option: i })
+                    }
+                  >
+                    Correct
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button className="add-btn" onClick={handleAddClick}>
+              Add Question
+            </button>
+            <button
+              className="cancel-btn"
+              onClick={() => setIsAddModalOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {editingQuestion && (
+        <div className="editor-modal">
+          <div className="modal-content">
+            <h4>Edit Question</h4>
+            <div className="form-group">
+              <label>Question Text</label>
+              <input
+                type="text"
+                value={editingQuestion.question_text}
+                onChange={(e) =>
+                  setEditingQuestion({
+                    ...editingQuestion,
+                    question_text: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="form-group">
+              <label>Options</label>
+              {editingQuestion.options.map((opt, i) => (
+                <div key={i} className="option-edit">
+                  <input
+                    type="text"
+                    value={opt}
+                    onChange={(e) => {
+                      const updated = [...editingQuestion.options];
+                      updated[i] = e.target.value;
+                      setEditingQuestion({
+                        ...editingQuestion,
+                        options: updated,
+                      });
+                    }}
+                  />
+                  <button
+                    className={`option-select ${
+                      i === editingQuestion.correct_option ? "selected" : ""
+                    }`}
+                    onClick={() =>
+                      setEditingQuestion({
+                        ...editingQuestion,
+                        correct_option: i,
+                      })
+                    }
+                  >
+                    Correct
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="modal-actions">
+              <button
+                className="cancel-btn"
+                onClick={() => setEditingQuestion(null)}
+              >
+                Cancel
+              </button>
+              <button className="save-btn" onClick={handleSave}>
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default QuestionList;

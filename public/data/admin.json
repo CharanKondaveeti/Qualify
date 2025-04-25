@@ -1,0 +1,16 @@
+{
+  "admins": [
+    {
+      "id": 1,
+      "username": "admin123",
+      "password": "securekey123",
+      "name": "Main Admin"
+    },
+    {
+      "id": 2,
+      "username": "superadmin",
+      "password": "supersecret",
+      "name": "Super Admin"
+    }
+  ]
+}

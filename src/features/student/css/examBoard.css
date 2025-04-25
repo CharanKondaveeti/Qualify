@@ -1,0 +1,316 @@
+/* examBoard.css */
+
+.exam-board {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  color: #2d3748;
+  height: 100vh;
+}
+
+.exam-board header {
+  background: linear-gradient(135deg, #4f6beb 0%, #3b56d6 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(63, 107, 235, 0.3);
+}
+
+.exam-board header h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.exam-board header div {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.exam-board header svg {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.exam-board main {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.exam-board main h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #2d3748;
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+
+.exam-board main ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.exam-board main li {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.exam-board main label {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.exam-board main label:hover {
+  background: #edf2f7;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.exam-board main input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cbd5e0;
+  border-radius: 50%;
+  margin-right: 1rem;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.exam-board main input[type="radio"]:checked {
+  border-color: #4f6beb;
+  background-color: #4f6beb;
+}
+
+.exam-board main input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+}
+
+.exam-board footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exam-board button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.exam-board button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.exam-board button svg {
+  margin: 0 0.3rem;
+}
+
+.exam-board button:nth-child(1) {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.exam-board button:nth-child(1):hover:not(:disabled) {
+  background: #cbd5e0;
+}
+
+.exam-board button:nth-child(2) {
+  background: #4f6beb;
+  color: white;
+}
+
+.exam-board button:nth-child(2):hover:not(:disabled) {
+  background: #3b56d6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(63, 107, 235, 0.3);
+}
+
+.exam-board button:nth-child(3) {
+  background: #f56565;
+  color: white;
+}
+
+.exam-board button:nth-child(3):hover:not(:disabled) {
+  background: #e53e3e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(245, 101, 101, 0.3);
+}
+
+.error-message, .no-questions {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.error-message h3, .no-questions h3 {
+  color: #e53e3e;
+  margin-top: 0;
+}
+
+.no-questions h3 {
+  color: #4a5568;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .exam-board {
+    padding: 1rem;
+  }
+  
+  .exam-board footer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .exam-board button {
+    width: 100%;
+  }
+}
+
+/* Animation for time warning */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.time-warning {
+  animation: pulse 1s infinite;
+  color: #f56565 !important;
+}
+/* Add these styles to your examBoard.css */
+
+.question-navigation {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.question-navigation h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #4a5568;
+}
+
+.question-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  gap: 0.5rem;
+}
+
+.question-number {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  color: #4a5568;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-number:hover {
+  border-color: #4f6beb;
+  transform: translateY(-2px);
+}
+
+.question-number.current {
+  border-color: #4f6beb;
+  background-color: rgba(79, 107, 235, 0.1);
+  color: #4f6beb;
+}
+
+.question-number.answered {
+  border-color: #48bb78;
+  background-color: rgba(72, 187, 120, 0.1);
+  color: #48bb78;
+}
+
+.checkmark {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  font-size: 0.8rem;
+  background: #48bb78;
+  color: white;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Update the main container to use grid layout */
+.exam-board {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  padding: 2rem;
+}
+
+/* Move footer to grid column */
+.exam-board footer {
+  grid-column: 1 / -1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .exam-board {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+  
+  .question-grid {
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  }
+}

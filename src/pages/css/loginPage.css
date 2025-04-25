@@ -1,0 +1,206 @@
+/* Qualify Exam Theme Styles */
+.loginpage-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+  padding: 2rem;
+  font-family: 'Montserrat', 'Arial', sans-serif;
+}
+
+.loginpage-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.loginpage-logo {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.loginpage-logo-svg {
+  width: 200px;
+  height: 60px;
+}
+
+.loginpage-title {
+  font-size: 2.2rem;
+  color: #7f8c8d;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.loginpage-subtitle {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Login Cards */
+.loginpage-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.loginpage-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 350px;
+  box-shadow: 0 10px 30px rgba(74, 107, 255, 0.1);
+  transition: all 0.3s ease;
+  text-align: center;
+  border-top: 4px solid transparent;
+}
+
+.loginpage-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(74, 107, 255, 0.15);
+}
+
+.loginpage-student-card {
+  border-top-color: #4A6BFF;
+}
+
+.loginpage-admin-card {
+  border-top-color: #00C896;
+}
+
+.loginpage-card-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.loginpage-student-card .loginpage-card-icon {
+  color: #4A6BFF;
+}
+
+.loginpage-admin-card .loginpage-card-icon {
+  color: #00C896;
+}
+
+.loginpage-card-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.loginpage-card h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.loginpage-card p {
+  color: #7f8c8d;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* Buttons */
+.loginpage-button {
+  display: inline-block;
+  padding: 0.9rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 240px;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+.loginpage-student-button {
+  background-color: #4A6BFF;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(74, 107, 255, 0.3);
+}
+
+.loginpage-student-button:hover {
+  background-color: #3A5BEF;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 107, 255, 0.4);
+}
+
+.loginpage-admin-button {
+  background-color: #00C896;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 200, 150, 0.3);
+}
+
+.loginpage-admin-button:hover {
+  background-color: #00B886;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 200, 150, 0.4);
+}
+
+/* Footer */
+.loginpage-footer {
+  margin-top: 3rem;
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.loginpage-highlight {
+  font-weight: 700;
+  background: linear-gradient(90deg, #4A6BFF, #00C896);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.loginpage-logo-text {
+  font-size: 4rem;
+  font-weight: 800;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(270deg, #4A6BFF 0%, #00C896 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(74, 107, 255, 0.2);
+  letter-spacing: -1px;
+  margin: 0;
+  line-height: 1;
+  animation: loginpage-gradientShift 6s ease infinite;
+  background-size: 200% 200%;
+}
+
+/* Animation */
+@keyframes loginpage-gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .loginpage-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .loginpage-title {
+    font-size: 1.8rem;
+  }
+
+  .loginpage-subtitle {
+    font-size: 1rem;
+  }
+}

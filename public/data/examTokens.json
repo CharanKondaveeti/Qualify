@@ -1,0 +1,13 @@
+{
+  "ExamTokens": [
+    {
+      "token_id": 1,
+      "student_exam_id": 1,
+      "token": "abc123xyz789",
+      "is_active": "true",
+      "status": "unused",
+      "expires_at": "2025-05-01T10:05:00Z",
+      "used_at": null
+    }
+  ]
+}
