@@ -3,6 +3,8 @@ import Papa from "papaparse";
 import { FiUpload, FiLoader, FiArrowLeft } from "react-icons/fi";
 import "./css/CreateNewExam.css";
 import UploadQuestions from "../../ui/UploadQuestions";
+import { createExamInSupabase, createQuestionsInSupabase } from "../../services/admin";
+import supabase from "../../services/supabase";
 
 const CreateNewExam = ({ whenCloseclicked }) => {
   const [newExam, setNewExam] = useState({
@@ -22,7 +24,7 @@ const CreateNewExam = ({ whenCloseclicked }) => {
   };
 
   const removeQuestion = (id) => {
-    setQuestions(questions.filter((q) => q.id !== id));
+    setQuestions(questions.filter((q) => q.question_id !== id));
   };
 
   const validateForm = () => {
@@ -53,7 +55,7 @@ const CreateNewExam = ({ whenCloseclicked }) => {
           const parsedQuestions = results.data
             .filter((q) => q.question)
             .map((q, i) => ({
-              id: Date.now() + i,
+              question_id: Date.now() + i,
               question_text: q.question || "",
               options: [
                 q.option1 || "",
@@ -80,11 +82,53 @@ const CreateNewExam = ({ whenCloseclicked }) => {
     }
   };
 
-  const createExam = () => {
+  const createExam = async () => {
     if (!validateForm()) return;
-    const examData = { ...newExam, questions };
-    console.log("Exam Created", examData);
+
+    try {
+      // 🔐 Get current user
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        alert("Unable to get user. Please login again.");
+        return;
+      }
+
+      const userId = user.id;
+
+      // 📝 Exam data with created_by
+      const examData = {
+        title: newExam.name,
+        course: newExam.course,
+        status: "upcoming",
+        scheduled_date: newExam.date,
+        duration_minutes: newExam.duration,
+        created_by: userId, // 👈 attach user ID here
+      };
+
+      // ✅ Step 1: Create exam
+      const examId = await createExamInSupabase(examData);
+
+      // ✅ Step 2: Attach exam_id to each question (remove question_id if UUID error)
+      const questionsWithExamId = questions.map(({ question_id, ...q }) => ({
+        ...q,
+        exam_id: examId[0].exam_id,
+      }));
+
+      // ✅ Step 3: Save questions
+      await createQuestionsInSupabase(questionsWithExamId);
+
+      // ✅ Step 4: Success
+      alert("Exam and questions created successfully!");
+    } catch (error) {
+      console.error("Error creating exam and questions:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
+
 
   return (
     <div className="create-exam-form">
@@ -174,7 +218,7 @@ const CreateNewExam = ({ whenCloseclicked }) => {
           questions={questions}
           onAdd={addQuestion}
           onDelete={removeQuestion}
-          onUpdate={addQuestion}
+          onUpdate={setQuestions}
         />
       </form>
       <div className="form-actions">

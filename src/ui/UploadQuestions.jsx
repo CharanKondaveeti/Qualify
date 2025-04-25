@@ -3,6 +3,7 @@ import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import "./css/questionList.css";
 
 const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
+  console.log("questions", questions);
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [expandedIds, setExpandedIds] = useState([]);
   const [newQuestion, setNewQuestion] = useState({
@@ -26,7 +27,7 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
     }
 
     // Add question to state
-    onAdd({ ...newQuestion, id: Date.now() });
+    onAdd({ ...newQuestion, question_id: Date.now() });
 
     setNewQuestion({
       question_text: "",
@@ -42,23 +43,30 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
     setEditingQuestion({ ...question });
   };
 
-  const handleSave = () => {
-    const { question_text, options, correct_option } = editingQuestion;
+ const handleSave = () => {
+   const { question_text, options, correct_option } = editingQuestion;
 
-    if (
-      !question_text.trim() ||
-      options.some((opt) => !opt.trim()) ||
-      correct_option === null
-    ) {
-      alert("Please complete all fields.");
-      return;
-    }
+   if (
+     !question_text.trim() ||
+     options.some((opt) => !opt.trim()) ||
+     correct_option === null
+   ) {
+     alert("Please complete all fields.");
+     return;
+   }
 
-    // Update the question in state
-    onUpdate(editingQuestion);
-    setEditingQuestion(null);
-    alert("Question updated successfully!");
-  };
+   // Update the question in state (find the existing question by ID)
+   const updatedQuestions = questions.map((q) =>
+     q.question_id === editingQuestion.question_id
+       ? { ...q, question_text, options, correct_option }
+       : q
+   );
+
+   // Use onUpdate (setQuestions) passed from the parent to update the questions
+   onUpdate(updatedQuestions); // Update the questions list
+   setEditingQuestion(null); // Close the editor modal
+   alert("Question updated successfully!");
+ };
 
   const handleDelete = (question_id) => {
     // Remove the question from state
@@ -76,16 +84,16 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
     <>
       <div className="questions-list">
         {questions.map((q, index) => (
-          <div key={q.id} className="question-card">
-            <div className="question-header" onClick={() => toggleExpand(q.id)}>
+          <div key={q.question_id} className="question-card">
+            <div className="question-header" onClick={() => toggleExpand(q.question_id)}>
               <span className="question-number">{index + 1}</span>
               <span className="question-text">{q.question_text}</span>
               <div className="question-actions">
                 <button
                   className="edit-btn"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    handleEdit(q);
+                    e.preventDefault(); // Prevent page reload
+                    handleEdit(q); // Trigger the edit logic
                   }}
                 >
                   <FiEdit2 />
@@ -94,7 +102,7 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
                   className="delete-btn"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDelete(q.id); // Call delete function
+                    handleDelete(q.question_id); // Call delete function
                   }}
                 >
                   <FiTrash2 />
@@ -102,7 +110,7 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
               </div>
             </div>
 
-            {expandedIds.includes(q.id) && (
+            {expandedIds.includes(q.question_id) && (
               <div className="options-list">
                 {q.options.map((opt, i) => (
                   <div
@@ -122,7 +130,10 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
 
       <button
         className="add-question-btn"
-        onClick={() => setIsAddModalOpen(true)}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsAddModalOpen(true);
+        }}
       >
         Add New Question
       </button>
@@ -162,9 +173,10 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
                     className={`option-select ${
                       i === newQuestion.correct_option ? "selected" : ""
                     }`}
-                    onClick={() =>
-                      setNewQuestion({ ...newQuestion, correct_option: i })
-                    }
+                    onClick={(e) => {
+                        e.preventDefault(); // Prevent page reload
+                      setNewQuestion({ ...newQuestion, correct_option: i });
+                    }}
                   >
                     Correct
                   </button>
@@ -221,12 +233,14 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
                     className={`option-select ${
                       i === editingQuestion.correct_option ? "selected" : ""
                     }`}
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent page reload
+
                       setEditingQuestion({
                         ...editingQuestion,
                         correct_option: i,
-                      })
-                    }
+                      });
+                    }}
                   >
                     Correct
                   </button>
@@ -240,7 +254,13 @@ const UploadQuestions = ({ questions, onDelete, onUpdate, onAdd }) => {
               >
                 Cancel
               </button>
-              <button className="save-btn" onClick={handleSave}>
+              <button
+                className="save-btn"
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent page reload
+                  handleSave(); // Save the edited question
+                }}
+              >
                 Save Changes
               </button>
             </div>

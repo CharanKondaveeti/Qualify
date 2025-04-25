@@ -206,6 +206,7 @@ const formatDate = (dateString) => {
                             className="delete-btn"
                             onClick={(e) => {
                               e.stopPropagation();
+                              console.log(exam.exam_id);
                               handleDelete(exam.exam_id);
                             }}
                           >

@@ -110,6 +110,23 @@ export async function createExamInSupabase(exam) {
   }
 }
 
+export async function createExam(examDetails) {
+  try {
+    const { data, error } = await supabase
+      .from("exams")
+      .insert([examDetails])
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to create exam: ${error.message}`);
+    }
+
+    return data.id; // exam_id
+  } catch (error) {
+    console.error("Error creating exam:", error);
+    throw new Error("Failed to create exam");
+  }
+}
 
 // Insert questions data
 export async function createQuestionsInSupabase(questions) {
@@ -201,8 +218,6 @@ const deleteExam = async (examId) => {
     if (error) {
       throw new Error(error.message);
     }
-
-    console.log("Exam deleted:", data);
 
     const { error: questionsError } = await supabase
       .from("questions")

@@ -150,7 +150,10 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
 
       <button
         className="add-question-btn"
-        onClick={() => setIsAddModalOpen(true)}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsAddModalOpen(true)
+        }}
       >
         Add New Question
       </button>
