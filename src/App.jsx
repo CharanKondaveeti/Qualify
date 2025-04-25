@@ -5,6 +5,9 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./App.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 // Pages
 import LoginPage from "./pages/LoginPage";
@@ -21,6 +24,8 @@ import AdminHomePage from "./features/admin/AdminHomepage";
 import ExamsTab from "./features/admin/ExamsTab";
 import CalendarTab from "./features/admin/CalenderTab";
 import StudentsTab from "./features/admin/StudentsTab";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 // Create router
 const router = createBrowserRouter([
@@ -50,9 +55,13 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="app-container">
-      <RouterProvider router={router} />
-    </div>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <div className="app-container">
+          <RouterProvider router={router} />
+        </div>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

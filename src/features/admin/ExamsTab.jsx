@@ -168,9 +168,8 @@ const formatDate = (dateString) => {
                     <th>Course</th>
                     <th>Date & Time</th>
                     <th>Duration</th>
-                    <th>Questions</th>
                     <th>Status</th>
-                    <th>Actions</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -185,7 +184,6 @@ const formatDate = (dateString) => {
                         <td>{exam.course}</td>
                         <td>{formatDate(exam.scheduled_date)}</td>
                         <td>{exam.duration_minutes || "-"}</td>
-                        <td>{exam.total_questions || "-"}</td>
                         <td>
                           <span className={`status-badge ${exam.status}`}>
                             {exam.status?.charAt(0).toUpperCase() +
@@ -193,7 +191,7 @@ const formatDate = (dateString) => {
                           </span>
                         </td>
                         <td className="actions-cell">
-                          <button
+                          {/* <button
                             className="edit-btn"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -201,7 +199,7 @@ const formatDate = (dateString) => {
                             }}
                           >
                             <FiEdit2 />
-                          </button>
+                          </button> */}
                           <button
                             className="delete-btn"
                             onClick={(e) => {

@@ -1,6 +1,22 @@
 import React from "react";
 import { FiArrowLeft, FiUser, FiClock } from "react-icons/fi";
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date
+    .toLocaleString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: true,
+    })
+    .replace("at", ",");
+};
+
+
 const ExamHeader = ({ exam, onBack }) => {
   return (
     <div className="exam-report-header">
@@ -19,7 +35,7 @@ const ExamHeader = ({ exam, onBack }) => {
             </span>
             <span className="exam-report-meta-item">
               <FiClock className="exam-report-meta-icon" />
-              {exam.scheduled_date}
+              {formatDate(exam.scheduled_date)}
             </span>
           </div>
         </div>
