@@ -96,6 +96,7 @@ export async function signupAdmin(email, password, name) {
 
 // Insert exam data
 export async function createExamInSupabase(exam) {
+  console.log("exam supabase", exam);
   try {
     const { data, error } = await supabase.from("exams").insert([exam]).select("exam_id"); 
 
@@ -203,9 +204,8 @@ export async function deleteQuestionFromSupabase(question_id) {
   }
 }
 
-const deleteExam = async (examId) => {
+export const deleteExam = async (examId) => {
   try {
-    // Check if the examId is valid
     if (!examId) {
       throw new Error("Invalid exam ID");
     }
@@ -235,4 +235,49 @@ const deleteExam = async (examId) => {
   }
 };
 
-export default deleteExam;
+export const editStudentInSupabase = async (studentId, updatedData) => {
+  const { data, error } = await supabase
+    .from("studentReport")
+    .update(updatedData)
+    .eq("id", studentId);
+
+  if (error) {
+    console.error("Error updating student:", error);
+    throw error;
+  }
+  return data;
+};
+
+export const deleteStudentFromSupabase = async (studentId) => {
+  console.log("Deleting student with ID:", studentId);
+  const { data, error } = await supabase
+    .from("studentReport")
+    .delete()
+    .eq("student_report_id", studentId);
+
+  if (error) {
+    console.error("Error deleting student:", error);
+    throw error;
+  }
+  return data;
+};
+
+export const updateStudentInSupabase = async (studentReportId, updatedData) => {
+  console.log(
+    "Updating student with ID:",
+    studentReportId,
+    "with data:",
+    updatedData
+  );
+
+  const { data, error } = await supabase
+    .from("studentReport")
+    .update(updatedData)
+    .eq("student_report_id", studentReportId);
+
+  if (error) {
+    console.error("Error updating student:", error);
+    throw error;
+  }
+   return data;
+};

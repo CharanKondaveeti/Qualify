@@ -51,6 +51,14 @@
   margin-bottom: 20px;
 }
 
+.exam-row{
+  cursor: pointer;
+}
+
+.exam-row:hover{
+  background:#f4f4f4;
+}
+
 .search-bar {
   position: relative;
   width: 100%;

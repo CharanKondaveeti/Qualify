@@ -26,28 +26,6 @@
   position: relative;
 }
 
-.exam-report-back-btn {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  margin-bottom : 1rem
-}
-
-.exam-report-back-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateX(-3px);
-}
-
-.exam-report-icon-left {
-  margin-right: 8px;
-}
 
 .exam-report-exam-header {
   display: flex;
@@ -62,46 +40,10 @@
   letter-spacing: -0.5px;
 }
 
-.exam-report-exam-meta {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.exam-report-meta-item {
-  display: flex;
-  align-items: center;
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
 
 .exam-report-meta-icon {
   margin-right: 6px;
   font-size: 1rem;
-}
-
-.exam-report-status-chip {
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: capitalize;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.exam-report-status-chip.active {
-  background: rgba(74, 222, 128, 0.2);
-  border-color: rgba(74, 222, 128, 0.5);
-}
-
-.exam-report-status-chip.upcoming {
-  background: rgba(251, 191, 36, 0.2);
-  border-color: rgba(251, 191, 36, 0.5);
-}
-
-.exam-report-status-chip.completed {
-  background: rgba(99, 102, 241, 0.2);
-  border-color: rgba(99, 102, 241, 0.5);
 }
 
 /* Edit Section */

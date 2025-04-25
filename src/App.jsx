@@ -5,6 +5,10 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./App.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { store } from "./store/index"; 
+
+const queryClient = new QueryClient();
 
 // Pages
 import LoginPage from "./pages/LoginPage";
@@ -21,6 +25,9 @@ import AdminHomePage from "./features/admin/AdminHomepage";
 import ExamsTab from "./features/admin/ExamsTab";
 import CalendarTab from "./features/admin/CalenderTab";
 import StudentsTab from "./features/admin/StudentsTab";
+import { Provider } from "react-redux";
+import CreateNewExam from "./features/admin/CreateNewExam";
+import ViewExamDetails from "./features/exam/ViewExamDetails";
 
 // Create router
 const router = createBrowserRouter([
@@ -41,18 +48,31 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" /> },
       { path: "dashboard", element: <AdminDashboard /> },
-      { path: "exams", element: <ExamsTab /> },
+      {
+        path: "exams",
+        element: <ExamsTab />,
+        children: [{ path: "create", element: <CreateNewExam /> }],
+      },
       { path: "calender", element: <CalendarTab /> },
       { path: "students", element: <StudentsTab /> },
+      { path: "exam/create", element: <CreateNewExam /> },
+      {
+        path: "exams/:examId",
+        element: <ViewExamDetails />,
+      },
     ],
   },
 ]);
 
 function App() {
   return (
-    <div className="app-container">
-      <RouterProvider router={router} />
-    </div>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <div className="app-container">
+          <RouterProvider router={router} />
+        </div>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

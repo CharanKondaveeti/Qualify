@@ -1,10 +1,28 @@
 import React from "react";
 import { FiArrowLeft, FiUser, FiClock } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
-const ExamHeader = ({ exam, onBack }) => {
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date
+    .toLocaleString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: true,
+    })
+    .replace("at", ",");
+};
+
+
+const ExamHeader = ({ exam }) => {
+  const navigate = useNavigate();
   return (
     <div className="exam-report-header">
-      <button onClick={onBack} className="exam-report-back-btn">
+      <button onClick={()=> navigate(-1)} className="exam-report-back-btn">
         <FiArrowLeft className="exam-report-icon-left" />
         Back to Exams
       </button>
@@ -19,7 +37,7 @@ const ExamHeader = ({ exam, onBack }) => {
             </span>
             <span className="exam-report-meta-item">
               <FiClock className="exam-report-meta-icon" />
-              {exam.scheduled_date}
+              {formatDate(exam.scheduled_date)}
             </span>
           </div>
         </div>

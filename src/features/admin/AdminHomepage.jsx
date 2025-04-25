@@ -119,7 +119,6 @@ export default function AdminHomePage() {
           </div>
         </header>
 
-        {/* Render Content Based on Active Menu Item */}
         <div className="content-wrapper">
           <Outlet />
         </div>
