@@ -39,7 +39,6 @@ const router = createBrowserRouter([
   { path: "/student-login", element: <StudentLogin /> },
   { path: "/examBoard", element: <ExamBoard /> },
   { path: "/register/exam/:examId", element: <ExamRegistration /> },
-
   // Admin Routes
   { path: "/admin-login", element: <AdminAuth /> },
   {

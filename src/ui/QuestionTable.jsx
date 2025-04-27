@@ -35,7 +35,6 @@ const QuestionTable = ({ questions }) => {
               <th>Correct Option</th>
               <th>Correct Answers</th>
               <th>Incorrect Answers</th>
-              {/* <th>Accuracy</th> */}
             </tr>
           </thead>
 
@@ -54,15 +53,6 @@ const QuestionTable = ({ questions }) => {
                   <td>{question.correctOption}</td>
                   <td>{question.correctAnswers}</td>
                   <td>{question.incorrectAnswers}</td>
-                  {/* <td>
-                    <div className="exam-report-accuracy-bar-container">
-                      <div
-                        className="exam-report-accuracy-bar"
-                        style={{ width: `${accuracy}%` }}
-                      ></div>
-                      <span>{ac..curacy}%</span>
-                    </div>
-                  </td> */}
                 </tr>
               );
             })}

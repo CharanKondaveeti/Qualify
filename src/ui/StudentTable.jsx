@@ -1,32 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./css/studentTable.css";
+import supabase from "../services/supabase";
 
-const StudentTable = ({ students }) => {
-  const [qualifyingMark, setQualifyingMark] = useState("");
-  const [qualifiedPercentage, setQualifiedPercentage] = useState(null);
+const StudentTable = ({ students, passMark, setPassMark, examId }) => {
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-
-  useEffect(() => {
-    const percentage = calculateQualifiedPercentage();
-    setQualifiedPercentage(percentage);
-  }, [qualifyingMark, students]);
-
-  const calculateQualifiedPercentage = () => {
-    if (!qualifyingMark || isNaN(qualifyingMark)) return 0;
-
-    const qualifiedStudents = students.filter(
-      (student) =>
-        student.is_attempted && student.score >= Number(qualifyingMark)
-    ).length;
-
-    const attemptedStudents = students.filter(
-      (student) => student.is_attempted
-    ).length;
-
-    return attemptedStudents > 0
-      ? Math.round((qualifiedStudents / attemptedStudents) * 100)
-      : 0;
-  };
 
   const handleSort = (key) => {
     let direction = "asc";
@@ -63,6 +40,26 @@ const StudentTable = ({ students }) => {
     return sorted;
   };
 
+  const handleSavePassMark = async () => {
+    console.log(passMark, examId);
+    if (!passMark) {
+      alert("Please enter a qualifying mark!");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("exams")
+      .update({ pass_mark: Number(passMark) })
+      .eq("exam_id", examId);
+
+    if (error) {
+      console.error(error);
+      alert("Failed to update pass mark!");
+    } else {
+      alert("Qualifying mark updated successfully!");
+    }
+  };
+
   return (
     <div className="exam-report-student-table">
       <div className="qualifying-mark-input">
@@ -70,15 +67,13 @@ const StudentTable = ({ students }) => {
         <input
           type="number"
           id="qualifying-mark"
-          value={qualifyingMark}
-          onChange={(e) => setQualifyingMark(e.target.value)}
+          value={passMark}
+          onChange={(e) => setPassMark(e.target.value)}
           min="0"
         />
-        {qualifyingMark && !isNaN(qualifyingMark) && (
-          <div className="qualified-percentage">
-            Qualified Percentage: {qualifiedPercentage}%
-          </div>
-        )}
+        <button onClick={handleSavePassMark} className="save-passmark-button">
+          {"Save"}
+        </button>
       </div>
 
       <div className="exam-report-table-wrapper">
@@ -122,7 +117,7 @@ const StudentTable = ({ students }) => {
                 <td>
                   {!student.completed_at ? (
                     "-"
-                  ) : student.marks_scored >= Number(qualifyingMark) ? (
+                  ) : student.marks_scored >= Number(passMark) ? (
                     <span className="exam-report-result-badge passed">
                       Passed
                     </span>
@@ -132,10 +127,23 @@ const StudentTable = ({ students }) => {
                     </span>
                   )}
                 </td>
-
+                {/* 
                 <td>
                   {student.completed_at ? (
                     <span className="exam-report-attempt-badge yes">Yes</span>
+                  ) : (
+                    <span className="exam-report-attempt-badge no">No</span>
+                  )}
+                </td> */}
+
+                <td>
+                  {student.exam_status === "submitted" &&
+                  student.completed_at ? (
+                    <span className="exam-report-attempt-badge yes">Yes</span>
+                  ) : student.exam_status === "revoked" ? (
+                    <span className="exam-report-attempt-badge no">
+                      Revoked
+                    </span>
                   ) : (
                     <span className="exam-report-attempt-badge no">No</span>
                   )}

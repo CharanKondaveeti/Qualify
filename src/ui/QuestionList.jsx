@@ -7,7 +7,13 @@ import {
   deleteQuestionFromSupabase,
 } from "../services/admin";
 
-const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
+const QuestionList = ({
+  questions,
+  onDelete,
+  onUpdate,
+  onAdd,
+  exam,
+}) => {
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [expandedIds, setExpandedIds] = useState([]);
   const [newQuestion, setNewQuestion] = useState({
@@ -18,40 +24,40 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
   });
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
- const handleAddClick = async () => {
-   const { question_text, options, correct_option } = newQuestion;
+  const handleAddClick = async () => {
+    const { question_text, options, correct_option } = newQuestion;
 
-   if (
-     !question_text.trim() ||
-     options.some((opt) => !opt.trim()) ||
-     correct_option === null
-   ) {
-     alert("Please complete all fields.");
-     return;
-   }
+    if (
+      !question_text.trim() ||
+      options.some((opt) => !opt.trim()) ||
+      correct_option === null
+    ) {
+      alert("Please complete all fields.");
+      return;
+    }
 
-   try {
-     const newQ = {
-       ...newQuestion,
-       exam_id: examId,
-     };
+    try {
+      const newQ = {
+        ...newQuestion,
+        exam_id: exam.exam_id,
+      };
 
-     await addQuestionToSupabase(newQ);
-     onAdd?.(newQ);
+      await addQuestionToSupabase(newQ);
+      onAdd?.(newQ);
 
-     setNewQuestion({
-       question_text: "",
-       options: ["", "", "", ""],
-       correct_option: null,
-       marks: 1,
-     });
-     setIsAddModalOpen(false);
-     alert("Question added successfully!");
-   } catch (error) {
-     console.error("Error adding question:", error);
-     alert("Error adding question. Please try again.");
-   }
- };
+      setNewQuestion({
+        question_text: "",
+        options: ["", "", "", ""],
+        correct_option: null,
+        marks: 1,
+      });
+      setIsAddModalOpen(false);
+      alert("Question added successfully!");
+    } catch (error) {
+      console.error("Error adding question:", error);
+      alert("Error adding question. Please try again.");
+    }
+  };
 
   const handleEdit = (question) => {
     setEditingQuestion({ ...question });
@@ -108,26 +114,28 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
             >
               <span className="question-number">{index + 1}</span>
               <span className="question-text">{q.question_text}</span>
-              <div className="question-actions">
-                <button
-                  className="edit-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEdit(q);
-                  }}
-                >
-                  <FiEdit2 />
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(q.question_id); // Call delete function
-                  }}
-                >
-                  <FiTrash2 />
-                </button>
-              </div>
+              {exam.status === "upcoming" && (
+                <div className="question-actions">
+                  <button
+                    className="edit-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit(q);
+                    }}
+                  >
+                    <FiEdit2 />
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(q.question_id); // Call delete function
+                    }}
+                  >
+                    <FiTrash2 />
+                  </button>
+                </div>
+              )}
             </div>
 
             {expandedIds.includes(q.question_id) && (
@@ -148,15 +156,17 @@ const QuestionList = ({ questions, onDelete, onUpdate, onAdd, examId }) => {
         ))}
       </div>
 
-      <button
-        className="add-question-btn"
-        onClick={(e) => {
-          e.preventDefault();
-          setIsAddModalOpen(true)
-        }}
-      >
-        Add New Question
-      </button>
+      {exam.status === "upcoming" && (
+        <button
+          className="add-question-btn"
+          onClick={(e) => {
+            e.preventDefault();
+            setIsAddModalOpen(true);
+          }}
+        >
+          Add New Question
+        </button>
+      )}
 
       {/* Add Question Modal */}
       {isAddModalOpen && (
