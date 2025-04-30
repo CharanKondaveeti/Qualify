@@ -1,20 +1,28 @@
 import supabase from "./supabase";
+import dayjs from "dayjs";
 
-// Get all exams
-export async function getExams() {
-  let { data, error } = await supabase.from("exams").select("*");
-  if (error) {
-    throw new Error("Exams could not be loaded");
+// get loggedin admin details
+export const getCurrentAdmin = async () => {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("Unable to fetch user");
   }
-  return data;
-}
+
+  return user;
+};
+
 
 // Get questions for a specific exam
 export async function getQuestions(exam_id) {
   let { data, error } = await supabase
     .from("questions")
     .select("*")
-    .eq("exam_id", exam_id);
+    .eq("exam_id", exam_id)
+    .order("question_id", { ascending: true }); 
 
   if (error) {
     throw new Error("Questions could not be loaded: " + error.message);
@@ -50,6 +58,7 @@ export async function loginAdmin(email, password) {
   }
 
   const user = data.user;
+  console.log("Logged in user:", user);
 
   const { data: profile, error: profileError } = await supabase
     .from("admins")
@@ -94,56 +103,6 @@ export async function signupAdmin(email, password, name) {
   return user;
 }
 
-// Insert exam data
-export async function createExamInSupabase(exam) {
-  console.log("exam supabase", exam);
-  try {
-    const { data, error } = await supabase.from("exams").insert([exam]).select("exam_id"); 
-
-    if (error) {
-      throw new Error(`Failed to insert exam: ${error.message}`);
-    }
-
-    return data; 
-  } catch (error) {
-    console.error("Error creating exam:", error);
-    throw new Error("Failed to create exam");
-  }
-}
-
-export async function createExam(examDetails) {
-  try {
-    const { data, error } = await supabase
-      .from("exams")
-      .insert([examDetails])
-      .single();
-
-    if (error) {
-      throw new Error(`Failed to create exam: ${error.message}`);
-    }
-
-    return data.id; // exam_id
-  } catch (error) {
-    console.error("Error creating exam:", error);
-    throw new Error("Failed to create exam");
-  }
-}
-
-// Insert questions data
-export async function createQuestionsInSupabase(questions) {
-  try {
-    const { data, error } = await supabase.from("questions").insert(questions);
-
-    if (error) {
-      throw new Error(`Failed to insert questions: ${error.message}`);
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Error creating questions:", error);
-    throw new Error("Failed to create questions");
-  }
-}
 
 // Add new question
 export async function addQuestionToSupabase(question) {
@@ -204,37 +163,6 @@ export async function deleteQuestionFromSupabase(question_id) {
   }
 }
 
-export const deleteExam = async (examId) => {
-  try {
-    if (!examId) {
-      throw new Error("Invalid exam ID");
-    }
-
-    const { data, error } = await supabase
-      .from("exams")
-      .delete()
-      .eq("exam_id", examId);
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    const { error: questionsError } = await supabase
-      .from("questions")
-      .delete()
-      .eq("exam_id", examId);
-
-    if (questionsError) {
-      throw new Error(questionsError.message);
-    }
-
-    console.log("Questions related to the exam have been deleted.");
-  } catch (error) {
-    console.error("Error deleting exam:", error);
-    throw error;
-  }
-};
-
 export const editStudentInSupabase = async (studentId, updatedData) => {
   const { data, error } = await supabase
     .from("studentReport")
@@ -281,3 +209,186 @@ export const updateStudentInSupabase = async (studentReportId, updatedData) => {
   }
    return data;
 };
+
+
+export async function submitExam(
+  examId,
+  studentId,
+  answers,
+  mode = "autosave"
+) {
+  let updateFields = {
+    answers: answers,
+  };
+
+  if (mode === "finalsubmit") {
+    const { data: questions, error: questionsError } = await supabase
+      .from("questions")
+      .select("question_id, correct_option, marks, negative_marks")
+      .eq("exam_id", examId);
+
+    if (questionsError) {
+      return { success: false, message: "Failed to fetch questions" };
+    }
+
+    let totalMarks = 0;
+    questions.forEach((question) => {
+      const studentAnswer = answers[question.question_id];
+      if (studentAnswer !== undefined) {
+        if (studentAnswer === question.correct_option) {
+          totalMarks += question.marks;
+        }
+      }
+    });
+
+    updateFields.marks_scored = totalMarks;
+    updateFields.exam_status = "submitted";
+  }
+
+  const { error: reportError } = await supabase
+    .from("studentReport")
+    .update(updateFields)
+    .eq("exam_id", examId)
+    .eq("student_report_id", studentId);
+
+  if (reportError) {
+    return { success: false, message: "Failed to submit exam" };
+  }
+
+  return {
+    success: true,
+    message:
+      mode === "finalsubmit"
+        ? "Exam submitted successfully!"
+        : "Answers autosaved successfully.",
+  };
+}
+
+export const getExamWithStartTime = async (examId, studentId) => {
+  try {
+    // 1. Fetch exam details
+    const { data: examData, error: examError } = await supabase
+      .from("exams")
+      .select("exam_id, title, course, duration_minutes")
+      .eq("exam_id", examId)
+      .single();
+
+    if (examError) throw examError;
+
+    // 2. Fetch started_at from studentReport
+    const { data: reportData, error: reportError } = await supabase
+      .from("studentReport")
+      .select("started_at, exam_status")
+      .eq("exam_id", examId)
+      .eq("student_report_id", studentId)
+      .single();
+
+
+    if (reportError) throw reportError;
+
+    // 3. Combine both
+    return {
+      ...examData,
+      started_at: reportData?.started_at,
+      exam_status: reportData?.exam_status,
+
+    };
+  } catch (error) {
+    console.error("Error fetching exam and started_at:", error);
+    return null;
+  }
+};
+
+export async function startExamNow(studentId) {
+  const { data, error } = await supabase
+    .from("studentReport")
+    .update({
+      started_at: new Date().toISOString(),
+      exam_status: "in progress",
+    })
+    .eq("student_report_id", studentId)
+    .select("started_at");
+
+  if (error) {
+    console.error(error);
+    return { success: false };
+  }
+
+  return { success: true, started_at: data[0].started_at };
+}
+
+export async function updateExamStatuses() {
+  try {
+    const { data: exams, error } = await supabase.from("exams").select("*");
+
+    if (error) {
+      console.error("Failed to fetch exams:", error.message);
+      return;
+    }
+
+    const updates = [];
+
+    exams.forEach((exam) => {
+      const now = dayjs();
+      const start = dayjs(exam.scheduled_date);
+      const end = start.add(exam.duration_minutes, "minute");
+
+      let newStatus = exam.status;
+
+      if (now.isBefore(start)) {
+        newStatus = "upcoming";
+      } else if (now.isAfter(end)) {
+        newStatus = "completed";
+      } else {
+        newStatus = "active";
+      }
+
+      if (newStatus !== exam.status) {
+        updates.push({
+          exam_id: exam.exam_id,
+          status: newStatus,
+        });
+      }
+    });
+
+    // Batch update exams
+    for (const update of updates) {
+      await supabase
+        .from("exams")
+        .update({ status: update.status })
+        .eq("exam_id", update.exam_id);
+    }
+
+    console.log("Exam statuses updated:", updates);
+  } catch (err) {
+    console.error("Error updating exam statuses:", err.message);
+  }
+}
+
+export async function fetchStudentReportsByExamId(examId) {
+  const { data, error } = await supabase
+    .from("studentReports")
+    .select("*")
+    .eq("exam_id", examId);
+
+  if (error) {
+    console.error("Error fetching student reports:", error.message);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function updateExamInSupabase(examId, updatedData) {
+  const { data, error } = await supabase
+    .from("exams")
+    .update(updatedData)
+    .eq("exam_id", examId);
+
+  if (error) {
+    console.error("Failed to update exam:", error.message);
+    throw error;
+  }
+
+  return data;
+}

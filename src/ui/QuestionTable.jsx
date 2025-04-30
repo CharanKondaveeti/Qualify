@@ -16,9 +16,8 @@ const QuestionTable = ({ questions }) => {
         id: q.id,
         text: q.question_text,
         correctOption,
-        correctAnswers: Math.floor(Math.random() * 20),
-        incorrectAnswers: Math.floor(Math.random() * 10),
-        difficulty: ["Easy", "Medium", "Hard"][Math.floor(Math.random() * 3)],
+        correctAnswers: "",
+        incorrectAnswers: "",
       };
     });
 
@@ -33,8 +32,8 @@ const QuestionTable = ({ questions }) => {
             <tr>
               <th>Question</th>
               <th>Correct Option</th>
-              <th>Correct Answers</th>
-              <th>Incorrect Answers</th>
+              {/* <th>Correct Answers</th>
+              <th>Incorrect Answers</th> */}
             </tr>
           </thead>
 
@@ -51,8 +50,8 @@ const QuestionTable = ({ questions }) => {
                 <tr key={question.id} className="exam-report-table-row">
                   <td>{question.text}</td>
                   <td>{question.correctOption}</td>
-                  <td>{question.correctAnswers}</td>
-                  <td>{question.incorrectAnswers}</td>
+                  {/* <td>{question.correctAnswers}</td>
+                  <td>{question.incorrectAnswers}</td> */}
                 </tr>
               );
             })}

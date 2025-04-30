@@ -5,11 +5,12 @@ import {
   addQuestionToSupabase,
   editQuestionInSupabase,
   deleteQuestionFromSupabase,
-} from "../services/admin";
+} from "../services/admin";  import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 
 const QuestionList = ({
   questions,
-  onDelete,
+  // onDelete,
   onUpdate,
   onAdd,
   exam,
@@ -22,7 +23,22 @@ const QuestionList = ({
     correct_option: null,
     marks: 1,
   });
+  const queryClient = useQueryClient();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // mutations
+    const deleteQuestionMutation = useMutation({
+      mutationFn: deleteQuestionFromSupabase,
+      onSuccess: () => {
+        queryClient.invalidateQueries(["questions", exam.exam_id]);
+        alert("Question deleted successfully!");
+      },
+      onError: (error) => {
+        console.error(error);
+        alert("Error deleting question. Please try again.");
+      },
+    });
+
 
   const handleAddClick = async () => {
     const { question_text, options, correct_option } = newQuestion;
@@ -86,16 +102,21 @@ const QuestionList = ({
     }
   };
 
-  const handleDelete = async (question_id) => {
-    try {
-      await deleteQuestionFromSupabase(question_id);
-      onDelete(question_id);
-      alert("Question deleted successfully!");
-    } catch (error) {
-      console.error(error);
-      alert("Error deleting question. Please try again.");
-    }
-  };
+
+const handleDelete = (question_id) => {
+  deleteQuestionMutation.mutate(question_id);
+};
+
+  // const handleDelete = async (question_id) => {
+  //   try {
+  //     await deleteQuestionFromSupabase(question_id);
+  //     onDelete(question_id);
+  //     alert("Question deleted successfully!");
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("Error deleting question. Please try again.");
+  //   }
+  // };
 
   const toggleExpand = (id) => {
     setExpandedIds((prev) =>

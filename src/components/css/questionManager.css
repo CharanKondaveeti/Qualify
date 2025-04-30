@@ -1,0 +1,218 @@
+/* Question Header */
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .expand-icon {
+    margin-left: 8px;
+    font-size: 20px;
+  }
+  
+  /* Options List */
+  .options-list {
+    padding-left: 20px;
+    margin-bottom: 10px;
+    list-style: decimal;
+  }
+  
+  .options-list li {
+    margin-bottom: 5px;
+  }
+  
+  /* Highlight correct option */
+  .options-list li.correct {
+    color: #00C896;
+    font-weight: bold;
+  }
+  
+  /* Question List wrapper */
+  .questions-list {
+    margin-top: 1rem;
+  }
+  
+  /* Add Question Button (if shown) */
+  .add-question-btn {
+    background: #1a65e5;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-question-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .add-question-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Optional: modal transition support */
+  .questions-section {
+    transition: all 0.3s ease;
+  }
+  
+  .section-enter {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  
+  .section-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.3s ease;
+  }
+  
+  .section-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .section-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  
+  .actions button {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  
+  .edit-btn {
+    background-color: #1a73e8;
+    color: white;
+  }
+  
+  .delete-btn {
+    background-color: #e63946;
+    color: white;
+  }
+
+  
+  .questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.question-header {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.question-header > div:first-child {
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.question-header strong::before {
+  content: attr(data-qnumber);
+  background-color: #4f46e5;
+  color: white;
+  border-radius: 50%;
+  padding: 4px 9px;
+  margin-right: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.options-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.options-list li {
+  background-color: #f1f1f1;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.options-list li.correct {
+  background-color: #d1fae5; /* green light */
+  color: #047857;
+  font-weight: 600;
+}
+
+.actions {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  display: flex;
+  gap: 0.6rem;
+}
+
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.actions button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.add-question-btn {
+  background-color: #4f46e5;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}

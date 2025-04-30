@@ -38,10 +38,17 @@ function AddNewModal({
             }
           />
         </div>
-        <button className="add-btn" onClick={handleAddClick}>
+        <button className="add-btn" onClick={(e) => 
+        {
+          e.preventDefault();
+          handleAddClick()}}
+          >
           Add Question
         </button>
-        <button className="cancel-btn" onClick={() => setIsAddModalOpen(false)}>
+        <button className="cancel-btn" onClick={(e) => {
+          e.preventDefault();
+          setIsAddModalOpen(false)
+          }}>
           Cancel
         </button>
       </div>

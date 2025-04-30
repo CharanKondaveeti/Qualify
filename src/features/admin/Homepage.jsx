@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
-import "./css/AdminDashboard.css";
+import React, { useEffect, useState } from "react";
+import { Outlet, useNavigate, Link } from "react-router-dom";
+import "./css/adminDashboard.css";
+import supabase from "../../services/supabase";
 
 // Icons
 import {
@@ -20,6 +21,38 @@ import {
 export default function AdminHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const navigate = useNavigate();
+
+  // ✅ Check if user is logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (!data.session) {
+        navigate("/admin-login");
+      }
+    };
+
+    checkSession();
+
+    // Optional: auth change listener
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (!session) {
+          navigate("/admin-login");
+        }
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, [navigate]);
+
+  // ✅ Logout handler
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/admin-login");
+  };
 
   return (
     <div
@@ -39,22 +72,6 @@ export default function AdminHomePage() {
 
         <nav className="nav-menu">
           <Link
-            to="dashboard"
-            className={`nav-item ${activeTab === "dashboard" ? "active" : ""}`}
-            onClick={() => setActiveTab("dashboard")}
-          >
-            <FiBarChart2 className="nav-icon" />
-            <span className="nav-text">Dashboard</span>
-          </Link>
-          <Link
-            to="students"
-            className={`nav-item ${activeTab === "students" ? "active" : ""}`}
-            onClick={() => setActiveTab("students")}
-          >
-            <FiUsers className="nav-icon" />
-            <span className="nav-text">Students</span>
-          </Link>
-          <Link
             to="exams"
             className={`nav-item ${activeTab === "exams" ? "active" : ""}`}
             onClick={() => setActiveTab("exams")}
@@ -63,20 +80,12 @@ export default function AdminHomePage() {
             <span className="nav-text">Exams</span>
           </Link>
           <Link
-            to="calender"
+            to="calendar"
             className={`nav-item ${activeTab === "calendar" ? "active" : ""}`}
             onClick={() => setActiveTab("calendar")}
           >
             <FiCalendar className="nav-icon" />
             <span className="nav-text">Calendar</span>
-          </Link>
-          <Link
-            to="messages"
-            className={`nav-item ${activeTab === "messages" ? "active" : ""}`}
-            onClick={() => setActiveTab("messages")}
-          >
-            <FiMessageSquare className="nav-icon" />
-            <span className="nav-text">Messages</span>
           </Link>
           <Link
             to="settings"
@@ -89,10 +98,10 @@ export default function AdminHomePage() {
         </nav>
 
         <div className="sidebar-footer">
-          <Link to="/logout" className="logout-btn">
+          <button onClick={handleLogout} className="logout-btn">
             <FiLogOut className="nav-icon" />
             <span className="nav-text">Logout</span>
-          </Link>
+          </button>
         </div>
       </div>
 

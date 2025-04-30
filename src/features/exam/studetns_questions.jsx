@@ -10,11 +10,12 @@ import {
 } from "../../services/admin";
 import QuestionTable from "../../ui/QuestionTable";
 import StudentTable from "../../ui/StudentTable";
+import { useQueryClient } from "@tanstack/react-query";
+import QuestionManager from "../../components/QuestionManager";
 
 const StudentQuesTab = ({
   students,
   questions,
-  setQuestions,
   exam,
   passMark,
   setPassMark,
@@ -27,7 +28,7 @@ const StudentQuesTab = ({
     email: "",
     rollNo: "",
   });
-
+  const queryClient = useQueryClient();
   const handleEdit = (index) => {
     setEditingIndex(index);
     const student = students[index];
@@ -49,6 +50,7 @@ const StudentQuesTab = ({
         console.error("Student report ID missing");
         return;
       }
+
       const updatedStudent = {
         student_name: editForm.name,
         email: editForm.email,
@@ -57,22 +59,42 @@ const StudentQuesTab = ({
 
       await updateStudentInSupabase(editForm.id, updatedStudent);
       setEditingIndex(null);
+
+      // Invalidate students query
+      queryClient.invalidateQueries({
+        queryKey: ["students-report", exam.exam_id],
+      });
     } catch (error) {
       console.error("Error updating student:", error);
     }
   };
+  
 
   const handleDelete = async (index) => {
     const studentId = students[index].student_report_id;
     try {
       await deleteStudentFromSupabase(studentId);
+
+      // Invalidate students query
+      queryClient.invalidateQueries({
+        queryKey: ["students-report", exam.exam_id],
+      });
     } catch (error) {
       console.error("Error deleting student:", error);
     }
   };
+  
 
   const onUpdateQuestion = async (newQ) => {
-    await editQuestionInSupabase(newQ);
+    try {
+      await editQuestionInSupabase(newQ);
+      // Invalidate the questions query to trigger a re-fetch
+      queryClient.invalidateQueries({
+        queryKey: ["questions", exam.exam_id],
+      });
+    } catch (error) {
+      console.error("Error updating question:", error);
+    }
   };
 
   return (
@@ -97,16 +119,15 @@ const StudentQuesTab = ({
             <div className="questions-section">
               <QuestionList
                 questions={questions}
-                onDelete={(id) =>
-                  setQuestions((prev) => prev.filter((q) => q.id !== id))
-                }
                 onUpdate={onUpdateQuestion}
                 examId={exam.exam_id}
                 exam={exam}
               />
             </div>
           ) : (
-            <QuestionTable questions={questions} />
+            <>
+              <QuestionTable questions={questions} />
+            </>
           )}
         </>
       )}
@@ -119,6 +140,7 @@ const StudentQuesTab = ({
               passMark={passMark}
               setPassMark={setPassMark}
               examId={exam.exam_id}
+              exam={exam}
             />
           ) : (
             <div className="students-section">

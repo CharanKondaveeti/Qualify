@@ -490,3 +490,112 @@
     font-size: 1.5rem;
   }
 }
+
+/* added later */
+/* Add these styles to your existing CSS file */
+
+/* Editable Field Container */
+.exam-report-editable-field {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  transition: all 0.2s ease;
+}
+
+.exam-report-editable-field:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Input Fields */
+.exam-report-editable-field input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-family: inherit;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  margin-left: 0.3rem;
+  transition: all 0.2s ease;
+}
+
+.exam-report-editable-field input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+/* Date Input Specific */
+.exam-report-editable-field input[type="datetime-local"] {
+  width: 180px;
+}
+
+/* Number Input Specific */
+.exam-report-editable-field input[type="number"] {
+  width: 50px;
+  text-align: center;
+}
+
+/* Duration Input Specific */
+.exam-report-editable-field input.duration-input {
+  width: 60px;
+  text-align: center;
+}
+
+/* Edit Icon Indicator */
+.exam-report-editable-field .edit-indicator {
+  margin-left: 0.5rem;
+  opacity: 0.7;
+  font-size: 0.9em;
+}
+
+/* Save Button Enhancements */
+.exam-report-save-btn {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  margin-top: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.exam-report-save-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.exam-report-save-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.exam-report-save-btn .exam-report-meta-icon {
+  margin-right: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .exam-report-exam-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  
+  .exam-report-editable-field {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .exam-report-editable-field input[type="datetime-local"] {
+    width: 160px;
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "secure-exam-app",
+  "version": "1.0.0",
+  "description": "Electron-based secure exam kiosk",
+  "main": "main.js",
+  "author": "Your Name",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.exam.secure",
+    "productName": "SecureExamApp",
+    "protocols": [
+      {
+        "name": "Exam Protocol",
+        "schemes": [
+          "examapp"
+        ]
+      }
+    ],
+    "files": [
+      "main.js",
+      "preload.js"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

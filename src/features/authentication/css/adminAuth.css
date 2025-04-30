@@ -1,4 +1,4 @@
-.adminLogin-container {
+.adminAuth-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,7 +8,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
-.adminLogin-container > .adminLogin-card {
+.adminAuth-container > .adminAuth-card {
   background: white;
   border-radius: 16px;
   padding: 3rem;
@@ -18,12 +18,12 @@
   border-top: 4px solid #FF6B6B;
 }
 
-.adminLogin-header {
+.adminAuth-header {
   text-align: center;
   margin-bottom: 2.5rem;
 }
 
-.adminLogin-container > .adminLogin-logo-text {
+.adminAuth-container > .adminAuth-logo-text {
   font-size: 2.5rem;
   font-weight: 800;
   background: linear-gradient(90deg, #FF6B6B 0%, #FF8E53 100%);
@@ -33,7 +33,7 @@
   line-height: 1;
 }
 
-.adminLogin-logo-subtext {
+.adminAuth-logo-subtext {
   color: #7f8c8d;
   font-size: 0.9rem;
   margin-top: 0.5rem;
@@ -41,29 +41,29 @@
   font-weight: 500;
 }
 
-.adminLogin-header h2 {
+.adminAuth-header h2 {
   color: #2c3e50;
   margin-bottom: 0.5rem;
   font-size: 1.5rem;
 }
 
-.adminLogin-header p {
+.adminAuth-header p {
   color: #7f8c8d;
   font-size: 0.95rem;
   font-weight: 500;
 }
 
-.adminLogin-form {
+.adminAuth-form {
   display: flex;
   flex-direction: column;
 }
 
-.adminLogin-input-group {
+.adminAuth-input-group {
   position: relative;
   margin-bottom: 1.5rem;
 }
 
-.adminLogin-input-group label {
+.adminAuth-input-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: #2c3e50;
@@ -71,7 +71,7 @@
   font-weight: 500;
 }
 
-.adminLogin-inputContainer {
+.adminAuth-inputContainer {
   display: flex;
   align-items: center;
   padding: 0.8rem 1rem;
@@ -79,14 +79,14 @@
   border-radius: 8px;
 }
 
-.adminLogin-inputContainer input {
+.adminAuth-inputContainer input {
   width: 100%;
   border: none;
   font-size: 1.2rem;
   transition: all 0.3s ease;
 }
 
-.adminLogin-inputContainer input:focus {
+.adminAuth-inputContainer input:focus {
   outline: none;
   /* border-color: #FF6B6B; */
   /* box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1); */
@@ -99,7 +99,7 @@
   fill: #7f8c8d;
 }
 
-.adminLogin-options {
+.adminAuth-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -119,7 +119,7 @@
   accent-color: #FF6B6B;
 }
 
-.adminLogin-button {
+.adminAuth-button {
   background: linear-gradient(90deg, #FF6B6B 0%, #FF8E53 100%);
   color: white;
   border: none;
@@ -131,12 +131,12 @@
   transition: all 0.3s ease;
 }
 
-.adminLogin-button:hover {
+.adminAuth-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
 }
 
-.adminLogin-security-notice {
+.adminAuth-security-notice {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -145,20 +145,20 @@
   margin-top: 1rem;
 }
 
-.adminLogin-security-notice svg {
+.adminAuth-security-notice svg {
   fill: #FF6B6B;
 }
 
-.adminLogin-security-notice > span{
+.adminAuth-security-notice > span{
   font-size: 0.8rem;
 }
 
 @media (max-width: 480px) {
-  .adminLogin-card {
+  .adminAuth-card {
     padding: 2rem;
   }
   
-  .adminLogin-logo-text {
+  .adminAuth-logo-text {
     font-size: 2rem;
   }
 }

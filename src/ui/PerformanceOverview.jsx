@@ -27,7 +27,7 @@ const PerformanceOverview = ({ stats }) => {
       <div className="exam-report-section-header">Performance Overview</div>
       <div className="exam-report-performance-grid">
         <PerformanceItem
-          label="In Progress"
+          label="In progress"
           value={stats?.inProgress || 0}
           icon={<FiClock className="exam-report-icon" />}
           iconColor="blue"

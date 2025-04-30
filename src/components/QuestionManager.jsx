@@ -1,21 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
-import "./css/PreviewQuestions.css";
-
 import AddNewModal from "../features/modals/AddNewQuestionModal";
 import EditQuestionModal from "../features/modals/EditQuestionModal";
-import {
-  addQuestion,
-  removeQuestion,
-  updateQuestion,
-} from "../store/newExamSlice";
+import { addQuestion, removeQuestion, updateQuestion } from "../store/newExamSlice";
+import "./css/QuestionManager.css";
 
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-const PreviewQuestions = ({ setIsAddModalOpen, isAddModalOpen }) => {
-  const questions = useSelector((state) => state.newExam.questions);
+const QuestionManager = ({
+  isAddModalOpen,
+  setIsAddModalOpen,
+  readOnly = false,
+}) => {
+  const questions = useSelector((state) => state.questions.questions);
   const dispatch = useDispatch();
 
   const [expandedIds, setExpandedIds] = useState([]);
@@ -46,19 +42,19 @@ const PreviewQuestions = ({ setIsAddModalOpen, isAddModalOpen }) => {
 
   const handleAddClick = () => {
     if (!validateQuestion(newQuestion)) {
-      toast.error("Please complete all fields.");
+      alert("Please complete all fields.");
       return;
     }
 
     dispatch(addQuestion({ ...newQuestion, question_id: Date.now() }));
-    setIsAddModalOpen(false);
     resetNewQuestion();
-    toast.success("Question added successfully!");
+    setIsAddModalOpen(false);
+    alert("Question added successfully!");
   };
 
   const handleSave = () => {
     if (!validateQuestion(editingQuestion)) {
-      toast.error("Please complete all fields.");
+      alert("Please complete all fields.");
       return;
     }
 
@@ -73,7 +69,7 @@ const PreviewQuestions = ({ setIsAddModalOpen, isAddModalOpen }) => {
       })
     );
     setEditingQuestion(null);
-    toast.success("Question updated successfully!");
+    alert("Question updated successfully!");
   };
 
   const toggleExpand = (id) => {
@@ -82,21 +78,22 @@ const PreviewQuestions = ({ setIsAddModalOpen, isAddModalOpen }) => {
     );
   };
 
+  if (readOnly) {
+    return <ReadOnlyTable questions={questions} />;
+  }
+
   return (
     <>
-      {questions.length > 0 && (
-        <h3 className="Preview-question__heading">Preview Questions</h3>
-
-)}
       <div className="preview-questions">
         {questions.map((q, index) => (
           <QuestionCard
-            key={q.question_id || index}
+            key={q.question_id}
             q={q}
             toggleExpand={toggleExpand}
             index={index}
             setEditingQuestion={setEditingQuestion}
             dispatch={dispatch}
+            expandedIds={expandedIds}
           />
         ))}
       </div>
@@ -121,20 +118,25 @@ const PreviewQuestions = ({ setIsAddModalOpen, isAddModalOpen }) => {
   );
 };
 
-function QuestionCard({ q, toggleExpand, index, setEditingQuestion, dispatch }) {
+const QuestionCard = ({
+  q,
+  toggleExpand,
+  index,
+  setEditingQuestion,
+  dispatch,
+  expandedIds,
+}) => {
   return (
-    <div key={q.question_id} className="Preview-question__question-card">
+    <div className="question-card">
       <div
-        className="Preview-question__question-header"
+        className="question-header"
         onClick={() => toggleExpand(q.question_id)}
       >
-        <span className="Preview-question__question-number">{index + 1}</span>
-        <span className="Preview-question__question-text">
-          {q.question_text}
-        </span>
-        <div className="Preview-question__question-actions">
+        <span className="question-number">{index + 1}</span>
+        <span className="question-text">{q.question_text}</span>
+        <div className="question-actions">
           <button
-            className="Preview-question__edit-btn"
+            className="edit-btn"
             onClick={(e) => {
               e.preventDefault();
               setEditingQuestion({ ...q });
@@ -143,11 +145,11 @@ function QuestionCard({ q, toggleExpand, index, setEditingQuestion, dispatch }) 
             <FiEdit2 />
           </button>
           <button
-            className="Preview-question__delete-btn"
+            className="delete-btn"
             onClick={(e) => {
               e.stopPropagation();
               dispatch(removeQuestion(q.question_id));
-              toast.success("Question deleted successfully!");
+              alert("Question deleted successfully!");
             }}
           >
             <FiTrash2 />
@@ -155,14 +157,12 @@ function QuestionCard({ q, toggleExpand, index, setEditingQuestion, dispatch }) 
         </div>
       </div>
 
-      {q.options && q.options.length > 0 && (
-        <div className="Preview-question__options-list">
+      {expandedIds.includes(q.question_id) && (
+        <div className="options-list">
           {q.options.map((opt, i) => (
             <div
               key={i}
-              className={`Preview-question__option ${
-                i === q.correct_option ? "correct" : ""
-              }`}
+              className={`option ${i === q.correct_option ? "correct" : ""}`}
             >
               {opt}
             </div>
@@ -171,7 +171,48 @@ function QuestionCard({ q, toggleExpand, index, setEditingQuestion, dispatch }) 
       )}
     </div>
   );
-}
+};
 
-export default PreviewQuestions;
- 
+const ReadOnlyTable = ({ questions }) => {
+  const [processedQuestions, setProcessedQuestions] = useState([]);
+
+  useEffect(() => {
+    if (!questions) return;
+
+    const processed = questions.map((q) => ({
+      id: q.question_id || q.id,
+      text: q.question_text,
+      correctOption:
+        q.options && q.correct_option !== undefined
+          ? q.options[q.correct_option]
+          : "N/A",
+    }));
+
+    setProcessedQuestions(processed);
+  }, [questions]);
+
+  return (
+    <div className="exam-report-questions-table">
+      <div className="exam-report-table-wrapper">
+        <table className="exam-report-table">
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Correct Option</th>
+            </tr>
+          </thead>
+          <tbody>
+            {processedQuestions.map((q) => (
+              <tr key={q.id} className="exam-report-table-row">
+                <td>{q.text}</td>
+                <td>{q.correctOption}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default QuestionManager;

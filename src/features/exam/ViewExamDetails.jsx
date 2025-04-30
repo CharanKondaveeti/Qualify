@@ -1,57 +1,57 @@
-import "./css/viewExamDetails.css";
-
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import ExamHeader from "../../ui/ExamHeader";
-import ExamRegistryLink from "../uicomponents/ExamRegistryLink";
-import UpcomingExamNotice from "../uicomponents/UpcomingExamNotice";
+import ExamRegistryLink from "../../components/ExamRegistryLink";
+import UpcomingExamNotice from "../../components/UpcomingExamNotice";
 import StudentQuesTab from "./studetns_questions";
 import SummaryGrid from "../../ui/SummaryGrid";
-import PerformanceOverview from "../../ui/PerformanceOverview";
-import AccordionSection from "../../ui/AccordionSection";
-import StudentTable from "../../ui/StudentTable";
-import QuestionTable from "../../ui/QuestionTable";
-import { useEffect, useState } from "react";
 import { getQuestions, getStudentsReport } from "../../services/admin";
+import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import "./css/viewExamDetailss.css";
 
 function ViewExamDetails() {
-  const location = useLocation();
-  const exam = location.state?.exam;
-  const [questions, setQuestions] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [passMark, setPassMark] = useState(exam.pass_mark);
-  console.log("passMark", passMark);
+  const { examId } = useParams(); 
+  const queryClient = useQueryClient();
+  const cachedExams = queryClient.getQueryData(["exams"]);
+  const exam = cachedExams?.find((e) => e.exam_id === examId);
+  const [passMark, setPassMark] = useState(exam?.pass_mark);
 
-  const submitPassMark = async (examId, passMark) => {};
+  const {
+    data: questions = [],
+    isLoading: loadingQuestions,
+    isError: errorQuestions,
+  } = useQuery({
+    queryKey: ["questions", exam?.exam_id],
+    queryFn: () => getQuestions(exam.exam_id),
+    enabled: !!exam?.exam_id,
+  });
 
-  useEffect(() => {
-    fetchQuestions();
-    fetchStudentReports();
-  }, [exam.exam_id]);
+  const {
+    data: students = [],
+    isLoading: loadingStudents,
+    isError: errorStudents,
+  } = useQuery({
+    queryKey: ["students-report", exam?.exam_id],
+    queryFn: () => getStudentsReport(exam.exam_id),
+    enabled: !!exam?.exam_id,
+  });
 
-  const fetchQuestions = async () => {
-    try {
-      const response = await getQuestions(exam.exam_id);
-      setQuestions(response);
-    } catch (error) {
-      console.error("Error fetching questions:", error);
-    }
-  };
-
-  const fetchStudentReports = async () => {
-    try {
-      const studentData = await getStudentsReport(exam.exam_id);
-      setStudents(studentData);
-    } catch (error) {
-      console.error("Error fetching student data:", error);
-    }
-  };
+  const isUpcoming = exam?.status === "upcoming";
+  const isPastOrOngoing = !isUpcoming;
 
   return (
     <div className="view-exam-details">
       <ExamHeader exam={exam} />
-      {exam.status === "upcoming" && <ExamRegistryLink examId={exam.exam_id} />}
-      {exam.status === "upcoming" && <UpcomingExamNotice />}
-      {exam.status !== "upcoming" && (
+
+      {isUpcoming && (
+        <>
+          <ExamRegistryLink examId={exam.exam_id} />
+          <UpcomingExamNotice />
+        </>
+      )}
+
+      {isPastOrOngoing && (
         <SummaryGrid
           examStatus={exam.status}
           students={students}
@@ -63,7 +63,6 @@ function ViewExamDetails() {
       <StudentQuesTab
         students={students}
         questions={questions}
-        setQuestions={setQuestions}
         examId={exam.exam_id}
         exam={exam}
         passMark={passMark}
