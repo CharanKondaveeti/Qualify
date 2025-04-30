@@ -1,0 +1,198 @@
+/* examStartCard.css */
+
+.exam-status-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
+  
+  .exam-status-card {
+    width: 100%;
+    max-width: 700px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 2.5rem;
+  }
+  
+  .exam-status-card.ready {
+    border-top: 6px solid #4e54c8;
+  }
+  
+  .exam-status-card h2 {
+    color: #4e54c8;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  .exam-status-card h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, #4e54c8, #8f94fb);
+  }
+  
+  .exam-details-preview {
+    background: rgba(78, 84, 200, 0.05);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #8f94fb;
+  }
+  
+  .exam-details-preview div {
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  
+  .exam-details-preview div:last-child {
+    margin-bottom: 0;
+  }
+  
+  .exam-details-preview strong {
+    color: #4e54c8;
+    font-weight: 600;
+  }
+  
+  .exam-countdown {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(78, 84, 200, 0.3);
+  }
+  
+  .exam-countdown h3 {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  .start-exam-button {
+    display: block;
+    width: 100%;
+    padding: 1.2rem;
+    margin: 2rem auto;
+    background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(78, 84, 200, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .start-exam-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(78, 84, 200, 0.4);
+  }
+  
+  .start-exam-button:active {
+    transform: translateY(1px);
+  }
+  
+  .start-exam-button.pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(143, 148, 251, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 15px rgba(143, 148, 251, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(143, 148, 251, 0);
+    }
+  }
+  
+  .exam-expired-message {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #ff4b1f 0%, #ff9068 100%);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(255, 75, 31, 0.3);
+  }
+  
+  .exam-expired-message h3 {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  .exam-instructions {
+    margin-top: 2.5rem;
+  }
+  
+  .exam-instructions h3 {
+    color: #4e54c8;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-left: 15px;
+  }
+  
+  
+  .exam-instructions ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .exam-instructions li {
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    position: relative;
+    padding-left: 2.5rem;
+    transition: all 0.3s ease;
+  }
+
+  
+  .exam-instructions li::before {
+    content: '•';
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #4e54c8;
+    font-size: 1.5rem;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .exam-status-container {
+      padding: 1rem;
+    }
+    
+    .exam-status-card {
+      padding: 1.5rem;
+    }
+    
+    .exam-status-card h2 {
+      font-size: 1.7rem;
+    }
+  }

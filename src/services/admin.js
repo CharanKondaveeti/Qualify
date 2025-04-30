@@ -1,41 +1,19 @@
 import supabase from "./supabase";
+import dayjs from "dayjs";
 
-// Get all exams
-export async function getExams() {
-  let { data, error } = await supabase.from("exams").select("*");
-  if (error) {
-    throw new Error("Exams could not be loaded");
-  }
-  return data;
-}
+export const getCurrentAdmin = async (showModal) => {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-// Get questions for a specific exam
-export async function getQuestions(exam_id) {
-  let { data, error } = await supabase
-    .from("questions")
-    .select("*")
-    .eq("exam_id", exam_id);
-
-  if (error) {
-    throw new Error("Questions could not be loaded: " + error.message);
+  if (error || !user) {
+    showModal("error", "Error", "Unable to get user. Please login again.");
+    return null;
   }
 
-  return data;
-}
-
-// Get students' report for a specific exam
-export async function getStudentsReport(exam_id) {
-  let { data, error } = await supabase
-    .from("studentReport")
-    .select("*")
-    .eq("exam_id", exam_id);
-
-  if (error) {
-    throw new Error("Student report could not be loaded: " + error.message);
-  }
-
-  return data;
-}
+  return user;
+};
 
 // Admin login function
 export async function loginAdmin(email, password) {
@@ -50,6 +28,7 @@ export async function loginAdmin(email, password) {
   }
 
   const user = data.user;
+  console.log("Logged in user:", user);
 
   const { data: profile, error: profileError } = await supabase
     .from("admins")
@@ -94,56 +73,6 @@ export async function signupAdmin(email, password, name) {
   return user;
 }
 
-// Insert exam data
-export async function createExamInSupabase(exam) {
-  console.log("exam supabase", exam);
-  try {
-    const { data, error } = await supabase.from("exams").insert([exam]).select("exam_id"); 
-
-    if (error) {
-      throw new Error(`Failed to insert exam: ${error.message}`);
-    }
-
-    return data; 
-  } catch (error) {
-    console.error("Error creating exam:", error);
-    throw new Error("Failed to create exam");
-  }
-}
-
-export async function createExam(examDetails) {
-  try {
-    const { data, error } = await supabase
-      .from("exams")
-      .insert([examDetails])
-      .single();
-
-    if (error) {
-      throw new Error(`Failed to create exam: ${error.message}`);
-    }
-
-    return data.id; // exam_id
-  } catch (error) {
-    console.error("Error creating exam:", error);
-    throw new Error("Failed to create exam");
-  }
-}
-
-// Insert questions data
-export async function createQuestionsInSupabase(questions) {
-  try {
-    const { data, error } = await supabase.from("questions").insert(questions);
-
-    if (error) {
-      throw new Error(`Failed to insert questions: ${error.message}`);
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Error creating questions:", error);
-    throw new Error("Failed to create questions");
-  }
-}
 
 // Add new question
 export async function addQuestionToSupabase(question) {
@@ -204,50 +133,6 @@ export async function deleteQuestionFromSupabase(question_id) {
   }
 }
 
-export const deleteExam = async (examId) => {
-  try {
-    if (!examId) {
-      throw new Error("Invalid exam ID");
-    }
-
-    const { data, error } = await supabase
-      .from("exams")
-      .delete()
-      .eq("exam_id", examId);
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    const { error: questionsError } = await supabase
-      .from("questions")
-      .delete()
-      .eq("exam_id", examId);
-
-    if (questionsError) {
-      throw new Error(questionsError.message);
-    }
-
-    console.log("Questions related to the exam have been deleted.");
-  } catch (error) {
-    console.error("Error deleting exam:", error);
-    throw error;
-  }
-};
-
-export const editStudentInSupabase = async (studentId, updatedData) => {
-  const { data, error } = await supabase
-    .from("studentReport")
-    .update(updatedData)
-    .eq("id", studentId);
-
-  if (error) {
-    console.error("Error updating student:", error);
-    throw error;
-  }
-  return data;
-};
-
 export const deleteStudentFromSupabase = async (studentId) => {
   console.log("Deleting student with ID:", studentId);
   const { data, error } = await supabase
@@ -281,3 +166,17 @@ export const updateStudentInSupabase = async (studentReportId, updatedData) => {
   }
    return data;
 };
+
+export async function updateExamInSupabase(examId, updatedData) {
+  const { data, error } = await supabase
+    .from("exams")
+    .update(updatedData)
+    .eq("exam_id", examId);
+
+  if (error) {
+    console.error("Failed to update exam:", error.message);
+    throw error;
+  }
+
+  return data;
+}
