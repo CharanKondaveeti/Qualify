@@ -8,13 +8,26 @@ export async function getExams() {
   }
   return data;
 }
+export async function getExam(exam_id) {
+  let { data, error } = await supabase
+    .from("exams")
+    .select("*")
+    .eq("exam_id", exam_id);
+;
+  if (error) {
+    throw new Error("Exams could not be loaded");
+  }
+  return data;
+}
+
 
 // Get questions for a specific exam
 export async function getQuestions(exam_id) {
   let { data, error } = await supabase
     .from("questions")
     .select("*")
-    .eq("exam_id", exam_id);
+    .eq("exam_id", exam_id)
+    .order("question_id", { ascending: true }); 
 
   if (error) {
     throw new Error("Questions could not be loaded: " + error.message);
@@ -281,3 +294,110 @@ export const updateStudentInSupabase = async (studentReportId, updatedData) => {
   }
    return data;
 };
+
+
+export async function submitExam(
+  examId,
+  studentId,
+  answers,
+  mode = "autosave"
+) {
+  let updateFields = {
+    answers: answers,
+  };
+
+  if (mode === "finalsubmit") {
+    const { data: questions, error: questionsError } = await supabase
+      .from("questions")
+      .select("question_id, correct_option, marks, negative_marks")
+      .eq("exam_id", examId);
+
+    if (questionsError) {
+      return { success: false, message: "Failed to fetch questions" };
+    }
+
+    let totalMarks = 0;
+    questions.forEach((question) => {
+      const studentAnswer = answers[question.question_id];
+      if (studentAnswer !== undefined) {
+        if (studentAnswer === question.correct_option) {
+          totalMarks += question.marks;
+        }
+      }
+    });
+
+    updateFields.marks_scored = totalMarks;
+    updateFields.exam_status = "submitted";
+  }
+
+  const { error: reportError } = await supabase
+    .from("studentReport")
+    .update(updateFields)
+    .eq("exam_id", examId)
+    .eq("student_report_id", studentId);
+
+  if (reportError) {
+    return { success: false, message: "Failed to submit exam" };
+  }
+
+  return {
+    success: true,
+    message:
+      mode === "finalsubmit"
+        ? "Exam submitted successfully!"
+        : "Answers autosaved successfully.",
+  };
+}
+
+export const getExamWithStartTime = async (examId, studentId) => {
+  try {
+    // 1. Fetch exam details
+    const { data: examData, error: examError } = await supabase
+      .from("exams")
+      .select("exam_id, title, course, duration_minutes")
+      .eq("exam_id", examId)
+      .single();
+
+    if (examError) throw examError;
+
+    // 2. Fetch started_at from studentReport
+    const { data: reportData, error: reportError } = await supabase
+      .from("studentReport")
+      .select("started_at, exam_status")
+      .eq("exam_id", examId)
+      .eq("student_report_id", studentId)
+      .single();
+
+
+    if (reportError) throw reportError;
+
+    // 3. Combine both
+    return {
+      ...examData,
+      started_at: reportData?.started_at,
+      exam_status: reportData?.exam_status,
+
+    };
+  } catch (error) {
+    console.error("Error fetching exam and started_at:", error);
+    return null;
+  }
+};
+
+export async function startExamNow(studentId) {
+  const { data, error } = await supabase
+    .from("studentReport")
+    .update({
+      started_at: new Date().toISOString(),
+      exam_status: "in progress",
+    })
+    .eq("student_report_id", studentId)
+    .select("started_at");
+
+  if (error) {
+    console.error(error);
+    return { success: false };
+  }
+
+  return { success: true, started_at: data[0].started_at };
+}

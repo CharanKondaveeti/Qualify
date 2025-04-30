@@ -5,10 +5,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./App.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {QueryClientProvider } from "@tanstack/react-query";
 import { store } from "./store/index"; 
-
-const queryClient = new QueryClient();
 
 // Pages
 import LoginPage from "./pages/LoginPage";
@@ -28,6 +26,7 @@ import StudentsTab from "./features/admin/StudentsTab";
 import { Provider } from "react-redux";
 import CreateNewExam from "./features/admin/CreateNewExam";
 import ViewExamDetails from "./features/exam/ViewExamDetails";
+import queryClient from "./services/queryClient";
 
 // Create router
 const router = createBrowserRouter([
@@ -37,7 +36,7 @@ const router = createBrowserRouter([
 
   // Student Routes
   { path: "/student-login", element: <StudentLogin /> },
-  { path: "/examBoard", element: <ExamBoard /> },
+  { path: "/exams/:examId/student/:studentId", element: <ExamBoard /> },
   { path: "/register/exam/:examId", element: <ExamRegistration /> },
   // Admin Routes
   { path: "/admin-login", element: <AdminAuth /> },

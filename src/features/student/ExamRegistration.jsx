@@ -12,45 +12,36 @@ export default function ExamRegistration() {
   const [hallticket, setHallticket] = useState("");
   const [message, setMessage] = useState("");
 
-  // Generate a random Token
-  const generateToken = (length = 8) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let token = "";
-    for (let i = 0; i < length; i++) {
-      token += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return token;
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const newStudentReport = {
+    exam_id: examId,
+    student_name: name,
+    roll_no: hallticket,
+    email: email,
+    marks_scored: 0,
+    exam_status: "not started",
+    answers: {},
+    current_question: null,
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = generateToken();
+  try {
+    const { data, error } = await supabase
+      .from("studentReport")
+      .insert([newStudentReport])
+      .select();
 
-    const newStudentReport = {
-      exam_id: examId,
-      student_name: name,
-      roll_no: hallticket,
-      email: email,
-      marks_scored: 0,
-      exam_status: "not started",
-      answers: {},
-      current_question: null,
-    };
-
-    try {
-      const { data, error } = await supabase
-        .from("studentReport")
-        .insert([newStudentReport]);
-
-      if (error) {
-        throw error;
-      }
-
-      setMessage(`🎉 Registered successfully! Your login token is: ${token}`);
-    } catch (error) {
-      setMessage("❌ Registration failed: " + error.message);
+    if (error) {
+      throw error;
     }
-  };
+const token = data[0].student_report_id;
+    setMessage(`http://localhost:5173/exams/${examId}/student/${token}`);
+  } catch (error) {
+    setMessage("❌ Registration failed: " + error.message);
+  }
+};
+
 
   return (
     <div className="exam-reg-container">
