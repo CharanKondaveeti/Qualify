@@ -9,3 +9,7 @@ export const formatDate = (dateString) => {
     hour12: true,
   });
 };
+
+export const clearLocalStorage = (name) => {
+  localStorage.removeItem(name);
+};

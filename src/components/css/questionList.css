@@ -1,0 +1,129 @@
+
+/* Question Card - Modern Design */
+.question-manager__question-card {
+  background: #ffffff;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.question-manager__question-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Header - Improved Styling */
+.question-manager__question-header {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 1.3rem 1.5rem;
+  background: linear-gradient(to right, #f9f9f9, #f0f4ff);
+  border-bottom: 1px solid rgba(74, 107, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.question-manager__question-header:hover {
+  background: linear-gradient(to right, #f0f4ff, #e6ecff);
+}
+
+/* Question Number & Text - Enhanced */
+.question-manager__question-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4a6bff, #8A63FF);
+  color: #fff;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(74, 107, 255, 0.3);
+}
+
+.question-manager__question-text {
+  flex-grow: 1;
+  font-weight: 500;
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* Actions - More Prominent */
+.question-manager__question-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.question-manager__edit-btn,
+.question-manager__delete-btn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.question-manager__edit-btn {
+  color: #4a6bff;
+  background: rgba(74, 107, 255, 0.1);
+}
+
+.question-manager__edit-btn:hover {
+  background: rgba(74, 107, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.question-manager__delete-btn {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.question-manager__delete-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  transform: scale(1.1);
+}
+
+/* Options List - Modern Cards */
+.question-manager__options-list {
+  padding: 1rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .question-manager__options-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.question-manager__option {
+  padding: 12px 15px;
+  background: #f8f9fa;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.question-manager__option.correct {
+  background: linear-gradient(to right, rgba(0, 200, 150, 0.05), rgba(0, 200, 150, 0.1));
+  color: #00a876;
+  font-weight: 500;
+  border-left-color: #00c896;
+  position: relative;
+}

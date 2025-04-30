@@ -1,54 +1,52 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  getExams as fetchExamsFromAPI,
-  deleteExam as deleteExamAPI,
-} from "../services/admin";
+// import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// import {
+//   createExamInSupabase,
+//   createQuestionsInSupabase,
+// } from "../services/admin";
 
-export const fetchExams = createAsyncThunk("exams/fetchExams", async () => {
-  const data = await fetchExamsFromAPI();
-  return data;
-});
+// export const createExam = createAsyncThunk(
+//   "exam/createExam",
+//   async (examData) => {
+//     const { data } = await createExamInSupabase(examData);
+//     return data[0];
+//   }
+// );
 
-export const deleteExam = createAsyncThunk(
-  "exams/deleteExam",
-  async (id, { dispatch }) => {
-    await deleteExamAPI(id);
-    dispatch(fetchExams());
-  }
-);
+// export const createQuestions = createAsyncThunk(
+//   "exam/createQuestions",
+//   async ({ examId, questions }) => {
+//     const questionsWithExam = questions.map((q) => ({
+//       ...q,
+//       exam_id: examId,
+//     }));
+//     await createQuestionsInSupabase(questionsWithExam);
+//     return questionsWithExam;
+//   }
+// );
 
-const examsSlice = createSlice({
-  name: "exams",
-  initialState: {
-    exams: [],
-    loading: false,
-    error: null,
-    searchQuery: "",
-    activeFilter: "all",
-  },
-  reducers: {
-    setSearchQuery(state, action) {
-      state.searchQuery = action.payload;
-    },
-    setActiveFilter(state, action) {
-      state.activeFilter = action.payload;
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchExams.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchExams.fulfilled, (state, action) => {
-        state.exams = action.payload;
-        state.loading = false;
-      })
-      .addCase(fetchExams.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
-  },
-});
+// const examSlice = createSlice({
+//   name: "exam",
+//   initialState: {
+//     examDetails: {
+//       title: "Demo Exam",
+//       duration: 60,
+//     },
+//     questions: [],
+//   },
+//   reducers: {
+//     setQuestions: (state, action) => {
+//       state.questions = action.payload;
+//     },
+//     addQuestion: (state, action) => {
+//       state.questions.push(action.payload);
+//     },
+//   },
+//   extraReducers: (builder) => {
+//     builder.addCase(createExam.fulfilled, (state, action) => {
+//       state.examDetails = action.payload;
+//     });
+//   },
+// });
 
-export const { setSearchQuery, setActiveFilter } = examsSlice.actions;
-export default examsSlice.reducer;
+// export const { setQuestions, addQuestion } = examSlice.actions;
+// export default examSlice.reducer;

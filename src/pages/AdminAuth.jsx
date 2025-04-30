@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/AdminLogin.css";
+import "./css/adminAuth.css";
 import { loginAdmin, signupAdmin } from "../services/admin";
 
-export default function AdminLoginSignup() {
+export default function AdminAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,19 +43,19 @@ export default function AdminLoginSignup() {
   };
 
   return (
-    <div className="adminLogin-container">
-      <div className="adminLogin-card">
-        <h1 className="adminLogin-logo-text">QUALIFY</h1>
-        <p className="adminLogin-logo-subtext">
+    <div className="adminAuth-container">
+      <div className="adminAuth-card">
+        <h1 className="adminAuth-logo-text">QUALIFY</h1>
+        <p className="adminAuth-logo-subtext">
           {isLogin ? "Admin Login" : "Admin Signup"}
         </p>
 
         <form
           onSubmit={isLogin ? handleLogin : handleSignup}
-          className="adminLogin-form"
+          className="adminAuth-form"
         >
           {!isLogin && (
-            <div className="adminLogin-input-group">
+            <div className="adminAuth-input-group">
               <label>Name</label>
               <input
                 type="text"
@@ -67,7 +67,7 @@ export default function AdminLoginSignup() {
             </div>
           )}
 
-          <div className="adminLogin-input-group">
+          <div className="adminAuth-input-group">
             <label>Email</label>
             <input
               type="email"
@@ -78,7 +78,7 @@ export default function AdminLoginSignup() {
             />
           </div>
 
-          <div className="adminLogin-input-group">
+          <div className="adminAuth-input-group">
             <label>Password</label>
             <input
               type="password"
@@ -90,7 +90,7 @@ export default function AdminLoginSignup() {
           </div>
 
           {!isLogin && (
-            <div className="adminLogin-input-group">
+            <div className="adminAuth-input-group">
               <label>Confirm Password</label>
               <input
                 type="password"
@@ -102,9 +102,9 @@ export default function AdminLoginSignup() {
             </div>
           )}
 
-          {errorMsg && <p className="adminLogin-error">{errorMsg}</p>}
+          {errorMsg && <p className="adminAuth-error">{errorMsg}</p>}
 
-          <button type="submit" className="adminLogin-button">
+          <button type="submit" className="adminAuth-button">
             {isLogin ? "Sign In" : "Sign Up"}
           </button>
 
