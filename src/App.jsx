@@ -5,29 +5,30 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./App.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {QueryClientProvider } from "@tanstack/react-query";
 import { store } from "./store/index"; 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ToastContainer } from "react-toastify";
 
-const queryClient = new QueryClient();
 
-// Pages
+// Authentication
 import LoginPage from "./pages/LoginPage";
-import StudentLogin from "./pages/StudentLogin";
 import AdminAuth from "./pages/AdminAuth";
 
+// Tabs
+import HomePage from "./pages/Homepage";
+import CalendarTab from "./pages/CalenderTab";
+import ExamsTab from "./pages/ExamsTab";
+
 // Student Features
-import ExamBoard from "./features/student/ExamBoard";
-import ExamRegistration from "./features/student/ExamRegistration";
+import ExamBoard from "./pages/ExamBoard";
+import ExamRegistration from "./pages/ExamRegistration";
 
 // Admin Features
-import AdminDashboard from "./features/admin/AdminDashBoard";
-import AdminHomePage from "./features/admin/AdminHomepage";
-import ExamsTab from "./features/admin/ExamsTab";
-import CalendarTab from "./features/admin/CalenderTab";
-import StudentsTab from "./features/admin/StudentsTab";
+import CreateNewExam from "./pages/CreateNewExam";
 import { Provider } from "react-redux";
-import CreateNewExam from "./features/admin/CreateNewExam";
-import ViewExamDetails from "./features/exam/ViewExamDetails";
+import ViewExamDetails from "./pages/ViewExamDetails";
+import queryClient from "./services/queryClient";
 
 // Create router
 const router = createBrowserRouter([
@@ -36,24 +37,21 @@ const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
 
   // Student Routes
-  { path: "/student-login", element: <StudentLogin /> },
-  { path: "/examBoard", element: <ExamBoard /> },
+  { path: "/exams/:examId/student/:studentId", element: <ExamBoard /> },
   { path: "/register/exam/:examId", element: <ExamRegistration /> },
   // Admin Routes
   { path: "/admin-login", element: <AdminAuth /> },
   {
     path: "/admin",
-    element: <AdminHomePage />,
+    element: <HomePage />,
     children: [
-      { index: true, element: <Navigate to="dashboard" /> },
-      { path: "dashboard", element: <AdminDashboard /> },
+      { index: true, element: <Navigate to="exams" /> },
       {
         path: "exams",
         element: <ExamsTab />,
         children: [{ path: "create", element: <CreateNewExam /> }],
       },
-      { path: "calender", element: <CalendarTab /> },
-      { path: "students", element: <StudentsTab /> },
+      { path: "calendar", element: <CalendarTab /> },
       { path: "exam/create", element: <CreateNewExam /> },
       {
         path: "exams/:examId",
@@ -69,7 +67,9 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <div className="app-container">
           <RouterProvider router={router} />
+          <ToastContainer position="top-right" autoClose={3000} />
         </div>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </Provider>
   );

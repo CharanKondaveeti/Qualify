@@ -1,0 +1,22 @@
+.blur-loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .loader {
+    color: white;
+    font-size: 1.5rem;
+    background-color: #3f37c9;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+  }
+  

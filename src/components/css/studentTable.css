@@ -1,0 +1,325 @@
+/* Student Table */
+.exam-report-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.exam-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.exam-report-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.exam-report-table td {
+  padding: 1rem;
+  /* border-bottom: 1px solid #e2e8f0; */
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.exam-report-table-row:hover {
+  background: #f8fafc;
+}
+
+/* Updated CSS */
+.exam-report-student-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.qualifying-mark-input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1rem ;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.qualifying-mark-input label {
+  font-weight: 500;
+  color: #334155;
+}
+
+.qualifying-mark-input input {
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  width: 80px;
+}
+
+.qualifying-mark-input button {
+  padding: 0.5rem 1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.qualifying-mark-input button:hover {
+  background: #2563eb;
+}
+
+.qualifying-mark-input button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.qualified-percentage {
+  margin-left: auto;
+  font-weight: 600;
+  color: #334155;
+}
+
+.exam-report-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.exam-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.exam-report-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.exam-report-table td {
+  padding: 1rem;
+  /* border-bottom: 1px solid #e2e8f0; */
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.exam-report-table-row:hover {
+  background: #f8fafc;
+}
+
+.exam-report-result-badge {
+  display: inline-block;
+  padding: 0.35rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.exam-report-result-badge.passed {
+  background: #dcfce7;
+  color: #166534;
+}
+.exam-report-result-badge.failed {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.exam-report-attempt-badge {
+  display: inline-block;
+  padding: 0.35rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.exam-report-attempt-badge.yes {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.exam-report-attempt-badge.no {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.spinner {
+  border: 2px solid #f3f3f3; /* Light grey */
+  border-top: 2px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  display: inline-block; /* To align with text if needed */
+  vertical-align: middle; /* Align vertically in the button */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .exam-report-student-table,
+  .exam-report-student-table * {
+    visibility: visible;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .exam-report-student-table {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .exam-report-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .exam-report-table th,
+  .exam-report-table td {
+    border: 1px solid #000;
+    padding: 6px;
+  }
+
+  .exam-report-result-badge {
+    padding: 2px 6px;
+    font-weight: bold;
+  }
+}
+/* Show only when printing */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .print-only h1.exam-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .print-only p {
+    margin: 2px 0;
+    font-size: 14px;
+  }
+}
+
+.pagination {
+  margin-top: 1rem;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Export Button Styles */
+.export-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  margin-left: auto;
+}
+
+.export-button:hover {
+  background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.export-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.export-button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.export-button:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}
+
+.export-icon {
+  transition: transform 0.3s ease;
+}
+
+.export-button:hover .export-icon {
+  transform: translateY(-3px);
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
+}
+
+/* For dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  .export-button {
+    background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+    color: #f8f9fa;
+  }
+  
+  .export-button:hover {
+    background: linear-gradient(135deg, #1a2a3a 0%, #3a919f 100%);
+  }
+}
