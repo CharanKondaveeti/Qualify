@@ -1,0 +1,538 @@
+/* ===============================================================
+   QUALIFY / Exam Calendar — compact classic redesign
+   Replace: src/features/admin/styles/calendar.css
+   CSS-only update. CalendarPage.jsx does not need to change.
+   All calendar styles are scoped to avoid affecting other pages.
+   =============================================================== */
+
+.calendar-tab {
+  --cal-ink: #12294b;
+  --cal-text: #334766;
+  --cal-muted: #8795ac;
+  --cal-blue: #4266f5;
+  --cal-blue-dark: #3156dc;
+  --cal-blue-wash: #eff3ff;
+  --cal-border: #e5ebf5;
+  --cal-surface: #f8faff;
+
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 20px 22px 22px;
+  color: var(--cal-ink);
+  background: #fff;
+  border: 1px solid #e8edf6;
+  border-radius: 18px;
+  box-shadow: 0 12px 38px rgba(19, 43, 85, 0.045);
+}
+
+.calendar-tab *,
+.calendar-tab *::before,
+.calendar-tab *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Header ---------- */
+.calendar-tab .calendar-header {
+  margin: 0 0 18px;
+  padding: 0 0 17px;
+  border-bottom: 1px solid #eef1f7;
+}
+
+.calendar-tab .header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.calendar-tab .header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.calendar-tab .header-icon {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  padding: 9px;
+  color: var(--cal-blue);
+  background: var(--cal-blue-wash);
+  border: 1px solid #e3eaff;
+  border-radius: 11px;
+}
+
+.calendar-tab .header-title h2 {
+  margin: 0;
+  color: var(--cal-ink);
+  font-size: clamp(19px, 1.55vw, 23px);
+  font-weight: 730;
+  letter-spacing: -0.7px;
+  line-height: 1.25;
+}
+
+/* ---------- Month controls ---------- */
+.calendar-tab .month-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.calendar-tab .current-month {
+  flex: 0 0 auto;
+  min-width: 164px;
+  margin: 0;
+  padding: 0 9px;
+  color: #1d3152;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.25px;
+  white-space: nowrap;
+}
+
+.calendar-tab .nav-btn {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  color: #587096;
+  background: #fff;
+  border: 1px solid var(--cal-border);
+  border-radius: 10px;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background .16s ease, color .16s ease, border-color .16s ease;
+}
+
+.calendar-tab .nav-btn svg { width: 17px; height: 17px; }
+
+.calendar-tab .nav-btn:hover {
+  background: var(--cal-blue-wash);
+  border-color: #cfdafe;
+  color: var(--cal-blue);
+}
+
+.calendar-tab .today-btn {
+  flex: 0 0 auto;
+  min-width: 74px;
+  height: 35px;
+  margin-left: 6px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(110deg, #4d5ff5, #327bf4);
+  box-shadow: 0 3px 10px rgba(58, 99, 231, .17);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: box-shadow .16s ease, filter .16s ease;
+}
+
+.calendar-tab .today-btn:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 5px 14px rgba(58, 99, 231, .2);
+}
+
+.calendar-tab .nav-btn:focus-visible,
+.calendar-tab .today-btn:focus-visible,
+.calendar-tab .close-popup:focus-visible {
+  outline: 3px solid #92a9ff;
+  outline-offset: 3px;
+}
+
+/* ---------- Compact month grid ---------- */
+.calendar-tab .calendar-grid-container {
+  width: 100%;
+  min-width: 0;
+}
+
+.calendar-tab .day-names,
+.calendar-tab .calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  column-gap: 7px;
+}
+
+.calendar-tab .day-names { margin: 0 0 7px; }
+
+.calendar-tab .day-name {
+  padding: 4px 5px 10px;
+  color: #8491a6;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.05px;
+}
+
+.calendar-tab .calendar-grid {
+  /* Original CSS used aspect-ratio:1. That caused the huge squares.
+     This deliberately keeps six weeks compact on desktop screens. */
+  grid-auto-rows: clamp(72px, calc((100dvh - 395px) / 6), 88px);
+  row-gap: 7px;
+}
+
+.calendar-tab .calendar-day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  aspect-ratio: auto;
+  overflow: hidden;
+  padding: 10px 10px 9px;
+  background: #fff;
+  border: 1px solid #e9edf5;
+  border-radius: 10px;
+  color: var(--cal-ink);
+  box-shadow: none;
+  cursor: default;
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.calendar-tab .calendar-day:not(.other-month):hover {
+  border-color: #cfd8ef;
+  background: #fbfcff;
+  box-shadow: 0 3px 9px rgba(38, 65, 120, .045);
+  transform: none;
+}
+
+.calendar-tab .calendar-day.other-month {
+  background: #fbfcfe;
+  border-color: #f0f2f7;
+  opacity: 1;
+}
+
+.calendar-tab .calendar-day.other-month .day-number { color: #bdc6d4; }
+
+.calendar-tab .calendar-day.has-exam {
+  background: #f7f9ff;
+  border-color: #dfe7ff;
+  cursor: pointer;
+}
+
+.calendar-tab .calendar-day.has-exam:hover {
+  background: #eff4ff;
+  border-color: #aec3ff;
+  box-shadow: 0 3px 12px rgba(54, 96, 226, .085);
+}
+
+.calendar-tab .calendar-day.today {
+  background: #eef3ff;
+  border-color: #8da6ff;
+  box-shadow: inset 0 0 0 1px rgba(70, 103, 246, .14);
+}
+
+.calendar-tab .calendar-day.today.has-exam { background: #edf2ff; }
+
+.calendar-tab .day-number {
+  display: grid;
+  place-items: center;
+  align-self: flex-end;
+  flex: 0 0 auto;
+  min-width: 24px;
+  height: 24px;
+  margin: -1px -1px 0 0;
+  padding: 0 5px;
+  color: #2a3d59;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 8px;
+}
+
+.calendar-tab .calendar-day.today .day-number {
+  color: white;
+  background: var(--cal-blue);
+  box-shadow: 0 3px 9px rgba(65, 99, 241, .18);
+}
+
+/* Exam indicator is a short pill; it cannot stretch the row height. */
+.calendar-tab .exam-marker {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  min-width: 0;
+  min-height: 23px;
+  max-height: 23px;
+  padding: 3px 7px;
+  overflow: hidden;
+  background: #e8eeff;
+  border-radius: 6px;
+}
+
+.calendar-tab .exam-dot {
+  width: 6px;
+  height: 6px;
+  margin: 0;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--cal-blue);
+}
+
+.calendar-tab .calendar-day .exam-title,
+.calendar-tab .calendar-day .exam-count {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: #3759b7;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* ---------- Existing exam-details popup: restyle only ---------- */
+.calendar-tab .exam-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(12, 28, 56, .44);
+  backdrop-filter: blur(3px);
+  animation: calendar-fade-in .18s ease-out;
+}
+
+.calendar-tab .exam-popup,
+.calendar-tab .exam-popup.compact {
+  position: relative;
+  width: min(100%, 460px);
+  max-width: 460px;
+  max-height: min(560px, 85dvh);
+  padding: 23px;
+  background: #fff;
+  border: 1px solid #e5ebf7;
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(13, 31, 68, .22);
+  overflow: hidden;
+  animation: calendar-slide-up .18s ease-out;
+}
+
+.calendar-tab .close-popup {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e9edf5;
+  border-radius: 9px;
+  background: #f7f9fd;
+  color: #5c6e87;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .16s ease, background .16s ease;
+}
+
+.calendar-tab .close-popup:hover {
+  background: #eaf0ff;
+  color: var(--cal-blue);
+  transform: none;
+}
+
+.calendar-tab .popup-date {
+  margin: 0 32px 17px 0;
+  padding: 0 0 14px;
+  border-bottom: 1px solid #edf0f6;
+  color: var(--cal-ink);
+  text-align: left;
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: -.4px;
+}
+
+.calendar-tab .compact-exam-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: min(385px, 62dvh);
+  overflow-y: auto;
+  padding-right: 3px;
+}
+
+.calendar-tab .compact-exam-card {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 12px;
+  background: #f8faff;
+  border: 1px solid #e9edf8;
+  border-radius: 10px;
+  transition: border-color .16s ease, background .16s ease;
+}
+
+.calendar-tab .compact-exam-card:hover {
+  background: #f1f5ff;
+  border-color: #dce5ff;
+}
+
+.calendar-tab .compact-exam-card .exam-time {
+  flex: 0 0 65px;
+  min-width: 0;
+  color: #4468e9;
+  font-size: 11px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar-tab .compact-exam-card .exam-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+
+.calendar-tab .compact-exam-card .exam-title {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--cal-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.calendar-tab .compact-exam-card .exam-course {
+  color: var(--cal-muted);
+  font-size: 11px;
+}
+
+.calendar-tab .compact-exam-card .exam-status {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 5px 8px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.calendar-tab .exam-status.status-active { background: #e8efff; color: #3d62de; }
+.calendar-tab .exam-status.status-upcoming { background: #fff4d9; color: #966312; }
+.calendar-tab .exam-status.status-completed { background: #ddf8ed; color: #087a55; }
+
+@keyframes calendar-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes calendar-slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Existing loading/error views sit outside .calendar-tab. */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 24px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 12px;
+  border: 3px solid #e5eaff;
+  border-top-color: #4266f5;
+  border-radius: 50%;
+  animation: calendar-spin .7s linear infinite;
+}
+
+@keyframes calendar-spin { to { transform: rotate(360deg); } }
+.error-container { color: #be3245; }
+.retry-btn {
+  margin-top: 14px;
+  padding: 9px 20px;
+  color: #fff;
+  background: #4266f5;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+}
+.retry-btn:hover { background: #3156dc; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .calendar-tab { padding: 18px; }
+  .calendar-tab .calendar-day { padding: 8px; }
+  .calendar-tab .day-names,
+  .calendar-tab .calendar-grid { column-gap: 5px; }
+  .calendar-tab .calendar-grid { row-gap: 5px; }
+}
+
+@media (max-width: 760px) {
+  .calendar-tab { padding: 16px 12px; border-radius: 14px; }
+  .calendar-tab .calendar-header { margin-bottom: 13px; padding-bottom: 13px; }
+  .calendar-tab .header-content { align-items: flex-start; gap: 12px; }
+  .calendar-tab .header-icon { width: 33px; height: 33px; padding: 7px; }
+  .calendar-tab .header-title h2 { font-size: 18px; }
+  .calendar-tab .month-navigation { justify-content: space-between; width: 100%; gap: 5px; }
+  .calendar-tab .current-month { min-width: 0; font-size: 14px; padding: 0 3px; }
+  .calendar-tab .nav-btn { width: 32px; height: 32px; }
+  .calendar-tab .today-btn { height: 32px; min-width: 61px; padding: 0 10px; margin-left: 1px; }
+  .calendar-tab .day-name { font-size: 9px; letter-spacing: .4px; padding: 5px 2px 8px; }
+  .calendar-tab .calendar-grid { grid-auto-rows: 69px; }
+  .calendar-tab .calendar-day { padding: 6px 5px; border-radius: 8px; }
+  .calendar-tab .day-number { font-size: 11px; min-width: 21px; height: 21px; }
+  .calendar-tab .exam-marker { padding: 2px 4px; gap: 4px; }
+  .calendar-tab .exam-dot { width: 5px; height: 5px; flex-basis: 5px; }
+  .calendar-tab .calendar-day .exam-title,
+  .calendar-tab .calendar-day .exam-count { font-size: 9px; }
+}
+
+@media (max-width: 560px) {
+  .calendar-tab .exam-marker { justify-content: center; }
+  .calendar-tab .exam-dot { display: none; }
+  .calendar-tab .calendar-day .exam-title { display: none; }
+  .calendar-tab .calendar-day .exam-count { font-size: 9px; text-align: center; }
+  .calendar-tab .calendar-day.has-exam:has(.exam-title) .exam-marker::after {
+    content: 'Exam';
+    font-size: 9px;
+    color: #3759b7;
+    font-weight: 700;
+  }
+  .calendar-tab .exam-popup.compact { padding: 18px 13px; }
+  .calendar-tab .compact-exam-card { flex-wrap: wrap; gap: 7px; }
+  .calendar-tab .compact-exam-card .exam-time { flex-basis: 62px; }
+  .calendar-tab .compact-exam-card .exam-status { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-tab *,
+  .calendar-tab *::before,
+  .calendar-tab *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

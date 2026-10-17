@@ -1,0 +1,94 @@
+/* Pre-exam instructions: calm, institutional design. Scoped so submitted
+   and in-progress examination pages retain their own styles. */
+.qualify-start-page {
+  --start-ink: #152642;
+  --start-muted: #62718b;
+  --start-blue: #2459e8;
+  --start-line: #dce4f1;
+  color: var(--start-ink);
+  background: #f3f6fb;
+  min-height: 100vh;
+  padding: 24px clamp(14px, 4vw, 44px) 18px;
+  font: 400 15px/1.5 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.qualify-start-page *, .qualify-start-page *::before, .qualify-start-page *::after { box-sizing: border-box; }
+.qualify-start-shell { width: min(1130px, 100%); margin: 0 auto; }
+.qualify-start-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.qualify-start-brand { display: flex; align-items: center; gap: 10px; color: #142747; font-size: 19px; font-weight: 800; line-height: 1.15; letter-spacing: .015em; }
+.qualify-start-brand-icon { display:grid; place-items:center; width: 37px; height: 37px; border: 1px solid #cbd9f6; background: #e9f0ff; color: var(--start-blue); border-radius: 9px; font-size: 19px; }
+.qualify-start-brand small { display:block; margin-top:3px; color:var(--start-muted); font-size:11px; letter-spacing:0; font-weight:500; }
+.qualify-start-secure { display:flex; gap:7px; align-items:center; color:var(--start-muted); font-size:12px; font-weight:600; }
+.qualify-start-secure svg { color:#2866d6; }
+.qualify-start-card { border: 1px solid var(--start-line); border-radius: 12px; background: #fff; box-shadow: 0 3px 16px rgba(22,42,76,.035); overflow:hidden; }
+.qualify-start-titlebar { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; padding: 25px 30px 21px; }
+.qualify-start-institution { margin-bottom: 13px; }
+.qualify-start-institution .qualify-institution-brand { justify-content: flex-start; }
+.qualify-start-institution .qualify-institution-mark { width:35px; height:35px; flex-basis:35px; }
+.qualify-start-institution .qualify-institution-copy strong { font-size:14px; }
+.qualify-start-eyebrow { color:#536b98; font-size:11px; font-weight:800; letter-spacing:.1em; margin:0 0 5px; }
+.qualify-start-titlebar h1 { color: #13233f; margin:0; font-weight:750; font-size:clamp(24px,2.9vw,31px); line-height:1.2; letter-spacing:-.025em; }
+.qualify-start-subject { color:var(--start-muted); margin:6px 0 0; font-size:14px; }
+.qualify-start-status { display:flex; gap:8px; align-items:center; flex:0 0 auto; margin-top:5px; border-radius:50px; padding:7px 12px; border:1px solid #e4eaf2; background:#f4f7fa; color:#53647a; font-size:12px; font-weight:700; }
+.qualify-start-dot {width:7px;height:7px;border-radius:50%;background:#8b9bb0;}
+.qualify-start-status--upcoming {background:#fff9eb;border-color:#f7e7ba;color:#8f650f;}
+.qualify-start-status--upcoming .qualify-start-dot {background:#dfa52d;}
+.qualify-start-status--active {background:#effaf4;border-color:#ccebd8;color:#197344;}
+.qualify-start-status--active .qualify-start-dot {background:#24aa61;}
+.qualify-start-stats { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); border-top:1px solid var(--start-line); border-bottom:1px solid var(--start-line); background:#f9fbfe; padding: 18px 30px; gap: 0; }
+.qualify-start-stat { display:flex; align-items:center; gap:12px; min-width:0; padding:0 20px; border-right:1px solid var(--start-line); }
+.qualify-start-stat:first-child{padding-left:0;}
+.qualify-start-stat:last-child{border-right:0;padding-right:0;}
+.qualify-start-stat svg{flex:0 0 33px; width:33px;height:33px;padding:8px;border:1px solid #dce6f7;border-radius:8px;background:#eef3fc;color:#275be3;}
+.qualify-start-stat div{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.qualify-start-stat span{font-size:12px;color:var(--start-muted);}
+.qualify-start-stat strong{font-size:13px;font-weight:700;color:#182c4d;overflow-wrap:anywhere;}
+.qualify-start-main { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr); min-height:330px; }
+.qualify-start-instructions { padding:26px 30px; border-right:1px solid var(--start-line); }
+.qualify-start-section-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;}
+.qualify-start-section-heading > svg{width:20px;height:20px;flex:0 0 auto;margin-top:4px;color:var(--start-blue);}
+.qualify-start-section-heading h2,.qualify-start-action-panel h2{margin:0;color:var(--start-ink);font-size:17px;font-weight:750;line-height:1.35;}
+.qualify-start-section-heading p{font-size:13px;color:var(--start-muted);margin:3px 0 0;}
+.qualify-start-rules{list-style:none;counter-reset:rule;padding:0;margin:0;}
+.qualify-start-rules li{display:flex;gap:12px;align-items:flex-start;counter-increment:rule;color:#34455f;font-size:14px;line-height:1.6;padding:9px 0;}
+.qualify-start-rules li::before{content:counter(rule);display:grid;place-items:center;width:23px;height:23px;flex:0 0 23px;border-radius:6px;background:#edf2fb;color:#2958c8;font-weight:750;font-size:12px;}
+.qualify-start-note{display:flex;gap:8px;align-items:center;margin-top:15px;border-radius:7px;background:#f1f6ff;color:#385c9c;padding:10px 12px;font-size:12px;}
+.qualify-start-note svg{flex:0 0 auto;}
+.qualify-start-action-panel{padding:26px 27px 20px;background:#fff;}
+.qualify-start-action-panel h2{margin:0 0 17px;}
+.qualify-start-readiness{display:flex;flex-direction:column;gap:5px;padding:18px 15px;margin-bottom:17px;border:1px solid #d9e4f9;border-radius:9px;background:#f3f7ff;}
+.qualify-start-readiness-label{font-size:12px;font-weight:650;color:#526d9e;}
+.qualify-start-countdown{font-size:32px;font-weight:800;line-height:1.25;letter-spacing:.015em;font-variant-numeric:tabular-nums;color:#1644bc;}
+.qualify-start-readiness-desc{font-size:12px;color:var(--start-muted);}
+.qualify-start-readiness--active{background:#f2fbf5;border-color:#d1edda;}
+.qualify-start-readiness--active > svg{color:#218d4b;font-size:22px;}
+.qualify-start-readiness--active strong{font-size:16px;color:#1d7445;}
+.qualify-start-readiness--active span{font-size:12px;color:#526c59;}
+.qualify-start-readiness--closed{background:#fff8f2;border-color:#f1dccd;}
+.qualify-start-readiness--closed strong{font-size:15px;color:#92551b;}
+.qualify-start-readiness--closed > svg{color:#bc7730;font-size:21px;}
+.qualify-start-readiness--closed span{font-size:12px;color:#765e49;}
+.qualify-start-consent{display:flex;gap:11px;align-items:flex-start;margin:0 0 15px;cursor:pointer;color:#334663;font-size:13px;line-height:1.55;}
+.qualify-start-consent input{flex:0 0 auto;width:17px;height:17px;margin:2px 0 0;accent-color:var(--start-blue);cursor:pointer;}
+.qualify-start-button{width:100%;min-height:45px;padding:11px 16px;border:1px solid #1747c9;border-radius:7px;background:#2459e8;color:#fff;font:inherit;font-weight:700;cursor:pointer;}
+.qualify-start-button:hover:not(:disabled){background:#1747c9;}
+.qualify-start-button:focus-visible{outline:3px solid #b9cbff;outline-offset:2px;}
+.qualify-start-button:disabled{background:#e8edf7;border-color:#dce3ee;color:#7d8ba6;cursor:not-allowed;}
+.qualify-start-muted-action{border:1px solid var(--start-line);border-radius:7px;background:#f8fafc;padding:11px 12px;color:#65748b;font-size:12px;text-align:center;}
+.qualify-start-help{display:flex;align-items:center;justify-content:center;gap:7px;margin:17px 0 0;color:#8390a4;font-size:12px;}
+.qualify-start-error{font-size:12px;color:#ab2d29;margin:10px 0 0;}
+.qualify-start-footer{text-align:center;font-size:11px;color:#8491a5;margin-top:16px;}
+@media (max-width: 760px){
+  .qualify-start-page{padding:16px 12px;}
+  .qualify-start-titlebar{padding:21px 20px;}
+  .qualify-start-stats{padding:15px 20px;grid-template-columns:1fr;gap:13px;}
+  .qualify-start-stat,.qualify-start-stat:first-child,.qualify-start-stat:last-child{padding:0;border-right:none;}
+  .qualify-start-main{grid-template-columns:1fr;}
+  .qualify-start-instructions{padding:23px 20px;border-right:none;border-bottom:1px solid var(--start-line);}
+  .qualify-start-action-panel{padding:23px 20px;}
+}
+@media (max-width:440px){
+  .qualify-start-secure{font-size:0;gap:0;}
+  .qualify-start-secure svg{font-size:17px;}
+  .qualify-start-titlebar{gap:12px;}
+  .qualify-start-status{font-size:11px;padding:6px 9px;}
+}

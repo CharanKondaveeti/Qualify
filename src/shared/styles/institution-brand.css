@@ -1,0 +1,14 @@
+.qualify-institution-brand { display:flex;align-items:center;gap:12px;min-width:0;max-width:100%; }
+.qualify-institution-mark { display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;overflow:hidden;border:1px solid #dce6f5;border-radius:13px;background:linear-gradient(145deg,#f7faff,#e9f0ff);color:#4864ed; }
+.qualify-institution-mark img { width:100%;height:100%;object-fit:contain;padding:4px; }
+.qualify-institution-mark svg { width:22px;height:22px; }
+.qualify-institution-copy { display:flex;flex-direction:column;min-width:0;gap:2px; }
+.qualify-institution-copy strong { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;line-height:1.25;color:#14294c;font-weight:750; }
+.qualify-institution-copy small { color:#7c8ba4;font-size:11px;line-height:1.2; }
+.admin-dashboard .workspace-heading .qualify-institution-brand { max-width:460px; }
+@media(max-width:640px) {
+  .qualify-institution-mark { flex-basis:37px;width:37px;height:37px;border-radius:10px; }
+  .qualify-institution-brand {gap:8px;}
+  .admin-dashboard .workspace-heading .qualify-institution-copy strong {font-size:12px;}
+  .admin-dashboard .workspace-heading .qualify-institution-copy small {display:none;}
+}

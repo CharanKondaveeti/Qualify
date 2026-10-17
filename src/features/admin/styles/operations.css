@@ -1,0 +1,198 @@
+.qualify-ops{margin-top:26px;padding:24px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 6px 24px #1f2b4410}.qualify-ops h2{font-size:22px;color:#172c49}.qualify-ops h3{margin:22px 0 10px;font-size:17px;color:#283d59}.qualify-ops .muted{color:#64748b;font-size:14px;margin:8px 0 16px}.ops-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px}.ops-cards>div{background:#f3f6fc;border-radius:10px;padding:14px 10px;display:flex;flex-direction:column;gap:5px}.ops-cards strong{font-size:24px;color:#254da6}.ops-cards span{font-size:12px;color:#566276}.ops-actions{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:10px 0}.ops-actions button,.ops-panel button,.result-card button{background:#f0f5ff;color:#244f9a;border:1px solid #c7d7ee;border-radius:7px;padding:9px 12px;cursor:pointer;font-size:13px}.ops-actions button:hover,.ops-panel button:hover{background:#dde9ff}.ops-actions button:disabled{opacity:.5;cursor:wait}.ops-scroll{overflow-x:auto}.ops-scroll table{width:100%;border-collapse:collapse;min-width:500px}.ops-scroll th,.ops-scroll td{padding:10px;border-bottom:1px solid #e3e8f0;text-align:left;vertical-align:top;font-size:13px}.ops-scroll small{display:block;color:#69778a;margin-top:4px}.ops-error{color:#a02222}.ops-info{color:#126b45}.ops-panel{background:#f7faff;padding:18px;border-radius:10px;margin:18px 0}.ops-panel textarea{display:block;width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:12px;margin:12px 0;resize:vertical}.result-card{border-radius:16px;background:#fff;border:1px solid #d6dfef;padding:28px;margin:18px auto;max-width:480px;text-align:center}
+.bank-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.bank-form textarea{grid-column:1/-1}.bank-form input,.bank-form textarea,.bank-form select,.qualify-ops>input{padding:10px;border:1px solid #cbd5e1;border-radius:7px;max-width:100%}.bank-form button{padding:10px;background:#254da6;color:white;border:0;border-radius:8px;cursor:pointer}
+
+/* Fixed-height, searchable activity feed (scrolls vertically instead of growing the page). */
+.ops-activity-scroll{max-height:350px;overflow-y:auto;overflow-x:auto;overscroll-behavior:contain;border:1px solid #e3e8f0;border-radius:9px;}
+.ops-activity-scroll thead th{position:sticky;top:0;z-index:1;background:#f3f6fc;}
+.ops-activity-scroll:focus-visible{outline:2px solid #254da6;outline-offset:2px;}
+.ops-search{min-width:min(100%,310px);max-width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;}
+.ops-count,.ops-helper{color:#64748b;font-size:12px;}
+.ops-activity-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.qualify-ops .ops-danger{color:#a22222;background:#fff5f5;border:1px solid #fecaca;border-radius:8px;padding:9px 12px;cursor:pointer;}
+.qualify-ops .ops-danger:disabled{opacity:.5;cursor:not-allowed;}
+.ops-panel .ops-file-input{display:block;width:100%;padding:10px;margin:10px 0;border:1px dashed #9db2ca;border-radius:8px;background:#fff;}
+.ops-field{display:flex;flex-direction:column;gap:5px;font-size:13px;color:#334155;}
+.ops-field input,.ops-field select{min-width:0;padding:10px;border:1px solid #cbd5e1;border-radius:8px;}
+.ops-bank-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+.ops-import-errors{color:#a02222;font-size:13px;}
+
+/* ===============================================================
+   Exam monitoring — restrained, accessible administrative layout.
+   Scoped to the exam details view; other operations stay unchanged.
+   =============================================================== */
+.qualify-exam-panel .qualify-exam-operations {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.qualify-exam-operations .qualify-exam-section-heading { align-items: center; }
+.qualify-exam-operations .qualify-exam-section-heading h2 { margin: 0; font-size: 20px; font-weight: 700; }
+.qualify-exam-operations .qualify-exam-section-heading .muted { margin: 5px 0 0; line-height: 1.5; }
+.qualify-exam-operations .qualify-exam-section-heading .ops-actions { margin: 0; }
+
+/* Status summaries distinguish total registration from attempt state. */
+.qualify-exam-panel .qualify-exam-operations .ops-monitor-metrics {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+.qualify-exam-panel .qualify-exam-operations .ops-monitor-metrics > .ops-metric {
+  min-width: 0;
+  padding: 15px 16px;
+  border: 1px solid #e3e9f3;
+  border-radius: 9px;
+  background: #f7f9fc;
+  gap: 8px;
+}
+.qualify-exam-operations .ops-monitor-metrics .ops-metric__label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #52637d;
+}
+.qualify-exam-operations .ops-monitor-metrics .ops-metric__value {
+  color: #182e53;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.qualify-exam-panel .qualify-exam-operations .ops-monitor-metrics > .ops-metric--total { border-color: #b9caee; background: #f1f5ff; }
+.qualify-exam-operations .ops-monitor-metrics .ops-metric--total .ops-metric__value { color: #214caa; }
+
+/* Separate filters/tables from the headline and status summary. */
+.qualify-exam-operations .ops-monitor-panel {
+  padding: 18px;
+  border: 1px solid #e2e8f1;
+  border-radius: 11px;
+  background: #fff;
+  min-width: 0;
+}
+.qualify-exam-operations .ops-monitor-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-bottom: 14px;
+}
+.qualify-exam-operations .ops-monitor-panel__head h3 {
+  margin: 0;
+  color: #182c4b;
+  font-size: 16px;
+  font-weight: 700;
+}
+.qualify-exam-operations .ops-monitor-panel__head p {
+  margin: 4px 0 0;
+  color: #687892;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.qualify-exam-operations .ops-monitor-panel__counter,
+.qualify-exam-operations .ops-count {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #526581;
+  font-variant-numeric: tabular-nums;
+}
+.qualify-exam-operations .ops-monitor-panel__counter {
+  padding: 6px 10px;
+  border: 1px solid #e0e7f2;
+  border-radius: 7px;
+  background: #f6f8fc;
+}
+.qualify-exam-operations .ops-monitor-toolbar {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  margin: 0 0 14px;
+}
+.qualify-exam-operations .ops-filter-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #324563;
+  font-size: 13px;
+  font-weight: 600;
+}
+.qualify-exam-operations .ops-filter-label select,
+.qualify-exam-operations .ops-search {
+  height: 40px;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border: 1px solid #cdd8e8;
+  border-radius: 7px;
+  background: #fff;
+  color: #213653;
+  font-size: 13px;
+  box-shadow: none;
+}
+.qualify-exam-operations .ops-filter-label select { min-width: 150px; }
+.qualify-exam-operations .ops-search { flex: 1 1 260px; min-width: 180px; max-width: 390px; }
+.qualify-exam-operations .ops-filter-label select:focus-visible,
+.qualify-exam-operations .ops-search:focus-visible,
+.qualify-exam-operations button:focus-visible {
+  outline: 2px solid #3962bd;
+  outline-offset: 2px;
+}
+.qualify-exam-operations .ops-monitor-panel .ops-scroll {
+  overflow: auto;
+  border: 1px solid #e2e8f1;
+  border-radius: 8px;
+  max-height: 310px;
+}
+.qualify-exam-operations .ops-monitor-panel .ops-scroll table { min-width: 590px; }
+.qualify-exam-operations .ops-monitor-panel .ops-scroll th {
+  background: #f5f7fb;
+  color: #415571;
+  font-size: 12px;
+  font-weight: 650;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e1e7f0;
+  white-space: nowrap;
+}
+.qualify-exam-operations .ops-monitor-panel .ops-scroll td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #edf0f5;
+  color: #263a58;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.qualify-exam-operations .ops-monitor-panel .ops-scroll tbody tr:last-child td { border-bottom: 0; }
+.qualify-exam-operations .ops-monitor-panel .ops-scroll tbody tr:hover { background: #fafbfd; }
+.qualify-exam-operations .ops-monitor-panel .ops-scroll td .ops-actions { margin: 0; gap: 6px; }
+.qualify-exam-operations .ops-monitor-panel .ops-scroll td .ops-actions button { padding: 7px 10px; }
+.qualify-exam-operations .ops-status {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #dae2ed;
+  border-radius: 5px;
+  padding: 4px 9px;
+  background: #f5f7fa;
+  color: #40546f;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+.qualify-exam-operations .ops-status--in-progress { border-color: #c8d7f1; background: #f0f5ff; color: #2453a2; }
+.qualify-exam-operations .ops-status--submitted { border-color: #bfe4d3; background: #eefaf3; color: #176a43; }
+.qualify-exam-operations .ops-status--revoked { border-color: #f0c8c8; background: #fff3f3; color: #a62b35; }
+.qualify-exam-operations .ops-activity-toolbar { justify-content: space-between; }
+.qualify-exam-operations .ops-event-kind { text-transform: capitalize; }
+.qualify-exam-operations .ops-activity-scroll { max-height: 300px; }
+.qualify-exam-operations .ops-activity-panel .ops-helper { margin: 12px 0 0; line-height: 1.55; }
+
+@media (max-width: 1250px) {
+  .qualify-exam-panel .qualify-exam-operations .ops-monitor-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .qualify-exam-panel .qualify-exam-operations { padding: 14px; }
+  .qualify-exam-panel .qualify-exam-operations .ops-monitor-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .qualify-exam-operations .ops-monitor-panel { padding: 12px; }
+  .qualify-exam-operations .ops-monitor-toolbar { align-items: stretch; flex-direction: column; }
+  .qualify-exam-operations .ops-filter-label { width: 100%; }
+  .qualify-exam-operations .ops-filter-label select { flex: 1 1 auto; }
+  .qualify-exam-operations .ops-search { width: 100%; max-width: none; flex: none; min-width: 0; }
+  .qualify-exam-operations .ops-count { align-self: flex-start; }
+}

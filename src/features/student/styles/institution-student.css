@@ -1,0 +1,8 @@
+/* Scoped institution branding in public student pages */
+.qualify-student-institution{display:flex;justify-content:center;padding:0 0 20px;margin:0 0 19px;border-bottom:1px solid #e6ecf5}
+.qualify-student-institution .qualify-institution-brand{justify-content:center}
+.qualify-student-institution .qualify-institution-mark{width:55px;height:55px;flex-basis:55px}
+.qualify-student-institution .qualify-institution-copy strong{font-size:17px;white-space:normal}
+.qualify-registration-institution{display:flex;justify-content:center;text-align:left;margin-bottom:20px}
+.qualify-registration-institution .qualify-institution-copy strong{font-size:16px;white-space:normal}
+.qualify-registration-institution .qualify-institution-mark{width:53px;height:53px;flex-basis:53px}

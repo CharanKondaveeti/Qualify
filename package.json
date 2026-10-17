@@ -5,15 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "electron": "electron .",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "admin-server": "json-server --watch public/data/admin.json --port 5000",
-    "exams": "json-server --watch public/data/exams.json --port 5001",
-    "questions": "json-server --watch public/data/questions.json --port 5002",
-    "studentExamReport": "json-server --watch public/data/studentExamReport.json --port 5004",
-    "examTokens": "json-server --watch public/data/examTokens.json --port 5005"
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -44,13 +39,10 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
-    "electron": "^37.2.3",
-    "electron-builder": "^26.0.12",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "json-server": "^1.0.0-beta.3",
     "vite": "^6.3.1"
   }
 }

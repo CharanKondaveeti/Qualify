@@ -1,0 +1,166 @@
+
+/* Institution and staff management */
+
+.integrated-section {
+  color: #243650;
+}
+
+.integrated-section > h1 {
+  margin: 4px 0 6px;
+  font-size: 1.85rem;
+}
+
+.integrated-muted {
+  margin: 8px 0 16px;
+  color: #64748b;
+  font-size: .9rem;
+}
+
+.integrated-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit, minmax(300px, 1fr)
+  );
+  gap: 18px;
+  margin: 18px 0;
+}
+
+.integrated-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.integrated-form label,
+.integrated-item label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: .84rem;
+  font-weight: 600;
+}
+
+.integrated-form input,
+.integrated-form select,
+.integrated-form textarea,
+.integrated-item input,
+.integrated-item textarea,
+.integrated-section-head input {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  color: #243650;
+  background: #fff;
+  font: inherit;
+}
+
+.integrated-form input:focus,
+.integrated-form select:focus,
+.integrated-section-head input:focus {
+  outline: 2px solid #4a6bff;
+  outline-offset: 1px;
+}
+
+.integrated-primary,
+.integrated-danger {
+  padding: 10px 15px;
+  border-radius: 7px;
+  font-weight: 600;
+}
+
+.integrated-primary {
+  border: 0;
+  color: #fff;
+  background: #4a6bff;
+}
+
+.integrated-danger {
+  border: 1px solid #efbcbc;
+  color: #a22;
+  background: #fff6f6;
+}
+
+.integrated-primary:disabled,
+.integrated-danger:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.integrated-scroll {
+  max-height: 400px;
+  overflow: auto;
+}
+
+.integrated-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #e5eaf1;
+  overflow-wrap: anywhere;
+}
+
+.integrated-item h3 {
+  margin: 4px 0 8px;
+}
+
+.integrated-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 16px;
+}
+
+.integrated-section-head h2 {
+  margin: 0;
+}
+
+.integrated-section-head input {
+  max-width: 270px;
+}
+
+.integrated-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.integrated-section .content-section {
+  min-width: 0;
+  margin-top: 14px;
+}
+
+.integrated-section .exam-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.integrated-section .exam-summary > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  padding: 18px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 5px 15px #0000000b;
+}
+
+.integrated-section .exam-summary strong {
+  color: #4a6bff;
+  font-size: 1.6rem;
+}
+
+.integrated-section .exam-summary span {
+  color: #64748b;
+  font-size: .8rem;
+}
+
+@media (max-width: 800px) {
+  .integrated-grid {
+    grid-template-columns: 1fr;
+  }
+}

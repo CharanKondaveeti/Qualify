@@ -1,0 +1,885 @@
+
+/* ========================================
+   QUALIFY — NAMED QUESTION BANKS
+   ======================================== */
+
+.qb-page,
+.qb-picker {
+  --qb-ink: #142848;
+  --qb-muted: #697b98;
+  --qb-line: #e5ebf5;
+  --qb-blue: #4964f5;
+
+  color: var(--qb-ink);
+  font-family: inherit;
+}
+
+.qb-page *,
+.qb-picker * {
+  box-sizing: border-box;
+}
+
+.qb-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+  padding-bottom: 30px;
+}
+
+/* Header */
+
+.qb-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 148px;
+  padding: 26px 30px;
+  border: 1px solid #e6ebf9;
+  border-radius: 16px;
+  background: linear-gradient(
+    112deg,
+    #fff 50%,
+    #f1f4ff
+  );
+  box-shadow: 0 8px 26px #243c6f0a;
+}
+
+.qb-heading-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    #e8edff,
+    #e2f6f1
+  );
+  color: #4760e9;
+  font-size: 27px;
+}
+
+.qb-hero-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.qb-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  color: #5b6ed8;
+}
+
+.qb-hero h1 {
+  margin: 5px 0;
+  font-size: clamp(24px, 2.5vw, 32px);
+  letter-spacing: -.035em;
+}
+
+.qb-hero p,
+.qb-surface-heading p,
+.qb-bank-detail p {
+  margin: 5px 0;
+  color: var(--qb-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.qb-institution {
+  display: inline-flex;
+  margin-top: 7px;
+  font-size: 11px;
+  font-weight: 650;
+  color: #4860a5;
+}
+
+/* Buttons */
+
+.qb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background .15s,
+    border-color .15s,
+    box-shadow .15s;
+}
+
+.qb-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.qb-btn-primary {
+  color: #fff;
+  background: linear-gradient(
+    110deg,
+    #4666fa,
+    #5b58e5
+  );
+  box-shadow: 0 5px 15px #5164ee2b;
+}
+
+.qb-btn-primary:hover {
+  background: linear-gradient(
+    110deg,
+    #3956ed,
+    #4f45d6
+  );
+}
+
+.qb-btn-muted {
+  color: #3655ab;
+  border-color: #dbe4f7;
+  background: #f1f5ff;
+}
+
+.qb-btn-muted:hover {
+  background: #e6edff;
+}
+
+.qb-btn-danger {
+  color: #b73647;
+  border-color: #f5d1d7;
+  background: #fff5f6;
+}
+
+.qb-btn-danger:hover {
+  background: #ffe9eb;
+}
+
+.qb-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.qb-btn:focus-visible,
+.qb-page button:focus-visible,
+.qb-picker button:focus-visible {
+  outline: 2px solid #435cda;
+  outline-offset: 3px;
+}
+
+/* Main cards */
+
+.qb-surface {
+  min-width: 0;
+  padding: 23px;
+  border: 1px solid var(--qb-line);
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 5px 20px #273d7409;
+}
+
+.qb-surface-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 17px;
+}
+
+.qb-surface h2 {
+  margin: 0;
+  font-size: 19px;
+  letter-spacing: -.02em;
+}
+
+.qb-count {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 3px 8px;
+  border-radius: 30px;
+  background: #edf2ff;
+  color: #4d61df;
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+/* Search */
+
+.qb-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: min(100%, 325px);
+}
+
+.qb-search svg {
+  position: absolute;
+  left: 13px;
+  color: #91a0b9;
+}
+
+.qb-page input:not([type='file']):not([type='checkbox']),
+.qb-page select,
+.qb-picker input:not([type='checkbox']):not([type='radio']) {
+  min-width: 0;
+  width: 100%;
+  padding: 12px 13px;
+  border: 1px solid #d9e2f0;
+  border-radius: 9px;
+  background: #fcfdff;
+  color: #203a63;
+  font: inherit;
+  font-size: 13px;
+}
+
+.qb-search input {
+  padding-left: 40px !important;
+}
+
+.qb-page input:focus,
+.qb-page select:focus {
+  outline: 2px solid #c7d2ff;
+  outline-offset: 1px;
+}
+
+/* Named bank cards */
+
+.qb-bank-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fill, minmax(235px, 1fr));
+  gap: 15px;
+}
+
+.qb-bank-card {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 198px;
+  padding: 20px;
+  border: 1px solid #e4eaf6;
+  border-radius: 13px;
+  background: linear-gradient(
+    165deg,
+    #fff,
+    #fbfcff
+  );
+  box-shadow: 0 4px 12px #273b7208;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform .15s,
+    box-shadow .15s,
+    border-color .15s;
+}
+
+.qb-bank-card:hover {
+  border-color: #b8c8fc;
+  box-shadow: 0 9px 22px #253e7817;
+  transform: translateY(-2px);
+}
+
+.qb-bank-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: #ecf1ff;
+  color: #4d66e8;
+  font-size: 20px;
+}
+
+.qb-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 40px;
+  background: #eff2f9;
+  color: #61738e;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.qb-bank-card .qb-chip {
+  position: absolute;
+  top: 20px;
+  right: 17px;
+}
+
+.qb-chip-shared {
+  background: #e3f7ef;
+  color: #098969;
+}
+
+.qb-bank-card strong {
+  font-size: 15px;
+  font-weight: 750;
+  color: #1b3054;
+  line-height: 1.4;
+}
+
+.qb-bank-card small {
+  color: #7788a1;
+  font-size: 12px;
+}
+
+.qb-open {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #edf1f9;
+  color: #5365c9;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.qb-empty {
+  padding: 35px 20px;
+  text-align: center;
+  color: #7a8aa4;
+  font-size: 13px;
+}
+
+/* Feedback */
+
+.qb-notice {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin: 0;
+  padding: 12px 15px;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.qb-error {
+  color: #a42c43;
+  border: 1px solid #f2d0d4;
+  background: #fff3f4;
+}
+
+.qb-success {
+  color: #087b5d;
+  border: 1px solid #c5ebd9;
+  background: #effbf4;
+}
+
+/* Bank creation and editing */
+
+.qb-bank-form {
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    minmax(0, 1fr)
+  );
+  gap: 15px;
+}
+
+.qb-bank-form label,
+.qb-import-form label,
+.qb-difficulty {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  color: #344c70;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.qb-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+}
+
+.qb-inline-form {
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px solid #e4eaf4;
+  border-radius: 10px;
+  background: #fafbff;
+}
+
+.qb-detail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.qb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  background: transparent;
+  color: #4d60bb;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qb-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qb-detail-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.qb-detail-heading h2 {
+  margin: 5px 0;
+  font-size: 23px;
+}
+
+/* Bank statistics */
+
+.qb-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.qb-metrics > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 135px;
+  gap: 4px;
+  padding: 14px 22px;
+  border-radius: 10px;
+  background: #f2f5fd;
+}
+
+.qb-metrics strong {
+  color: #294b94;
+  font-size: 24px;
+}
+
+.qb-metrics span {
+  font-size: 11px;
+  color: var(--qb-muted);
+}
+
+/* CSV import */
+
+.qb-import-form {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.qb-import-form label:first-child {
+  flex: 1;
+}
+
+.qb-import-form input[type='file'] {
+  max-width: 100%;
+  padding: 9px;
+  border: 1px dashed #c1cde7;
+  border-radius: 9px;
+  background: #fafcff;
+  color: #4a607e;
+  font-size: 12px;
+}
+
+.qb-import-form label:nth-child(2) {
+  min-width: 135px;
+}
+
+.qb-helper {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #72829c;
+}
+
+.qb-helper a,
+.qb-create-link {
+  color: #455cda;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.qb-difficulty {
+  width: 190px;
+  margin-top: 14px;
+}
+
+/* Scrollable question list */
+
+.qb-question-list {
+  max-height: 540px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #e9edf6;
+  border-radius: 11px;
+}
+
+.qb-question {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 16px;
+  border-bottom: 1px solid #ecf0f7;
+}
+
+.qb-question:last-child {
+  border-bottom: 0;
+}
+
+.qb-question-number {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
+  color: #5265d7;
+  background: #ecf0ff;
+  font-weight: 750;
+  font-size: 12px;
+}
+
+.qb-question-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.qb-question-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.qb-question h3 {
+  margin: 2px 0 11px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.qb-marks {
+  white-space: nowrap;
+  padding: 5px 9px;
+  border-radius: 30px;
+  color: #4c5fc9;
+  background: #eef1ff;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+/* Correct answers */
+
+.qb-options {
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    minmax(0, 1fr)
+  );
+  gap: 8px;
+}
+
+.qb-options span {
+  padding: 9px 11px;
+  border: 1px solid #e9edf5;
+  border-radius: 7px;
+  background: #fafbfd;
+  color: #60718a;
+  font-size: 12px;
+}
+
+.qb-options span.qb-correct {
+  border-color: #b4e9d0;
+  background: #e9f9f2;
+  color: #0a8c68;
+}
+
+.qb-question-content > small {
+  display: block;
+  margin-top: 9px;
+  color: #8a99b0;
+  text-transform: capitalize;
+}
+
+.qb-question-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.qb-question-actions button {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  border: 0;
+  border-radius: 8px;
+  color: #5168d5;
+  background: #eef2ff;
+  cursor: pointer;
+}
+
+.qb-question-actions button:last-child {
+  color: #b74854;
+  background: #fff0f2;
+}
+
+.qb-create-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin-left: auto;
+  padding: 10px;
+  font-size: 13px;
+}
+
+/* ========================================
+   CREATE EXAM — BANK PICKER
+   ======================================== */
+
+.qb-picker {
+  width: 100%;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid #e0e8f8;
+  border-radius: 12px;
+  background: linear-gradient(
+    105deg,
+    #f7f9ff,
+    #fff
+  );
+}
+
+.qb-picker-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.qb-picker-heading strong {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.qb-picker-heading small {
+  display: block;
+  margin-top: 6px;
+  color: #71809a;
+  font-size: 12px;
+}
+
+.qb-picker-content {
+  padding-top: 15px;
+}
+
+/* Single / Multiple selection */
+
+.qb-mode-switch {
+  display: inline-flex;
+  gap: 3px;
+  margin-bottom: 13px;
+  padding: 4px;
+  border: 1px solid #e0e6f5;
+  border-radius: 10px;
+  background: #eff2fa;
+}
+
+.qb-mode-switch button {
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #667895;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.qb-mode-switch button.is-active {
+  color: #3551be;
+  background: #fff;
+  box-shadow: 0 2px 8px #223a7215;
+}
+
+.qb-picker-list {
+  display: grid;
+  gap: 7px;
+  max-height: 290px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.qb-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px;
+  border: 1px solid #e3e9f5;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.qb-picker-row.is-selected {
+  border-color: #aebdf9;
+  background: #f2f5ff;
+}
+
+.qb-picker-row input {
+  flex: none;
+  accent-color: #5165ed;
+}
+
+.qb-picker-row .qb-bank-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+}
+
+.qb-picker-title {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qb-picker-title strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qb-picker-title small {
+  overflow: hidden;
+  font-size: 11px;
+  color: #7b8aa1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qb-picker-visibility {
+  color: #74839a;
+  font-size: 10px;
+}
+
+.qb-picker-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.qb-picker-footer > span {
+  color: #697a92;
+  font-size: 12px;
+}
+
+/* Existing Add/Edit Question dialogs */
+
+.qb-page .modal-overlay,
+.qb-page .editor-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(16, 30, 57, .62);
+}
+
+.qb-page .modal-content {
+  width: min(100%, 560px);
+  max-height: calc(100dvh - 36px);
+  overflow-y: auto;
+  border: 1px solid #dee5f5;
+  border-radius: 16px;
+  box-shadow: 0 24px 70px #0d183850;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+  .qb-hero {
+    flex-wrap: wrap;
+    padding: 18px;
+  }
+
+  .qb-hero .qb-btn {
+    margin-left: 0;
+  }
+
+  .qb-surface {
+    padding: 16px;
+  }
+
+  .qb-bank-form {
+    grid-template-columns: 1fr;
+  }
+
+  .qb-options {
+    grid-template-columns: 1fr;
+  }
+
+  .qb-detail-top {
+    flex-wrap: wrap;
+  }
+
+  .qb-question {
+    gap: 9px;
+  }
+
+  .qb-import-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .qb-import-form label:nth-child(2),
+  .qb-difficulty {
+    width: 100%;
+  }
+
+  .qb-picker-footer {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qb-bank-card {
+    transition: none;
+  }
+}

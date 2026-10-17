@@ -1,0 +1,35 @@
+body { font-family: 'Segoe UI', Arial, sans-serif; color: #24334b; background: #f5f7fc; }
+button, input, select { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .6; }
+:focus-visible { outline: 3px solid #4a6bff; outline-offset: 3px; }
+.eyebrow { display: block; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #477a84; margin: 22px 0 12px; }
+.loginpage-container { background: radial-gradient(ellipse at 12% 10%, #e0f6f1, transparent 45%), radial-gradient(ellipse at 90% 90%, #dce4ff, transparent 55%), #f5f7fc; }
+.loginpage-title { color: #20334d; font-size: clamp(1.8rem, 3vw, 2.8rem); letter-spacing: -1.2px; }
+.loginpage-card { max-width: 410px; padding: 30px; text-align: left; border: 1px solid #e0e7ee; border-top: 3px solid #00a580; box-shadow: 0 12px 40px #24334b08; }
+.loginpage-student-card { border-top-color: #4a6bff; }
+.loginpage-card h2 { font-size: 23px; }
+.loginpage-card p { min-height: 64px; margin-bottom: 20px; color: #637086; }
+.portal-card-number { color: #738095; font-size: 10px; font-weight: 700; letter-spacing: 1.6px; margin-bottom: 26px; }
+.loginpage-button { max-width: none; text-align: center; padding: 14px 18px; letter-spacing: 0; }
+.demo-link { display: block; margin-top: 18px; font-size: 13px; text-align: center; color: #3655b8; }
+.portal-input { width: 100%; padding: 12px; border: 1px solid #ccd6e4; border-radius: 8px; margin-bottom: 12px; }
+.loginpage-footer { font-size: 14px; }.loginpage-footer small { display: block; margin-top: 10px; font-size: 11px; letter-spacing: 1px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.admin-dashboard { font-family: 'Segoe UI', Arial, sans-serif; }
+.sidebar { width: 230px; background: #182c45;}
+.sidebar .logo { background: linear-gradient(90deg,#79b1ff,#55e3c4); background-clip: text; text-decoration: none; font-size: 23px; letter-spacing: 1px; }
+.sidebar-caption { color: #7b91ad; padding: 25px 22px 0; font-size: 10px; letter-spacing: 1.8px; }
+.nav-menu { padding: 15px 12px; }.nav-item { border-radius: 8px; margin-bottom: 6px; }.nav-item.active { border-left-color: #64dfc0; background: #29425e; }
+.main-content { margin-left: 230px; }.top-nav { left: 230px; height: 74px; box-shadow: none; border-bottom: 1px solid #e2e8f0; }.content-wrapper { margin-top: 74px; height: calc(100vh - 74px); padding: 32px; }
+.sidebar-collapsed .main-content { margin-left: 70px; }.sidebar-collapsed .top-nav { left: 70px; }
+.workspace-label { color: #748096; font-size: 13px; }.avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #e9efff; color: #3457c5; }
+.logout-btn { background: #29425e; box-shadow: none; }.logout-btn:hover { background: #36536f; box-shadow: none; }
+.demo-banner { background: #edf8f5; color: #27725f; border: 1px solid #d0e8df; border-radius: 9px; padding: 13px 18px; margin-bottom: 26px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 12px; }.demo-banner a { color: #2564a0; }
+.portal-message { max-width: 680px; margin: 12vh auto; padding: 40px; border-radius: 16px; background: white; line-height: 1.8; }.portal-message p { margin: 15px 0; }
+.portal-settings { max-width: 900px; }.portal-settings h1 { font-size: 30px; margin-bottom: 12px; }.settings-card { background: white; padding: 26px; border: 1px solid #e0e7ef; border-radius: 12px; margin: 22px 0; }.settings-card h2 { font-size: 18px; }.settings-card p { color: #64748b; margin: 12px 0 20px; line-height: 1.7; }
+.exam-summary { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 26px; }.exam-summary div { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; }.exam-summary strong { display: block; font-size: 30px; margin-bottom: 8px; }.exam-summary span { font-size: 12px; color: #758197; }
+.exam-row { cursor: pointer; }.save-status { text-align: center; padding: 10px; font-size: 12px; color: #437c6d; }.option-item { width: 100%; text-align: left; font: inherit; background: white; }.exam-lifecycle { display: flex; gap: 12px; align-items: center; margin: 20px 0; flex-wrap: wrap; }
+@media(max-width: 800px) { .sidebar { width: 70px; }.sidebar .logo,.sidebar .nav-text,.sidebar-footer span,.sidebar .toggle-btn { display: none; }.sidebar-header { min-height: 40px; }.sidebar-header:after { content:'Q'; font-weight: 800; color: #64dfc0; font-size: 26px; }.main-content,.sidebar-collapsed .main-content { margin-left: 70px; }.top-nav,.sidebar-collapsed .top-nav { left: 70px; flex-direction: row; }.workspace-label { display: none; }.content-wrapper { padding: 16px; }.exam-summary { grid-template-columns: repeat(2,1fr); }.nav-item { padding: 14px 8px; }.sidebar-footer { padding: 12px; }.logout-btn { padding: 12px; }.exams-header,.exams-controls { flex-wrap: wrap; gap: 16px; }.exams-table-container { overflow-x: auto; }.exams-table { min-width: 620px; }.loginpage-container { padding: 30px 18px; }.exam-content { flex-direction: column; }.question-palette { width: 100%; }.portal-message { margin: 40px 15px; } }
+@media(prefers-reduced-motion: reduce) { *, *:before, *:after { animation: none !important; transition: none !important; } }

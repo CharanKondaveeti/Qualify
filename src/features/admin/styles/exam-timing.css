@@ -1,0 +1,11 @@
+.exam-timing-fields { grid-column:1 / -1; margin:12px 0; padding:18px; border:1px solid #dfe5f0; border-radius:12px; background:#fafbff; min-width:0; }
+.exam-timing-fields legend { padding:0 7px; font-weight:700; color:#253653; }
+.exam-timing-modes { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-bottom:14px; }
+.exam-timing-modes > label { display:flex; align-items:flex-start; gap:10px; padding:12px; border:1px solid #e1e6f0; border-radius:9px; background:white; }
+.exam-timing-modes > label:has(input[type=radio]:checked) { border-color:#4a6bff; background:#f0f3ff; }
+.exam-timing-modes input[type=radio] { width:auto; margin:4px 0 0; accent-color:#4a6bff; }
+.exam-timing-fields small { display:block; margin-top:5px; color:#64748b; font-size:.8rem; line-height:1.5; font-weight:400; }
+.exam-timing-fields .exam-timing-input { display:flex; flex-direction:column; gap:6px; align-items:stretch; font-size:.88rem; font-weight:600; }
+.exam-timing-input input { box-sizing:border-box; width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:7px; font:inherit; background:white; }
+.exam-timing-fields input:focus-visible { outline:2px solid #4a6bff; outline-offset:2px; }
+@media(max-width:650px) { .exam-timing-modes { grid-template-columns:1fr; } }
