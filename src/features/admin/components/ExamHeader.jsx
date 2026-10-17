@@ -1,12 +1,18 @@
 import { FiArrowLeft, FiUser, FiClock, FiAward } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { isDemo } from "../../../lib/supabase";
+import { useAdminWorkspace } from "../context/AdminWorkspaceContext";
 
 // Presentation only. Scheduled time and timing rules are edited in the Edit tab.
 export default function ExamHeader({ exam }) {
   const navigate = useNavigate();
+  const { institutionId } = useAdminWorkspace();
+  const examsPath = isDemo
+    ? "/demo/admin/exams"
+    : `/app/i/${encodeURIComponent(institutionId)}/exams`;
   return (
     <div className="exam-report-header">
-      <button type="button" onClick={() => navigate(-1)} className="exam-report-back-btn">
+      <button type="button" onClick={() => navigate(examsPath, { replace: true })} className="exam-report-back-btn">
         <FiArrowLeft className="exam-report-icon-left" />
         Back to Exams
       </button>

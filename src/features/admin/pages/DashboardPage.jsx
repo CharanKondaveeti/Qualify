@@ -3,11 +3,13 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
   NavLink,
   Outlet,
+  useBlocker,
   useNavigate,
   useLocation,
   useParams,
@@ -31,6 +33,7 @@ import {
   listPlatformInstitutions,
 } from "../../../services/institutionService";
 import InstitutionBrand from "../../../shared/components/InstitutionBrand";
+import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
 import PendingStaffInviteDialog from "../../institutions/components/PendingStaffInviteDialog";
 import {
   AdminWorkspaceContext,
@@ -59,6 +62,55 @@ export default function DashboardPage() {
   const isPlatformArea = location.pathname.startsWith("/platform");
   const cache = useQueryClient();
   const dispatch = useDispatch();
+  const dialog = useAppDialog();
+  const signingOutRef = useRef(false);
+
+  // Browser history Back/Forward is deliberate in a signed-in workspace.
+  // Regular menu links and buttons stay immediate; these are PUSH/REPLACE.
+  const historyBlocker = useBlocker(
+    ({ currentLocation, nextLocation, historyAction }) =>
+      !isDemo &&
+      Boolean(user) &&
+      historyAction === "POP" &&
+      (currentLocation.pathname !== nextLocation.pathname ||
+        currentLocation.search !== nextLocation.search ||
+        currentLocation.hash !== nextLocation.hash),
+  );
+  const historyBlockerRef = useRef(historyBlocker);
+  const dialogRef = useRef(dialog);
+
+  useEffect(() => {
+    historyBlockerRef.current = historyBlocker;
+    dialogRef.current = dialog;
+  }, [historyBlocker, dialog]);
+
+  useEffect(() => {
+    if (historyBlocker.state !== "blocked") return;
+    let disposed = false;
+    dialogRef.current.confirm(
+      "Are you sure you want to leave this page? You will remain signed in unless you sign out.",
+      { title: "Leave this page?", confirmLabel: "Continue" },
+    ).then((approved) => {
+      if (disposed) return;
+      if (approved) historyBlockerRef.current.proceed();
+      else historyBlockerRef.current.reset();
+    });
+    return () => { disposed = true; };
+    // The dialog must open only once per blocked history transition.
+  }, [historyBlocker.state]);
+
+  // Browsers require their own (browser-controlled) warning for reloads,
+  // closing the tab, and going to another origin. Custom text is not supported.
+  useEffect(() => {
+    if (isDemo || !user) return;
+    const warnBeforeUnload = (event) => {
+      if (signingOutRef.current) return;
+      event.preventDefault();
+      event.returnValue = true;
+    };
+    window.addEventListener("beforeunload", warnBeforeUnload);
+    return () => window.removeEventListener("beforeunload", warnBeforeUnload);
+  }, [user]);
 
   const refreshAccess = useCallback(
     async (userId, retainSelection = true) => {
@@ -189,9 +241,16 @@ export default function DashboardPage() {
   );
 
   async function logout() {
-    await supabase.auth.signOut();
-    cache.clear();
-    navigate("/", { replace: true });
+    signingOutRef.current = true;
+    try {
+      const { error: signOutError } = await supabase.auth.signOut();
+      if (signOutError) throw signOutError;
+      cache.clear();
+      navigate("/", { replace: true });
+    } catch (e) {
+      signingOutRef.current = false;
+      setError(e.message || "Could not sign out. Please try again.");
+    }
   }
   if (error)
     return (
@@ -226,6 +285,13 @@ export default function DashboardPage() {
   const base = isDemo
     ? "/demo/admin"
     : `/app/i/${encodeURIComponent(institutionId)}`;
+  const logoDestination = isPlatformArea
+    ? "/platform/institutions"
+    : canUseExams
+      ? `${base}/exams`
+      : isOwner
+        ? "/platform/institutions"
+        : `${base}/settings`;
   const nav = isDemo
     ? [
         [base + "/exams", "Examinations", FiBook],
@@ -265,10 +331,10 @@ export default function DashboardPage() {
           <div className="sidebar-panel">
             <div className="sidebar-header">
               <NavLink
-                to="/"
+                to={logoDestination}
                 className="logo"
-                aria-label="QUALIFY home"
-                title="QUALIFY home"
+                aria-label="QUALIFY Examinations"
+                title="Back to Examinations"
               >
                 <span className="sidebar-logo-wordmark">QUALIFY</span>
                 <span className="sidebar-logo-mark" aria-hidden="true">

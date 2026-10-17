@@ -192,7 +192,8 @@ export default function ExamDetailsPage() {
   const upcoming = exam.exam_status === "upcoming";
 
   function selectTab(id) {
-    navigate(tabPath(id));
+    // Tabs are views of one exam, not separate browser Back destinations.
+    if (id !== activeTab) navigate(tabPath(id), { replace: true });
   }
 
   function onTabKeyDown(event, index) {
