@@ -67,17 +67,16 @@ export default function DashboardPage() {
   const signingOutRef = useRef(false);
   const dialog = useAppDialog();
 
-  // Intercept browser Back/Forward within the signed-in workspace.
-  // Sidebar links and normal workspace navigation remain immediate.
-  const historyBlocker = useBlocker(({ currentLocation, nextLocation, historyAction }) =>
-    !isDemo &&
-    Boolean(user) &&
-    !signingOutRef.current &&
-    historyAction === "POP" &&
-    (currentLocation.pathname !== nextLocation.pathname ||
-      currentLocation.search !== nextLocation.search ||
-      currentLocation.hash !== nextLocation.hash)
-  );
+  // Only confirm when browser Back/Forward leaves the admin workspace.
+  // Moving between exams, question banks, team, settings, etc. is unrestricted.
+  const historyBlocker = useBlocker(({ currentLocation, nextLocation, historyAction }) => {
+    if (isDemo || !user || signingOutRef.current || historyAction !== "POP") return false;
+    const isWorkspacePage = pathname =>
+      pathname.startsWith("/app/i/") || pathname === "/platform" ||
+      pathname.startsWith("/platform/");
+    return isWorkspacePage(currentLocation.pathname) &&
+      !isWorkspacePage(nextLocation.pathname);
+  });
 
   useEffect(() => {
     if (historyBlocker.state !== "blocked") return undefined;
