@@ -89,3 +89,16 @@
 .qa-application-readonly .qa-full{grid-column:1/-1}
 .qa-application-status .qa-button-secondary{margin-top:17px}
 @media(max-width:560px){.qa-application-readonly{grid-template-columns:1fr}}
+
+/* Institution applicant: one read-only status page, correction only on rejection. */
+.qa-application-status .qa-application-meta,.qa-application-meta{font-size:11px;color:#7890aa;margin:5px 0 18px}
+.qa-rejection-feedback{border:1px solid #f0d4d4;border-left:3px solid #be5858;background:#fff8f7;border-radius:8px;padding:15px 17px;margin:15px 0}
+.qa-rejection-feedback strong{font-size:12px;color:#924040}
+.qa-rejection-feedback p{margin:8px 0 0;white-space:pre-wrap;line-height:1.6;font-size:13px;color:#6f4550;overflow-wrap:anywhere}
+.qa-application-primary-link{display:inline-flex;align-items:center;justify-content:center;width:100%;padding:13px 16px;border-radius:7px;background:#285db0;color:#fff!important;font-weight:750;margin-top:12px;text-decoration:none!important}
+.qa-application-cancel{width:100%;border:1px solid #d4dfec;background:#fff;color:#365d89;cursor:pointer;border-radius:7px;padding:11px;font-size:12px;font-weight:700}
+.qa-application-edit{max-width:860px}
+.qa-resubmit .qa-signup-institution{border:0;margin-top:0;padding:0}
+.qa-resubmit .qa-signup-institution>header{display:none}
+.qa-application-history summary{cursor:pointer;font-size:12px;color:#406298;font-weight:750;padding:9px 0}
+.qa-application-history .qa-application-item p{font-size:11px;color:#84616b;line-height:1.45}
