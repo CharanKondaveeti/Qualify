@@ -55,28 +55,40 @@ const showcaseExams = [
 
 const capabilities = [
   {
-    Icon: FiFileText,
-    name: "Create examinations",
-    detail: "Configure questions, marks, timing and access controls.",
+    Icon: FiBookOpen,
+    name: "Examination creation",
+    detail: "Configure papers, timing, marks and question randomization.",
     color: "blue",
   },
   {
     Icon: FiUsers,
-    name: "Manage students",
-    detail: "Review registrations and monitor participation.",
+    name: "Student management",
+    detail: "Manage registrations and monitor ongoing examinations.",
     color: "green",
   },
   {
     Icon: FiBarChart2,
-    name: "Review results",
-    detail: "Evaluate submissions and publish results with control.",
+    name: "Results & reporting",
+    detail: "Review submissions and publish results after completion.",
     color: "purple",
   },
   {
-    Icon: FiSettings,
-    name: "Institution control",
-    detail: "Manage staff permissions, settings and branding.",
+    Icon: FiShield,
+    name: "Role-based security",
+    detail: "Platform, institution and staff permissions remain separated.",
     color: "orange",
+  },
+  {
+    Icon: FiClipboard,
+    name: "Question banks",
+    detail: "Organize reusable questions and import examination questions.",
+    color: "blue",
+  },
+  {
+    Icon: FiCheckCircle,
+    name: "Controlled staff access",
+    detail: "Verify staff email ownership before granting account access.",
+    color: "green",
   },
 ];
 
@@ -242,9 +254,9 @@ export default function LandingPage() {
             aria-label="Main navigation"
             className={`qhome-nav ${menuOpen ? "qhome-nav-open" : ""}`}
           >
-            <Link to="/features" onClick={closeMenu}>
+            <a href="#features" onClick={closeMenu}>
               Features
-            </Link>
+            </a>
             <a href="#how-it-works" onClick={closeMenu}>
               How it works
             </a>
@@ -339,16 +351,16 @@ export default function LandingPage() {
 
         <section
           className="qhome-features"
-          id="how-it-works"
+          id="features"
           aria-labelledby="qhome-features-title"
         >
           <div className="qhome-container qhome-features-grid">
             <div className="qhome-features-intro">
               <span className="qhome-eyebrow">
-                BUILT FOR THE COMPLETE EXAM CYCLE
+                QUALIFY EXAMINATION PLATFORM
               </span>
               <h2 id="qhome-features-title">
-                Everything you need for a focused examination experience.
+                Built for serious institutional examinations.
               </h2>
             </div>
             {capabilities.map(({ Icon, name, detail, color }) => (
@@ -362,6 +374,36 @@ export default function LandingPage() {
                 <p>{detail}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section
+          className="qhome-process"
+          id="how-it-works"
+          aria-labelledby="qhome-process-title"
+        >
+          <div className="qhome-container">
+            <div className="qhome-process-heading">
+              <span className="qhome-eyebrow">HOW IT WORKS</span>
+              <h2 id="qhome-process-title">From preparation to results in one workspace.</h2>
+            </div>
+            <div className="qhome-process-grid">
+              <article className="qhome-process-step">
+                <span className="qhome-process-number">01</span>
+                <h3>Prepare the exam</h3>
+                <p>Create papers from your question bank and set timing and access rules.</p>
+              </article>
+              <article className="qhome-process-step">
+                <span className="qhome-process-number">02</span>
+                <h3>Manage candidates</h3>
+                <p>Register students, send private exam links and monitor participation.</p>
+              </article>
+              <article className="qhome-process-step">
+                <span className="qhome-process-number">03</span>
+                <h3>Review results</h3>
+                <p>Evaluate submitted answers and publish results when the exam is complete.</p>
+              </article>
+            </div>
           </div>
         </section>
 
@@ -407,9 +449,9 @@ export default function LandingPage() {
                     New institutions apply first; existing admins can sign in
                     directly.
                   </p>
-                  <Link to="/features">
+                  <a href="#features">
                     See platform features <FiArrowRight aria-hidden="true" />
-                  </Link>
+                  </a>
                 </div>
               </div>
             </div>
@@ -422,7 +464,7 @@ export default function LandingPage() {
           <span>© {new Date().getFullYear()} QUALIFY</span>
           <span>Examination management for institutions</span>
           <div>
-            <Link to="/features">Features</Link>
+            <a href="#features">Features</a>
             <Link to="/demo">Demo</Link>
             <Link to="/login">Sign in</Link>
           </div>
