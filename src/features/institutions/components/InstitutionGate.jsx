@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import supabase, { isDemo } from '../../../lib/supabase';
 import { getInstitutionAccess } from '../../../services/institutionService';
-import PendingStaffInviteDialog from './PendingStaffInviteDialog';
 
 export default function InstitutionGate({ role = 'any', workspaceOnly = false, children }) {
   const [result, setResult] = useState(null);
@@ -37,5 +36,5 @@ export default function InstitutionGate({ role = 'any', workspaceOnly = false, c
   if (role === 'owner' && !result.access.platform_owner) return <Navigate to="/app" replace />;
   if (role === 'member' && !result.access.platform_owner && !(result.access.institutions || []).some(i =>
     i.member_status === 'active' && i.institution_status === 'active')) return <Navigate to="/institutions/apply" replace />;
-  return <>{location.pathname !== '/invitations' && <PendingStaffInviteDialog />}{children}</>;
+  return <>{children}</>;
 }
