@@ -53,9 +53,23 @@ export async function signupAdmin(email, password, name, institutionApplication 
   });
 
   if (error) throw new Error("Signup failed: " + error.message);
+  if (!data?.user) {
+    throw new Error("The signup request did not create an account. Please try again.");
+  }
+
+  // Supabase deliberately returns an obfuscated user on repeat signup when
+  // email confirmation is enabled. A successful HTTP response alone does NOT
+  // mean a new account was created or a confirmation email was sent.
+  // Keep the copy neutral to avoid confirming whether an email is registered.
+  const existingOrObfuscated =
+    Array.isArray(data.user.identities) && data.user.identities.length === 0;
 
   // No signup action can create a privileged role.
-  return data.user;
+  return {
+    user: existingOrObfuscated ? null : data.user,
+    existingOrObfuscated,
+    needsConfirmation: !existingOrObfuscated && !data.session,
+  };
 }
 
 export async function addQuestionToSupabase(question) {
