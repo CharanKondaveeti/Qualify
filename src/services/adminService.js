@@ -1,6 +1,7 @@
 import supabase, { isDemo } from "../lib/supabase";
 import { getInstitutionAccess, resolveWorkspace } from "./institutionService";
 import { submitPendingInstitution } from "./institutionSignupService";
+import { staffSetupStatus } from "./staffOnboardingService";
 
 export async function getCurrentAdmin(showModal) {
   const {
@@ -24,6 +25,7 @@ export async function loginAdmin(email, password) {
   if (error) throw new Error(error.message);
 
   const user = data.user;
+  if (await staffSetupStatus()) return {user,destination:"/staff/set-password"};
 
   // Create the application captured during signup only after verified sign-in.
   // A duplicate institution code must not prevent normal login.
