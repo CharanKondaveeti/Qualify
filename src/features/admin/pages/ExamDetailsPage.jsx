@@ -105,9 +105,8 @@ export default function ExamDetailsPage() {
     listInstitutionMembers(institutionId)
       .then((members) => {
         if (!cancelled) {
-          setStaff(
-            (members ?? []).filter((member) => member.status === "active"),
-          );
+          // Keep inactive people for historical attribution; restrict transfers separately.
+          setStaff(members ?? []);
         }
       })
       .catch((err) => {
@@ -220,7 +219,7 @@ export default function ExamDetailsPage() {
 
   return (
     <div className="view-exam-details qualify-exam-detail">
-      <ExamHeader exam={exam} />
+      <ExamHeader exam={exam} responsibleStaff={isSuperAdmin ? staff.find(member => member.user_id === exam.created_by) : null} showResponsibleStaff={isSuperAdmin} />
 
       <ExamTimingSummary exam={exam} />
 
@@ -322,7 +321,7 @@ export default function ExamDetailsPage() {
                     <option value="">Choose staff member</option>
 
                     {staff
-                      .filter((member) => member.user_id !== exam.created_by)
+                      .filter((member) => member.status === "active" && member.user_id !== exam.created_by)
                       .map((member) => (
                         <option key={member.user_id} value={member.user_id}>
                           {member.name || member.email} (
