@@ -96,6 +96,29 @@ export default function TeamPage() {
   }, [institutionId, canManage, isSuperAdmin]);
 
   useEffect(() => {
+    if (!modal) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = event => {
+      if (event.key === "Escape" && !busy) setModal(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [modal, busy]);
+
+  useEffect(() => {
+    if (!menuId) return undefined;
+    const closeMenu = event => {
+      if (!event.target.closest(".qt-action-wrap")) setMenuId(null);
+    };
+    document.addEventListener("pointerdown", closeMenu);
+    return () => document.removeEventListener("pointerdown", closeMenu);
+  }, [menuId]);
+
+  useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 30000);
     return () => window.clearInterval(timer);
   }, []);
@@ -119,6 +142,7 @@ export default function TeamPage() {
   }
 
   function openInvite() {
+    setError("");
     setFullName("");
     setEmail("");
     setOtp("");
@@ -144,6 +168,7 @@ export default function TeamPage() {
   }
 
   function openVerify(invite) {
+    setError("");
     setOtp("");
     setModal({ type: "verify", invite });
     setMenuId(null);
@@ -389,6 +414,7 @@ export default function TeamPage() {
             <button className="qt-dialog-close" type="button" disabled={busy} aria-label="Close" onClick={() => setModal(null)}><FiX /></button>
           </div>
 
+          {error && <p className="ops-error qt-dialog-error" role="alert">{error}</p>}
           {modal.type === "invite" && <form onSubmit={submitInvite} className="qt-dialog-form">
             <label>Full name<input required maxLength={120} autoFocus value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Staff member's name" /></label>
             <label>Email address<input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="staff@institution.edu" /></label>
