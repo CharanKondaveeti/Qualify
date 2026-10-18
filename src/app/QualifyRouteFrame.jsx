@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import PageLoader from '../shared/components/PageLoader';
 
@@ -14,11 +14,9 @@ function skipTransition(pathname) {
 export default function QualifyRouteFrame() {
   const { pathname } = useLocation();
   const [visible, setVisible] = useState(() => !skipTransition(window.location.pathname));
-  const lastPath = useRef(pathname);
 
   useEffect(() => {
     // Queries, hash fragments and state changes within a page never trigger it.
-    if (pathname !== lastPath.current) lastPath.current = pathname;
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     if (skipTransition(pathname) || reduceMotion) {
       setVisible(false);
