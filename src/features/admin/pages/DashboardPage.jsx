@@ -9,6 +9,7 @@ import {
 import {
   NavLink,
   Outlet,
+  useBlocker,
   useNavigate,
   useLocation,
   useParams,
@@ -32,6 +33,7 @@ import {
   listPlatformInstitutions,
 } from "../../../services/institutionService";
 import InstitutionBrand from "../../../shared/components/InstitutionBrand";
+import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
 import { publishStagedInstitutionLogo } from "../../../services/institutionSignupService";
 import { staffSetupStatus } from "../../../services/staffOnboardingService";
 import {
@@ -63,6 +65,33 @@ export default function DashboardPage() {
   const cache = useQueryClient();
   const dispatch = useDispatch();
   const signingOutRef = useRef(false);
+  const dialog = useAppDialog();
+
+  // Intercept browser Back/Forward within the signed-in workspace.
+  // Sidebar links and normal workspace navigation remain immediate.
+  const historyBlocker = useBlocker(({ currentLocation, nextLocation, historyAction }) =>
+    !isDemo &&
+    Boolean(user) &&
+    !signingOutRef.current &&
+    historyAction === "POP" &&
+    (currentLocation.pathname !== nextLocation.pathname ||
+      currentLocation.search !== nextLocation.search ||
+      currentLocation.hash !== nextLocation.hash)
+  );
+
+  useEffect(() => {
+    if (historyBlocker.state !== "blocked") return undefined;
+    let cancelled = false;
+    dialog.confirm(
+      "Do you want to leave this page?",
+      { title: "Leave this page?", confirmLabel: "Yes, leave" }
+    ).then(confirmed => {
+      if (cancelled) return;
+      if (confirmed) historyBlocker.proceed();
+      else historyBlocker.reset();
+    });
+    return () => { cancelled = true; };
+  }, [historyBlocker.state]);
 
   const refreshAccess = useCallback(
     async (userId, retainSelection = true) => {
