@@ -842,64 +842,31 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
 
   if (active && !isFullscreen) {
     return (
-      <main
-        role="main"
-        style={{
-          minHeight: "100dvh",
-          display: "grid",
-          placeItems: "center",
-          padding: "24px",
-          background: "#f4f6f9",
-        }}
-      >
+      <main className="fullscreen-warning-screen">
         <section
+          className="fullscreen-warning-card"
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="fullscreen-gate-title"
           aria-describedby="fullscreen-gate-desc"
-          style={{
-            width: "min(100%, 470px)",
-            padding: "32px",
-            borderRadius: "16px",
-            background: "#ffffff",
-            border: "1px solid #dce2ea",
-            boxShadow: "0 18px 50px rgba(15,23,42,.12)",
-            textAlign: "center",
-          }}
         >
-          <div aria-hidden="true" style={{ fontSize: "32px", marginBottom: "8px" }}>⛶</div>
-          <h1 id="fullscreen-gate-title" style={{ margin: "0 0 12px", fontSize: "24px" }}>
-            Exit from fullscreen
-          </h1>
-          <p id="fullscreen-gate-desc" style={{ lineHeight: 1.6, color: "#475569" }}>
-            Return to fullscreen to continue your exam.
+          <div className="fullscreen-warning-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" width="46" height="46" fill="none">
+              <rect x="6" y="7" width="36" height="27" rx="3" stroke="currentColor" strokeWidth="3" />
+              <path d="M17 41h14M24 34v7M19 16l10 10M29 16 19 26" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+          </div>
+          <h1 id="fullscreen-gate-title" className="fullscreen-warning-title">Fullscreen required</h1>
+          <p id="fullscreen-gate-desc" className="fullscreen-warning-message">
+            Your Staff Admin is notified of this event
           </p>
-          <p style={{ fontWeight: 600, color: "#9a3412" }}>
-            Timer is running.
-          </p>
-          {fullscreenError && <p role="alert" style={{ color: "#b91c1c" }}>{fullscreenError}</p>}
-          {error && <p role="alert" style={{ color: "#b91c1c" }}>{error}</p>}
-          <button
-            type="button"
-            onClick={requestExamFullscreen}
-            style={{
-              width: "100%",
-              padding: "13px 18px",
-              border: 0,
-              borderRadius: "9px",
-              background: "#175cd3",
-              color: "white",
-              fontSize: "16px",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Return to fullscreen
+          <p className="fullscreen-warning-timer">Your exam timer is still running.</p>
+          {fullscreenError && <p role="alert" className="fullscreen-warning-error">{fullscreenError}</p>}
+          {error && <p role="alert" className="fullscreen-warning-error">{error}</p>}
+          <button type="button" onClick={requestExamFullscreen} className="fullscreen-warning-button">
+            Enter fullscreen to continue
           </button>
-          <p style={{ marginTop: "16px", fontSize: "13px", color: "#64748b" }}>
-            Fullscreen exit recorded.
-          </p>
-          <p style={{ fontSize: "13px", color: "#64748b" }} role="status">{saveStatus}</p>
+          <p className="fullscreen-warning-status" role="status">{saveStatus}</p>
         </section>
       </main>
     );
