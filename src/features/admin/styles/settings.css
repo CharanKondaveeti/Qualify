@@ -30,7 +30,11 @@
 .qualify-settings-logo-preview{height:65px;width:65px;border-radius:12px;background:#fff;border:1px solid #e4ebf6;display:grid;place-items:center;overflow:hidden}
 .qualify-settings-logo-preview img{max-width:100%;max-height:100%;object-fit:contain;padding:4px}
 .qualify-settings-logo-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
-.qualify-settings-logo-controls input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+/* The file control is visually hidden but stays anchored INSIDE its
+   visible label. Otherwise Chrome can focus-scroll the entire dashboard
+   upward when the picker opens, clipping the fixed-height workspace header. */
+.qualify-settings-logo-controls .qualify-settings-upload{position:relative}
+.qualify-settings-logo-controls input[type=file]{position:absolute;top:50%;left:50%;width:1px;height:1px;margin:0;padding:0;opacity:0;clip-path:inset(50%);overflow:hidden;pointer-events:none}
 .qualify-settings-logo-controls .qualify-settings-upload,.qualify-settings-logo-controls button{padding:9px 12px;border:1px solid #cbd8fc;border-radius:8px;background:#f4f7ff;color:#4264d7;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:750;cursor:pointer}
 .qualify-settings-logo-controls .qualify-settings-upload:focus-within{outline:2px solid #4a6bff}
 .qualify-settings-logo-controls .qualify-settings-remove{border-color:#ffdee0;background:#fff7f7;color:#c4555d}
