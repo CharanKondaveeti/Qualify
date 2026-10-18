@@ -3,7 +3,7 @@ import { useAppDialog } from '../../../shared/components/ConfirmDialogProvider';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createInstitutionAsPlatformOwner, getInstitutionApplicationsForReview,
-  listPlatformInstitutions, reviewInstitutionApplication, setInstitutionStatus } from '../../../services/institutionService';
+  listPlatformInstitutions, setInstitutionStatus } from '../../../services/institutionService';
 import { useAdminWorkspace } from '../context/AdminWorkspaceContext';
 import '../styles/operations.css';
 
@@ -14,7 +14,6 @@ export default function InstitutionsPage() {
   const [institutions,setInstitutions] = useState([]);
   const [applications,setApplications] = useState([]);
   const [form,setForm] = useState({name:'',code:'',superAdminEmail:''});
-  const [notes,setNotes] = useState({});
   const [search,setSearch] = useState('');
   const [busy,setBusy] = useState(false);
   const [error,setError] = useState('');
@@ -35,7 +34,7 @@ export default function InstitutionsPage() {
     <span className="eyebrow">PLATFORM OWNER</span><h1>Institutions</h1>
     <p className="integrated-muted">Approve college registrations and appoint institution Super Admins. This uses the protected QUALIFY platform workspace.</p>
     {error&&<p className="ops-error" role="alert">{error}</p>}{message&&<p className="ops-info" role="status">{message}</p>}
-    <div className="exam-summary">{[['Total institutions',institutions.length],['Active',institutions.filter(i=>i.status==='active').length],['Pending applications',applications.length]].map(([name,value])=><div key={name}><strong>{value}</strong><span>{name}</span></div>)}</div>
+    <div className="exam-summary">{[['Total institutions',institutions.length],['Active',institutions.filter(i=>i.status==='active').length],['Pending applications',applications.filter(a=>a.status==='pending').length]].map(([name,value])=><div key={name}><strong>{value}</strong><span>{name}</span></div>)}</div>
     <div className="integrated-grid">
       <div className="content-section"><h2>Create institution</h2><p className="integrated-muted">The first Super Admin must already have a verified Qualify account.</p>
         <form className="integrated-form" onSubmit={e=>{e.preventDefault();act(()=>createInstitutionAsPlatformOwner(form),'Institution created.');}}>
@@ -45,15 +44,21 @@ export default function InstitutionsPage() {
           <button className="integrated-primary" disabled={busy}>Create institution</button>
         </form>
       </div>
-      <div className="content-section"><h2>Verification requests ({applications.length})</h2>
-        <div className="integrated-scroll">{applications.length===0&&<p className="integrated-muted">No pending applications.</p>}{applications.map(app=><article className="integrated-item" key={app.id}>
-          <h3>{app.institution_name}</h3><p><strong>{app.requested_code}</strong> · {app.applicant_email}</p>
-          {app.website&&<p className="integrated-muted">Website: {app.website}</p>}{app.details&&<p>{app.details}</p>}
-          <p className="integrated-muted">Submitted {new Date(app.created_at).toLocaleString()}</p>
-          <label>Verification notes<textarea maxLength={1500} rows={2} value={notes[app.id]||''} onChange={e=>setNotes({...notes,[app.id]:e.target.value})}/></label>
-          <div className="integrated-actions"><button disabled={busy} className="integrated-primary" onClick={async ()=>{if(await dialog.confirm('Approve this institution and appoint the applicant as its Super Admin?'))act(()=>reviewInstitutionApplication(app.id,true,notes[app.id]||''),'Application approved.');}}>Approve</button>
-          <button disabled={busy} className="integrated-danger" onClick={async ()=>{if(await dialog.confirm('Reject this application?'))act(()=>reviewInstitutionApplication(app.id,false,notes[app.id]||''),'Application rejected.');}}>Reject</button></div>
-        </article>)}</div>
+      <div className="content-section">
+        <h2>Institution applications</h2>
+        <p className="integrated-muted">All submitted details, review decisions, and rejection feedback are managed in one dedicated place.</p>
+        <div className="integrated-actions">
+          <Link className="integrated-primary" to="/platform/applications">
+            Review applications ({applications.filter(a=>a.status==='pending').length} pending) →
+          </Link>
+        </div>
+        {applications.filter(a=>a.status==='pending').slice(0,4).map(app=>
+          <div key={app.id} className="integrated-item">
+            <strong>{app.institution_name}</strong>
+            <p className="integrated-muted">{app.applicant_email}</p>
+            <Link to={`/platform/applications/${app.id}`}>View complete application →</Link>
+          </div>
+        )}
       </div>
     </div>
     <div className="content-section"><div className="integrated-section-head"><h2>Registered institutions</h2><input type="search" aria-label="Search institutions" placeholder="Search by name or code" value={search} onChange={e=>setSearch(e.target.value)}/></div>
