@@ -84,7 +84,7 @@ export default function DashboardPage() {
     let cancelled = false;
     dialog.confirm(
       "Do you want to leave this page?",
-      { title: "Leave this page?", confirmLabel: "Yes, leave" }
+      { title: "Leave this page?", confirmLabel: "Yes", cancelLabel: "No" }
     ).then(confirmed => {
       if (cancelled) return;
       if (confirmed) historyBlocker.proceed();
