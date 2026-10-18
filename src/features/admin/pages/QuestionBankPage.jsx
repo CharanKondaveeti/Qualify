@@ -57,7 +57,7 @@ const blankQuestion = () => ({
 });
 
 export default function QuestionBankPage() {
-  const { institutionId, selectedInstitution, user } = useAdminWorkspace();
+  const { institutionId, user } = useAdminWorkspace();
   const dialog = useAppDialog();
 
   const [banks, setBanks] = useState([]);
@@ -427,7 +427,6 @@ export default function QuestionBankPage() {
         </div>
 
         <div className="qb-hero-copy">
-          <span className="qb-eyebrow">QUALIFY LIBRARY</span>
 
           <h1>Question Bank</h1>
 
@@ -436,9 +435,6 @@ export default function QuestionBankPage() {
             creating exams.
           </p>
 
-          <span className="qb-institution">
-            {selectedInstitution?.name || "Institution workspace"}
-          </span>
         </div>
 
         {!selectedId && !creatingBank && (
