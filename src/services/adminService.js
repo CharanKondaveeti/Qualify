@@ -29,7 +29,7 @@ export async function loginAdmin(email, password) {
   // A duplicate institution code must not prevent normal login.
   // The applicant can resolve any conflict on the applications page.
   try { await submitPendingInstitution(); } catch (err) {
-    console.warn("Institution application needs attention:", err.message);
+    sessionStorage.setItem("qualify-pending-application-error", err.message);
   }
   const access = await getInstitutionAccess();
 
