@@ -11,7 +11,9 @@ export default function AuthCallbackPage(){
     const {data,error:authError}=await supabase.auth.getSession();
     if(authError) throw authError;
     if(!data?.session) { if(current)setTarget('/login'); return; }
-    await submitPendingInstitution();
+    try { await submitPendingInstitution(); } catch (err) {
+      console.warn("Institution application needs attention:", err.message);
+    }
     const access=await getInstitutionAccess();
     if(current)setTarget(resolveWorkspace(access));
   })().catch(e=>current&&setError(e.message));return()=>{current=false};},[]);
