@@ -809,14 +809,13 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
         >
           <div aria-hidden="true" style={{ fontSize: "32px", marginBottom: "8px" }}>⛶</div>
           <h1 id="fullscreen-gate-title" style={{ margin: "0 0 12px", fontSize: "24px" }}>
-            Fullscreen required
+            Exit from fullscreen
           </h1>
           <p id="fullscreen-gate-desc" style={{ lineHeight: 1.6, color: "#475569" }}>
-            You must stay in fullscreen mode while taking this examination.
-            Your questions are hidden until you return to fullscreen.
+            Return to fullscreen to continue your exam.
           </p>
           <p style={{ fontWeight: 600, color: "#9a3412" }}>
-            Your exam timer is still running.
+            Timer is running.
           </p>
           {fullscreenError && <p role="alert" style={{ color: "#b91c1c" }}>{fullscreenError}</p>}
           {error && <p role="alert" style={{ color: "#b91c1c" }}>{error}</p>}
@@ -835,10 +834,10 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
               cursor: "pointer",
             }}
           >
-            Enter fullscreen to continue
+            Return to fullscreen
           </button>
           <p style={{ marginTop: "16px", fontSize: "13px", color: "#64748b" }}>
-            Exiting fullscreen is recorded as exam activity. It does not automatically submit your exam.
+            Fullscreen exit recorded.
           </p>
           <p style={{ fontSize: "13px", color: "#64748b" }} role="status">{saveStatus}</p>
         </section>
