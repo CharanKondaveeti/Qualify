@@ -60,7 +60,7 @@ export function ConfirmDialogProvider({ children }) {
         <form onSubmit={e => { e.preventDefault(); dismiss(dialog.type === 'input' ? dialog.value : true); }}>
           {dialog.type === 'input' && <label className="qualify-dialog-label">{dialog.label || 'Value'}<input ref={inputRef} type={dialog.inputType || 'text'} required={dialog.required !== false} value={dialog.value} placeholder={dialog.placeholder || ''} onChange={e => setDialog(d => ({ ...d, value: e.target.value }))} /></label>}
           <div className="qualify-dialog-actions">
-            {dialog.type !== 'alert' && <button type="button" className="qualify-dialog-neutral" onClick={() => dismiss(null)}>Cancel</button>}
+            {dialog.type !== 'alert' && <button type="button" className="qualify-dialog-neutral" onClick={() => dismiss(null)}>{dialog.cancelLabel || "Cancel"}</button>}
             <button ref={approveRef} className={dialog.danger ? 'qualify-dialog-danger' : 'qualify-dialog-primary'} type="submit">{dialog.confirmLabel || (dialog.type === 'alert' ? 'OK' : dialog.type === 'input' ? 'Continue' : 'Confirm')}</button>
           </div>
         </form>
