@@ -772,7 +772,6 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
       ),
     );
   };
-  const enterFullscreen = requestExamFullscreen;
 
   // ------------------------------------------
   // FULLSCREEN EXAM GATE
@@ -859,7 +858,6 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
           subject: details.course,
         }}
         timeLeft={left}
-        onEnterFullscreen={enterFullscreen}
       />
 
       {error && (
