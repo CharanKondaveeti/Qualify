@@ -56,7 +56,7 @@ export async function getInstitutionApplicationsForReview() {
   const { data, error } = await supabase
     .from("institution_applications")
     .select(
-      "id,applicant_email,institution_name,requested_code,website,details,status,created_at,review_notes",
+      "id,applicant_email,institution_name,requested_code,website,details,profile_details,status,created_at,review_notes",
     )
     .eq("status", "pending")
     .order("created_at", { ascending: true });
