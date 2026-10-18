@@ -12,7 +12,7 @@ export default function AuthCallbackPage(){
     if(authError) throw authError;
     if(!data?.session) { if(current)setTarget('/login'); return; }
     try { await submitPendingInstitution(); } catch (err) {
-      console.warn("Institution application needs attention:", err.message);
+      sessionStorage.setItem("qualify-pending-application-error", err.message);
     }
     const access=await getInstitutionAccess();
     if(current)setTarget(resolveWorkspace(access));
