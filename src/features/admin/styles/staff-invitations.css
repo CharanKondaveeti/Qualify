@@ -74,3 +74,5 @@
 .qt-dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:6px;flex-wrap:wrap}
 @media(max-width:1100px){.qt-directory-toolbar{align-items:stretch}.qt-search{width:100%;max-width:320px}.qt-table-scroll{overflow-x:auto}.qt-table{min-width:730px}}
 @media(max-width:650px){.qt-header{align-items:stretch;flex-direction:column}.qt-header-actions>*{flex:1}.qt-stat{padding:16px 13px}.qt-stat strong{font-size:22px}.qt-directory-toolbar{padding:12px}.qt-tabs{gap:2px}.qualify-team .qt-tab{padding:8px}.qt-search{max-width:none}.qt-dialog-top{padding:19px}.qt-dialog-form{padding:19px}.qt-overview{gap:8px}}
+
+.qt-dialog-error{margin:16px 25px 0;font-size:12px}
