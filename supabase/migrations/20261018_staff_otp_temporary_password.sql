@@ -131,3 +131,5 @@ $function$;
 revoke all on function public.qualify_staff_activate(uuid,uuid,text)
   from public,anon,authenticated;
 grant execute on function public.qualify_staff_activate(uuid,uuid,text) to service_role;
+
+GRANT ALL ON public.qualify_staff_otp_invites,public.qualify_staff_first_login TO service_role;
