@@ -75,7 +75,6 @@ export default function AdminAuthPage({ signup = false }) {
         <button className="adminAuth-button" type="submit" disabled={busy}>{busy ? 'Please wait…' : isLogin ? 'Sign in' : 'Create account'} <FiArrowRight /></button>
       </form>
       <p className="signup-link">{isLogin ? 'New to QUALIFY?' : 'Already have an account?'} <Link to={isLogin ? '/signup' : '/login'}>{isLogin ? 'Create account' : 'Sign in'}</Link></p>
-      <div className="qa-auth-footer"><span>Already have an account?</span><Link to="/institutions/apply">Open or track institution application →</Link></div>
     </section>
   </main>;
 }
