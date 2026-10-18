@@ -1,4 +1,5 @@
 import supabase from "../lib/supabase";
+import { getInstitutionBranding, updateInstitutionBranding, uploadInstitutionLogo } from "./institutionService";
 
 const IMAGE_KEY = "qualify-signup-logo";
 const TYPES = ["school","junior_college","engineering_college","degree_college","polytechnic","university","medical_pharmacy","coaching","other"];
@@ -90,4 +91,22 @@ export async function clearStagedSignupLogo() {
     tx.oncomplete = () => {db.close();resolve();};
     tx.onerror = () => {db.close();reject(tx.error);};
   });
+}
+
+/** After Platform Owner approval, publish a signup logo stored by this browser.
+ *  This is best-effort: a different browser cannot retrieve local staged files.
+ *  The Settings uploader remains available to Super Admins in all cases. */
+export async function publishStagedInstitutionLogo(institutionId) {
+  const file = await getStagedSignupLogo().catch(()=>null);
+  if (!file || !institutionId) return false;
+  const existing = await getInstitutionBranding(institutionId);
+  if (existing?.logo_path) { await clearStagedSignupLogo(); return false; }
+  const path = await uploadInstitutionLogo(institutionId,file);
+  try {
+    await updateInstitutionBranding({ institutionId, name: existing.name, logoPath:path });
+    await clearStagedSignupLogo();
+    return true;
+  } catch (e) {
+    throw e;
+  }
 }
