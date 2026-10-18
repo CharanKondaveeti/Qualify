@@ -62,32 +62,32 @@ function logoDB() {
     req.onerror = () => reject(req.error);
   });
 }
-export async function stageSignupLogo(file) {
+export async function stageSignupLogo(file, accountEmail) {
   if (!file) return;
   if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 1048576 || file.size === 0)
     throw new Error("Logo must be PNG, JPG or WebP under 1 MB.");
   const db = await logoDB();
   return new Promise((resolve,reject) => {
     const tx = db.transaction("logo","readwrite");
-    tx.objectStore("logo").put(file,"pending");
+    tx.objectStore("logo").put(file,String(accountEmail || "").trim().toLowerCase());
     tx.oncomplete = () => {db.close();resolve(true);};
     tx.onerror = () => {db.close();reject(tx.error);};
   });
 }
-export async function getStagedSignupLogo() {
+export async function getStagedSignupLogo(accountEmail) {
   const db = await logoDB();
   return new Promise((resolve,reject) => {
     const tx = db.transaction("logo","readonly");
-    const req = tx.objectStore("logo").get("pending");
+    const req = tx.objectStore("logo").get(String(accountEmail || "").trim().toLowerCase());
     req.onsuccess = () => {db.close();resolve(req.result || null);};
     req.onerror = () => {db.close();reject(req.error);};
   });
 }
-export async function clearStagedSignupLogo() {
+export async function clearStagedSignupLogo(accountEmail) {
   const db = await logoDB();
   return new Promise((resolve,reject) => {
     const tx = db.transaction("logo","readwrite");
-    tx.objectStore("logo").delete("pending");
+    tx.objectStore("logo").delete(String(accountEmail || "").trim().toLowerCase());
     tx.oncomplete = () => {db.close();resolve();};
     tx.onerror = () => {db.close();reject(tx.error);};
   });
@@ -96,15 +96,15 @@ export async function clearStagedSignupLogo() {
 /** After Platform Owner approval, publish a signup logo stored by this browser.
  *  This is best-effort: a different browser cannot retrieve local staged files.
  *  The Settings uploader remains available to Super Admins in all cases. */
-export async function publishStagedInstitutionLogo(institutionId) {
-  const file = await getStagedSignupLogo().catch(()=>null);
+export async function publishStagedInstitutionLogo(institutionId, accountEmail) {
+  const file = await getStagedSignupLogo(accountEmail).catch(()=>null);
   if (!file || !institutionId) return false;
   const existing = await getInstitutionBranding(institutionId);
-  if (existing?.logo_path) { await clearStagedSignupLogo(); return false; }
+  if (existing?.logo_path) { await clearStagedSignupLogo(accountEmail); return false; }
   const path = await uploadInstitutionLogo(institutionId,file);
   try {
     await updateInstitutionBranding({ institutionId, name: existing.name, logoPath:path });
-    await clearStagedSignupLogo();
+    await clearStagedSignupLogo(accountEmail);
     return true;
   } catch (e) {
     throw e;
