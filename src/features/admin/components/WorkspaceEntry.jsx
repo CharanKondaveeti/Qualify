@@ -3,12 +3,14 @@ import { Navigate } from 'react-router-dom';
 import supabase from '../../../lib/supabase';
 import { getInstitutionAccess, resolveWorkspace } from '../../../services/institutionService';
 import PageLoader from '../../../shared/components/PageLoader';
+import { staffSetupStatus } from '../../../services/staffOnboardingService';
 export default function WorkspaceEntry({account=false}) {
   const [target,setTarget] = useState('');
   const [error,setError] = useState('');
   useEffect(()=>{let active=true;(async()=>{
     const {data:{user},error:authError}=await supabase.auth.getUser();
     if(authError||!user) {if(active)setTarget('/login');return;}
+    if(await staffSetupStatus()){if(active)setTarget("/staff/set-password");return;}
     const access=await getInstitutionAccess();
     if(active) {
       const target=resolveWorkspace(access);
