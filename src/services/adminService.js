@@ -26,7 +26,11 @@ export async function loginAdmin(email, password) {
   const user = data.user;
 
   // Create the application captured during signup only after verified sign-in.
-  await submitPendingInstitution();
+  // A duplicate institution code must not prevent normal login.
+  // The applicant can resolve any conflict on the applications page.
+  try { await submitPendingInstitution(); } catch (err) {
+    console.warn("Institution application needs attention:", err.message);
+  }
   const access = await getInstitutionAccess();
 
   return {
