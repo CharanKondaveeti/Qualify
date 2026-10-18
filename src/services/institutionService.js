@@ -56,15 +56,19 @@ export async function getInstitutionApplicationsForReview() {
   const { data, error } = await supabase
     .from("institution_applications")
     .select(
-      "id,applicant_email,institution_name,requested_code,website,details,profile_details,status,created_at,review_notes",
+      "id,applicant_email,institution_name,requested_code,website,details,profile_details,status,created_at,review_notes,reviewed_at,institution_id",
     )
-    .eq("status", "pending")
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
 
   return data ?? [];
 }
+
+export const resubmitRejectedInstitution = (application) =>
+  rpc("qualify_resubmit_institution_application", {
+    p_application: application,
+  });
 
 export const reviewInstitutionApplication = (
   applicationId,
