@@ -449,3 +449,13 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-dashboard .add-exam-btn { transition: none; }
 }
+
+/* Visible only to Institution Super Admins; data comes from their staff directory. */
+.admin-dashboard .exams-table .exam-responsible-cell { min-width: 155px; }
+.admin-dashboard .exams-table .exam-responsible-name {
+  display: block; color: #243b57; font-weight: 650; font-size: 12px;
+}
+.admin-dashboard .exams-table .exam-responsible-email {
+  display: block; margin-top: 3px; color: #8292a7; font-size: 11px;
+  overflow-wrap: anywhere;
+}
