@@ -34,6 +34,7 @@ import {
 } from "../../../services/institutionService";
 import InstitutionBrand from "../../../shared/components/InstitutionBrand";
 import { publishStagedInstitutionLogo } from "../../../services/institutionSignupService";
+import { staffSetupStatus } from "../../../services/staffOnboardingService";
 import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
 import PendingStaffInviteDialog from "../../institutions/components/PendingStaffInviteDialog";
 import {
@@ -174,6 +175,7 @@ export default function DashboardPage() {
         navigate("/login", { replace: true });
         return;
       }
+      if(!isDemo && await staffSetupStatus()) {navigate("/staff/set-password",{replace:true});return;}
       setUser(result.data.user);
       if (!isDemo) await refreshAccess(result.data.user.id);
     }
