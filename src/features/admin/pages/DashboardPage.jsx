@@ -9,7 +9,6 @@ import {
 import {
   NavLink,
   Outlet,
-  useBlocker,
   useNavigate,
   useLocation,
   useParams,
@@ -35,7 +34,6 @@ import {
 import InstitutionBrand from "../../../shared/components/InstitutionBrand";
 import { publishStagedInstitutionLogo } from "../../../services/institutionSignupService";
 import { staffSetupStatus } from "../../../services/staffOnboardingService";
-import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
 import {
   AdminWorkspaceContext,
   activeMemberships,
@@ -64,55 +62,7 @@ export default function DashboardPage() {
   const isPlatformArea = location.pathname.startsWith("/platform");
   const cache = useQueryClient();
   const dispatch = useDispatch();
-  const dialog = useAppDialog();
   const signingOutRef = useRef(false);
-
-  // Browser history Back/Forward is deliberate in a signed-in workspace.
-  // Regular menu links and buttons stay immediate; these are PUSH/REPLACE.
-  const historyBlocker = useBlocker(
-    ({ currentLocation, nextLocation, historyAction }) =>
-      !isDemo &&
-      Boolean(user) &&
-      historyAction === "POP" &&
-      (currentLocation.pathname !== nextLocation.pathname ||
-        currentLocation.search !== nextLocation.search ||
-        currentLocation.hash !== nextLocation.hash),
-  );
-  const historyBlockerRef = useRef(historyBlocker);
-  const dialogRef = useRef(dialog);
-
-  useEffect(() => {
-    historyBlockerRef.current = historyBlocker;
-    dialogRef.current = dialog;
-  }, [historyBlocker, dialog]);
-
-  useEffect(() => {
-    if (historyBlocker.state !== "blocked") return;
-    let disposed = false;
-    dialogRef.current.confirm(
-      "Are you sure you want to leave this page? You will remain signed in unless you sign out.",
-      { title: "Leave this page?", confirmLabel: "Continue" },
-    ).then((approved) => {
-      if (disposed) return;
-      if (approved) historyBlockerRef.current.proceed();
-      else historyBlockerRef.current.reset();
-    });
-    return () => { disposed = true; };
-    // The dialog must open only once per blocked history transition.
-  }, [historyBlocker.state]);
-
-  // Browsers require their own (browser-controlled) warning for reloads,
-  // closing the tab, and going to another origin. Custom text is not supported.
-  useEffect(() => {
-    if (isDemo || !user) return;
-    const warnBeforeUnload = (event) => {
-      if (signingOutRef.current) return;
-      event.preventDefault();
-      event.returnValue = true;
-    };
-    window.addEventListener("beforeunload", warnBeforeUnload);
-    return () => window.removeEventListener("beforeunload", warnBeforeUnload);
-  }, [user]);
 
   const refreshAccess = useCallback(
     async (userId, retainSelection = true) => {
