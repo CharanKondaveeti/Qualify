@@ -1,5 +1,5 @@
 import { isConfigured, isDemo } from '../../../lib/supabase';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FiArrowRight, FiCheckCircle, FiLock, FiMail, FiShield, FiUser } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import InstitutionSignupFields from '../../institutions/components/InstitutionSignupFields';

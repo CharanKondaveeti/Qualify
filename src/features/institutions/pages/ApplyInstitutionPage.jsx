@@ -50,7 +50,7 @@ function ApplicationDetails({ application }) {
 
 export default function ApplyInstitutionPage() {
   const [applications,setApplications] = useState([]);
-  const [approved,setApproved] = useState(false);
+  const [,setApproved] = useState(false);
   const [loading,setLoading] = useState(true);
   const [editing,setEditing] = useState(false);
   const [form,setForm] = useState({ ...emptyInstitution });

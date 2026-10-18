@@ -102,11 +102,7 @@ export async function publishStagedInstitutionLogo(institutionId, accountEmail) 
   const existing = await getInstitutionBranding(institutionId);
   if (existing?.logo_path) { await clearStagedSignupLogo(accountEmail); return false; }
   const path = await uploadInstitutionLogo(institutionId,file);
-  try {
-    await updateInstitutionBranding({ institutionId, name: existing.name, logoPath:path });
-    await clearStagedSignupLogo(accountEmail);
-    return true;
-  } catch (e) {
-    throw e;
-  }
+  await updateInstitutionBranding({ institutionId, name: existing.name, logoPath:path });
+  await clearStagedSignupLogo(accountEmail);
+  return true;
 }

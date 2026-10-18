@@ -25,7 +25,7 @@ export const deleteExam = async (examId) => {
       throw new Error("Invalid exam ID");
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("exams")
       .delete()
       .eq("exam_id", examId);
@@ -58,7 +58,7 @@ export async function createNewExam(exam) {
     }
 
     return data; 
-  } catch (error) {
+  } catch {
     throw new Error("Failed to create exam");
   }
 }
@@ -72,7 +72,7 @@ export async function uploadExamQuestions(questions) {
     }
 
     return data;
-  } catch (error) {
+  } catch {
     throw new Error("Failed to create questions");
   }
 }
@@ -86,7 +86,7 @@ export async function createExamWithQuestions(exam, questions, showModal) {
       const result = await supabase.from('exams').insert([exam]).select();
       if (result.error || !result.data?.[0]) throw new Error('Could not create demo exam');
       const examId = result.data[0].exam_id;
-      const saved = await supabase.from('questions').insert(questions.map(({question_id, ...q})=>({...q,exam_id:examId}))).select();
+      const saved = await supabase.from('questions').insert(questions.map(({question_id: _questionId, ...q})=>({...q,exam_id:examId}))).select();
       if (saved.error) {
         await supabase.from('exams').delete().eq('exam_id',examId);
         throw new Error(saved.error.message);
