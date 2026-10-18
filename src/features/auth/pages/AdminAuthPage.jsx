@@ -1,4 +1,4 @@
-import { isConfigured, isDemo } from '../../../lib/supabase';
+import supabase, { isConfigured, isDemo } from '../../../lib/supabase';
 import { useEffect, useState } from 'react';
 import { FiArrowRight, FiCheckCircle, FiLock, FiMail, FiShield, FiUser } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ export default function AdminAuthPage({ signup = false }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState('');
   const [busy, setBusy] = useState(false);
+  const [canResendVerification, setCanResendVerification] = useState(false);
   const [registrationMode, setRegistrationMode] = useState('institution');
   const [institutionForm, setInstitutionForm] = useState({ ...emptyInstitution });
   const [institutionLogo, setInstitutionLogo] = useState(null);
@@ -37,7 +38,7 @@ export default function AdminAuthPage({ signup = false }) {
 
   async function handleSignup(e) {
     e.preventDefault(); if (busy) return;
-    setErrorMsg(''); setSuccess('');
+    setErrorMsg(''); setSuccess(''); setCanResendVerification(false);
     if (registrationMode === 'institution') {
       const validationError = validateInstitution(institutionForm);
       if (validationError) { setErrorMsg(validationError); return; }
@@ -48,13 +49,40 @@ export default function AdminAuthPage({ signup = false }) {
     try {
       if (registrationMode === 'institution' && institutionLogo) await stageSignupLogo(institutionLogo, email.trim());
       if (registrationMode !== 'institution') await clearStagedSignupLogo(email.trim()).catch(() => {});
-      await signupAdmin(email.trim(), password, name.trim(), registrationMode === 'institution' ? institutionForm : null);
-      setSuccess(registrationMode === 'institution'
-        ? 'Account created. Verify your email, then sign in. Your institution application will be submitted automatically for Platform Owner review.'
-        : 'Account created. Verify your email, then sign in. Staff invitations for this address will appear automatically.');
+      const result = await signupAdmin(email.trim(), password, name.trim(), registrationMode === 'institution' ? institutionForm : null);
+      if (result.existingOrObfuscated) {
+        // Supabase intentionally masks whether an email exists. Never claim
+        // a new account or verification message was actually created.
+        setSuccess('If this email already has an account, sign in instead of registering again. If you forgot the password, use Forgot password.');
+        setCanResendVerification(false);
+      } else if (result.needsConfirmation) {
+        setSuccess('Signup request accepted. Check your inbox and Spam folder for a confirmation message. If it does not arrive, you can request another one below.');
+        setCanResendVerification(true);
+      } else {
+        setSuccess('Signup completed. Sign in to continue to QUALIFY.');
+        setCanResendVerification(false);
+      }
       setIsLogin(true); setPassword(''); setConfirmPassword('');
     } catch (error) { setErrorMsg(error.message || 'Could not create account.'); }
     finally { setBusy(false); }
+  }
+
+  async function resendVerification() {
+    if (busy || !email.trim()) return;
+    setBusy(true);
+    setErrorMsg('');
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email.trim(),
+      });
+      if (error) throw error;
+      setSuccess('If email verification is still pending for this account, another confirmation email has been requested. Check your inbox and Spam folder.');
+    } catch (err) {
+      setErrorMsg(err.message || 'Could not request a confirmation email. Please try again later.');
+    } finally {
+      setBusy(false);
+    }
   }
 
   if (isDemo) return <div className="portal-message">Switching to secure Supabase login…</div>;
@@ -75,6 +103,7 @@ export default function AdminAuthPage({ signup = false }) {
         {!isLogin && registrationMode === 'institution' && <InstitutionSignupFields value={institutionForm} onChange={setInstitutionForm} logo={institutionLogo} onLogo={setInstitutionLogo} />}
         {errorMsg && <p role="alert" className="adminAuth-error">{errorMsg}</p>}
         {success && <p role="status" className="qa-success"><FiCheckCircle />{success}</p>}
+        {canResendVerification && <button type="button" className="qa-button-secondary" disabled={busy} onClick={resendVerification}>{busy ? 'Please wait…' : 'Resend verification email'}</button>}
         <button className="adminAuth-button" type="submit" disabled={busy}>{busy ? 'Please wait…' : isLogin ? 'Sign in' : 'Create account'} <FiArrowRight /></button>
       </form>
       <p className="signup-link">{isLogin ? 'New to QUALIFY?' : 'Already have an account?'} <Link to={isLogin ? '/signup' : '/login'}>{isLogin ? 'Create account' : 'Sign in'}</Link></p>
