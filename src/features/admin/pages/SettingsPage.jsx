@@ -400,7 +400,7 @@ export default function SettingsPage() {
             </form>
           </section>
 
-          <section className="qualify-settings-panel">
+          {!isOwner && <section className="qualify-settings-panel">
             <div className="qualify-settings-panel-title">
               <span className="qualify-settings-icon">
                 <FiHome />
@@ -500,7 +500,7 @@ export default function SettingsPage() {
             ) : (
               <p className="qualify-settings-hint">No institution selected.</p>
             )}
-          </section>
+          </section>}
         </div>
       </div>
     </section>

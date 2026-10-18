@@ -195,7 +195,7 @@ export default function DashboardPage() {
 
   // Reload branding whenever the institution changes (also updated after saving settings).
   const refreshBranding = useCallback(async () => {
-    if (isDemo || !institutionId) {
+    if (isDemo || isPlatformArea || !institutionId) {
       setInstitutionBranding(null);
       return;
     }
@@ -206,7 +206,7 @@ export default function DashboardPage() {
     } catch {
       setInstitutionBranding(null);
     }
-  }, [institutionId]);
+  }, [institutionId, isPlatformArea]);
 
   useEffect(() => {
     refreshBranding();
@@ -420,17 +420,12 @@ export default function DashboardPage() {
           <header className="top-nav workspace-top-nav">
             <div className="integrated-top-left workspace-heading">
               <InstitutionBrand
-                name={
-                  institutionBranding?.name ||
-                  selectedInstitution?.name ||
-                  (isDemo
-                    ? "Demo institution"
-                    : isPlatformArea
-                      ? "QUALIFY Platform"
-                      : "Institution workspace")
-                }
-                logoPath={institutionBranding?.logo_path}
-                subtitle="Examination Portal"
+                name={isPlatformArea ? "QUALIFY Platform" : (
+                  institutionBranding?.name || selectedInstitution?.name ||
+                  (isDemo ? "Demo institution" : "Institution workspace")
+                )}
+                logoPath={isPlatformArea ? null : institutionBranding?.logo_path}
+                subtitle={isPlatformArea ? "Platform administration" : "Examination Portal"}
               />
             </div>
             <div className="user-profile workspace-profile">

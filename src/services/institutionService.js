@@ -43,7 +43,7 @@ export async function getMyInstitutionApplications() {
   const { data, error } = await supabase
     .from("institution_applications")
     .select(
-      "id,institution_name,requested_code,status,created_at,review_notes,reviewed_at,institution_id",
+      "id,institution_name,requested_code,website,details,profile_details,status,created_at,review_notes,reviewed_at,institution_id",
     )
     .order("created_at", { ascending: false });
 
