@@ -1,10 +1,20 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
 // Service secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY,
 // QUALIFY_OTP_HMAC_SECRET (32+ random chars), QUALIFY_EMAIL_FROM, QUALIFY_SITE_ORIGIN.
-const origin=Deno.env.get("QUALIFY_SITE_ORIGIN")||"https://qualifyexam.online";
-const hdr={"Access-Control-Allow-Origin":origin,"Access-Control-Allow-Headers":"authorization,apikey,content-type,x-client-info","Access-Control-Allow-Methods":"POST,OPTIONS","Cache-Control":"no-store"};
-const respond=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{...hdr,"content-type":"application/json"}});
-const bad=(message,status=400)=>respond({error:message},status);
+// Only the exact production app origins may invoke this function from a browser.
+// Browsers distinguish www.qualifyexam.online from qualifyexam.online.
+// Keep the JWT and institution-level authorization checks below.
+const allowedOrigins=new Set(["https://qualifyexam.online","https://www.qualifyexam.online"]);
+// For failed/non-browser origins, no Access-Control-Allow-Origin is returned.
+const corsHeaders=(requestOrigin)=>{
+ const allowed=allowedOrigins.has(requestOrigin);
+ return {
+  ...(allowed?{"Access-Control-Allow-Origin":requestOrigin,"Vary":"Origin"}:{}),
+  "Access-Control-Allow-Headers":"authorization,apikey,content-type,x-client-info",
+  "Access-Control-Allow-Methods":"POST,OPTIONS",
+  "Cache-Control":"no-store"
+ };
+};
 const emailOK=(v)=>v.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const otp=()=>{const n=new Uint32Array(1);crypto.getRandomValues(n);return String(n[0]%1000000).padStart(6,"0")};
 const tempPass=()=>{const a="abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#";return Array.from(crypto.getRandomValues(new Uint8Array(24)),v=>a[v%a.length]).join("")};
@@ -23,6 +33,9 @@ async function mail(to,subject,html){
  if(!r.ok)throw Error("Email provider rejected delivery request ("+r.status+")");
 }
 Deno.serve(async(req)=>{
+ const hdr=corsHeaders(req.headers.get("origin")||"");
+ const respond=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{...hdr,"content-type":"application/json"}});
+ const bad=(message,status=400)=>respond({error:message},status);
  if(req.method==="OPTIONS")return new Response(null,{headers:hdr});
  if(req.method!=="POST")return bad("Method not allowed",405);
  const url=Deno.env.get("SUPABASE_URL"),key=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
