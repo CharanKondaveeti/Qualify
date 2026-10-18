@@ -36,7 +36,6 @@ import InstitutionBrand from "../../../shared/components/InstitutionBrand";
 import { publishStagedInstitutionLogo } from "../../../services/institutionSignupService";
 import { staffSetupStatus } from "../../../services/staffOnboardingService";
 import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
-import PendingStaffInviteDialog from "../../institutions/components/PendingStaffInviteDialog";
 import {
   AdminWorkspaceContext,
   activeMemberships,
@@ -342,7 +341,6 @@ export default function DashboardPage() {
 
   return (
     <AdminWorkspaceContext.Provider value={context}>
-      {!isDemo && <PendingStaffInviteDialog />}
       <div
         className={`admin-dashboard ${collapsed ? "sidebar-collapsed" : ""}`}
       >
