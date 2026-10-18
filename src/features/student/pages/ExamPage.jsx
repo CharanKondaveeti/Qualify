@@ -53,47 +53,82 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
   const submitting = useRef(false);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
   const [fullscreenError, setFullscreenError] = useState("");
-  const hadFullscreen = useRef(Boolean(document.fullscreenElement));
+  const fullscreenState = useRef(Boolean(document.fullscreenElement));
+  const fullscreenAudio = useRef(null);
+
+  const playExitSound = () => {
+    const context = fullscreenAudio.current;
+    if (!context) return;
+    try {
+      if (context.state === "suspended") void context.resume().catch(() => {});
+      const now = context.currentTime;
+      // Short two-note alert; no external media files needed.
+      [660, 880].forEach((frequency, index) => {
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        const start = now + index * 0.14;
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(frequency, start);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(0.09, start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.12);
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(start);
+        oscillator.stop(start + 0.13);
+      });
+    } catch {
+      // Audio availability must never block exam recovery.
+    }
+  };
 
   const requestExamFullscreen = () => {
     setFullscreenError("");
 
+    // Prepare sound during a real user interaction to meet autoplay policies.
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      try {
+        if (!fullscreenAudio.current) fullscreenAudio.current = new AudioContextClass();
+        if (fullscreenAudio.current.state === "suspended") {
+          void fullscreenAudio.current.resume().catch(() => {});
+        }
+      } catch {
+        // Silent fallback if audio cannot be initialized.
+      }
+    }
+
     if (!document.fullscreenEnabled || !document.documentElement.requestFullscreen) {
-      setFullscreenError("Fullscreen is not supported in this browser. Use an updated desktop browser.");
+      setFullscreenError("Fullscreen is not supported in this browser.");
       return;
     }
 
-    // Must be called directly from a click, before any awaited API calls.
+    // Request must happen directly within the button click.
     document.documentElement.requestFullscreen().catch(() => {
-      setFullscreenError("Fullscreen was blocked. Click Enter fullscreen again and allow the browser request.");
+      setFullscreenError("Fullscreen was blocked. Click the button to try again.");
     });
   };
 
   useEffect(() => {
     const updateFullscreen = () => {
       const full = Boolean(document.fullscreenElement);
+      const wasFull = fullscreenState.current;
+      fullscreenState.current = full;
       setIsFullscreen(full);
+
       if (full) {
-        hadFullscreen.current = true;
         setFullscreenError("");
-      } else if (hadFullscreen.current && details?.student_status === "in progress") {
-        logExamEvent(studentId, "fullscreen_exit");
+      } else if (wasFull && details?.student_status === "in progress") {
+        // Only once per actual exit, not on every polling tick.
+        void logExamEvent(studentId, "fullscreen_exit");
+        playExitSound();
       }
     };
 
-    const preventEscape = (event) => {
-      if (event.key === "Escape" && details?.student_status === "in progress") {
-        // Browsers may still allow Escape to exit fullscreen.
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    };
-
-    // Primary event, with a backup check for missed state changes.
+    // Browsers can still process Escape; the fullscreen gate handles that.
     document.addEventListener("fullscreenchange", updateFullscreen);
     document.addEventListener("visibilitychange", updateFullscreen);
     window.addEventListener("focus", updateFullscreen);
-    document.addEventListener("keydown", preventEscape, true);
     const fullscreenCheck = window.setInterval(updateFullscreen, 1000);
     updateFullscreen();
 
@@ -101,10 +136,16 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
       document.removeEventListener("fullscreenchange", updateFullscreen);
       document.removeEventListener("visibilitychange", updateFullscreen);
       window.removeEventListener("focus", updateFullscreen);
-      document.removeEventListener("keydown", preventEscape, true);
       window.clearInterval(fullscreenCheck);
     };
   }, [details?.student_status, studentId]);
+
+  useEffect(() => () => {
+    if (fullscreenAudio.current) {
+      void fullscreenAudio.current.close().catch(() => {});
+      fullscreenAudio.current = null;
+    }
+  }, []);
 
   // ------------------------------------------
   // SERVER CLOCK SYNCHRONIZATION
