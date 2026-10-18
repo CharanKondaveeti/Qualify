@@ -16,7 +16,7 @@ import "../styles/staff-invitations.css";
 
 const tabs = [
   ["all", "All staff"], ["active", "Active"], ["pending", "Pending"],
-  ["suspended", "Suspended"], ["history", "History"],
+  ["suspended", "Suspended"],
 ];
 
 const inviteState = (invite, now) => (
@@ -267,19 +267,7 @@ export default function TeamPage() {
       role: "Staff Admin", status: inviteState(invite, now),
       invite,
     }));
-    const historyRows = invites
-      .filter(invite => {
-        const state = inviteState(invite, now);
-        return state !== "pending" && (state !== "provisioned" || memberEmails.has(invite.invited_email.toLowerCase())) ||
-          state === "expired";
-      })
-      .map(invite => ({
-        kind: "history", key: "history-" + invite.id,
-        name: invite.staff_name, email: invite.invited_email,
-        role: "Staff Admin", status: inviteState(invite, now),
-        invite,
-      }));
-    const source = tab === "history" ? historyRows : [...staffRows, ...invitationRows];
+    const source = [...staffRows, ...invitationRows];
     return source.filter(row => {
       if (tab === "active" && row.status !== "active") return false;
       if (tab === "pending" && !["pending", "provisioned"].includes(row.status)) return false;
@@ -287,7 +275,7 @@ export default function TeamPage() {
       const haystack = [row.name, row.email, row.role, statusLabel[row.status] || row.status].join(" ").toLowerCase();
       return haystack.includes(search.trim().toLowerCase());
     });
-  }, [members, invites, memberEmails, pendingInvites, tab, search, now]);
+  }, [members, pendingInvites, tab, search, now]);
 
   const activeCount = members.filter(m => m.status === "active").length;
   const pendingCount = pendingInvites.length;
@@ -324,7 +312,7 @@ export default function TeamPage() {
           <div className="qt-card qt-directory">
             <div className="qt-directory-toolbar">
               <div className="qt-tabs" role="tablist" aria-label="Staff filter">
-                {tabs.filter(([id]) => isSuperAdmin || !["pending", "history"].includes(id)).map(([id, label]) => (
+                {tabs.filter(([id]) => isSuperAdmin || id !== "pending").map(([id, label]) => (
                   <button key={id} type="button" role="tab" aria-selected={tab === id}
                     className={tab === id ? "qt-tab is-active" : "qt-tab"}
                     onClick={() => { setTab(id); setMenuId(null); }}>{label}{id === "pending" && pendingCount > 0 ? " (" + pendingCount + ")" : ""}</button>
@@ -387,13 +375,12 @@ export default function TeamPage() {
                   ))}
                   {loading && <tr><td colSpan={5} className="qt-table-empty">Loading team…</td></tr>}
                   {!loading && !rows.length && <tr><td colSpan={5} className="qt-table-empty">
-                    {search ? "No staff match your search." : tab === "pending" ? "No pending staff invitations." : tab === "history" ? "No verification history yet." : "No staff found."}
+                    {search ? "No staff match your search." : tab === "pending" ? "No pending staff invitations." : "No staff found."}
                   </td></tr>}
                 </tbody>
               </table>
             </div>
             <div className="qt-table-footer"><FiUsers aria-hidden="true" /> {rows.length} record{rows.length === 1 ? "" : "s"}
-              {tab === "history" && <span> · Latest 50 verification requests</span>}
             </div>
           </div>
         </>
