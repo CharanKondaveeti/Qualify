@@ -66,7 +66,7 @@ export default function AcceptInvitePage() {
         </div>}
         {!invitations.length && !token && !message && <div className="qa-invitation-empty"><FiCheckCircle /><strong>No pending invitations</strong><p>Ask your Super Admin to check the spelling of your email if you expected an invitation.</p></div>}
       </>}
-      <div className="qa-bottom-links"><Link to="/institutions/application-status">Application status</Link><Link to="/app">Go to dashboard</Link></div>
+      <div className="qa-bottom-links"><Link to="/app">Go to dashboard</Link></div>
     </section>
   </main>;
 }
