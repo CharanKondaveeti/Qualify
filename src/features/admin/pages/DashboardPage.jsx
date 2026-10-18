@@ -57,6 +57,7 @@ export default function DashboardPage() {
   const [institutionId, setInstitutionIdState] = useState(isDemo ? "demo" : "");
   const [institutionBranding, setInstitutionBranding] = useState(null);
   const [error, setError] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { institutionId: routeInstitutionId } = useParams();
@@ -183,7 +184,7 @@ export default function DashboardPage() {
         setError(e.message || "Could not verify your institution membership.");
     });
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session && event === "SIGNED_OUT") {
+      if (!session && event === "SIGNED_OUT" && !signingOutRef.current) {
         cache.clear();
         navigate("/login", { replace: true });
       }
@@ -259,7 +260,10 @@ export default function DashboardPage() {
   );
 
   async function logout() {
+    if (signingOutRef.current) return;
     signingOutRef.current = true;
+    setSigningOut(true);
+    setError("");
     try {
       const { error: signOutError } = await supabase.auth.signOut();
       if (signOutError) throw signOutError;
@@ -267,9 +271,11 @@ export default function DashboardPage() {
       navigate("/", { replace: true });
     } catch (e) {
       signingOutRef.current = false;
+      setSigningOut(false);
       setError(e.message || "Could not sign out. Please try again.");
     }
   }
+  if (signingOut) return <PageLoader fullPage label="Signing out of QUALIFY…" />;
   if (error)
     return (
       <div className="portal-message" role="alert">
