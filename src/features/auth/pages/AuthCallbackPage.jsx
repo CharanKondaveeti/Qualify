@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import supabase from '../../../lib/supabase';
 import { getInstitutionAccess, resolveWorkspace } from '../../../services/institutionService';
 import PageLoader from '../../../shared/components/PageLoader';
+import { submitPendingInstitution } from '../../../services/institutionSignupService';
 export default function AuthCallbackPage(){
   const [target,setTarget]=useState(''); const [error,setError]=useState('');
   useEffect(()=>{let current=true;(async()=>{
@@ -10,6 +11,7 @@ export default function AuthCallbackPage(){
     const {data,error:authError}=await supabase.auth.getSession();
     if(authError) throw authError;
     if(!data?.session) { if(current)setTarget('/login'); return; }
+    await submitPendingInstitution();
     const access=await getInstitutionAccess();
     if(current)setTarget(resolveWorkspace(access));
   })().catch(e=>current&&setError(e.message));return()=>{current=false};},[]);
