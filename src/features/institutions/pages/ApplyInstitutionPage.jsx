@@ -54,7 +54,6 @@ export default function ApplyInstitutionPage() {
   const [loading,setLoading] = useState(true);
   const [editing,setEditing] = useState(false);
   const [form,setForm] = useState({ ...emptyInstitution });
-  const [logo,setLogo] = useState(null);
   const [error,setError] = useState('');
   const [busy,setBusy] = useState(false);
 
@@ -82,7 +81,6 @@ export default function ApplyInstitutionPage() {
   function startCorrection() {
     if(!rejected)return;
     setForm(existingDetails(latest));
-    setLogo(null);
     setError('');
     setEditing(true);
   }
@@ -133,8 +131,8 @@ export default function ApplyInstitutionPage() {
           </div>
           <p className="adminAuth-logo-subtext">All available details are prefilled from your last application. Keep the same account; a new pending request will be created after submission.</p>
           <form className="adminAuth-form" onSubmit={resubmit}>
-            <InstitutionSignupFields value={form} onChange={setForm} logo={logo} onLogo={setLogo}/>
-            <p className="qa-directory-note">For a logo selected during correction, upload it in Institution Settings after approval.</p>
+            <InstitutionSignupFields value={form} onChange={setForm} showLogo={false}/>
+            <p className="qa-directory-note">You can add or change the institution logo in Settings after your institution is approved.</p>
             {error && <p role="alert" className="adminAuth-error">{error}</p>}
             <button className="adminAuth-button" disabled={busy} type="submit">{busy?'Submitting corrections…':'Resubmit for approval'} <FiArrowRight/></button>
             <button type="button" className="qa-application-cancel" onClick={()=>{setEditing(false);setError('');}}>Cancel changes</button>
