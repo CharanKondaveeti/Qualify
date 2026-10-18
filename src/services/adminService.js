@@ -1,5 +1,6 @@
 import supabase, { isDemo } from "../lib/supabase";
 import { getInstitutionAccess, resolveWorkspace } from "./institutionService";
+import { submitPendingInstitution } from "./institutionSignupService";
 
 export async function getCurrentAdmin(showModal) {
   const {
@@ -24,7 +25,8 @@ export async function loginAdmin(email, password) {
 
   const user = data.user;
 
-  // Allow applicants to sign in to submit or track applications.
+  // Create the application captured during signup only after verified sign-in.
+  await submitPendingInstitution();
   const access = await getInstitutionAccess();
 
   return {
@@ -33,7 +35,7 @@ export async function loginAdmin(email, password) {
   };
 }
 
-export async function signupAdmin(email, password, name) {
+export async function signupAdmin(email, password, name, institutionApplication = null) {
   if (!email || !password || !name) {
     throw new Error("Name, email and password are required");
   }
@@ -42,7 +44,7 @@ export async function signupAdmin(email, password, name) {
     email,
     password,
     options: {
-      data: { full_name: name },
+      data: { full_name: name, ...(institutionApplication ? { pending_institution_application: institutionApplication } : {}) },
     },
   });
 
