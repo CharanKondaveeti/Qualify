@@ -235,7 +235,7 @@ export default function DashboardPage() {
     if (isDemo || !isSuperAdmin || !institutionId ||
         logoPublishAttempted.current.has(institutionId)) return;
     logoPublishAttempted.current.add(institutionId);
-    publishStagedInstitutionLogo(institutionId)
+    publishStagedInstitutionLogo(institutionId, user.email)
       .then(published => {if (published) refreshBranding();})
       .catch(err => console.warn("Signup logo can be uploaded from Settings:",err.message));
   }, [institutionId,isSuperAdmin,refreshBranding]);
