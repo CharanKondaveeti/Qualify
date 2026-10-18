@@ -68,6 +68,12 @@ Deno.serve(async(req)=>{
     const {data:membership}=await db.from("institution_members").select("role").eq("institution_id",institutionId).eq("user_id",known).maybeSingle();
     if(membership)return bad("Staff email already has institution membership");
    }
+   // Limit custom invitation emails to 20 per Super Admin every 24 hours.
+   const {count:sentCount,error:quotaError}=await db.from("qualify_staff_otp_invites")
+     .select("id",{count:"exact",head:true}).eq("requested_by",user.id)
+     .gte("created_at",new Date(Date.now()-86400000).toISOString());
+   if(quotaError)throw quotaError;
+   if((sentCount||0)>=20)return bad("Daily staff invitation limit reached. Try again tomorrow.",429);
    const {data:pending}=await db.from("qualify_staff_otp_invites").select("id,created_at").eq("institution_id",institutionId).eq("invited_email",email).eq("status","pending").maybeSingle();
    if(pending){
     if(Date.now()-new Date(pending.created_at).getTime()<120000)return bad("Wait 2 minutes before resending an OTP");
