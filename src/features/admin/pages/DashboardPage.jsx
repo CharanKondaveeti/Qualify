@@ -232,13 +232,16 @@ export default function DashboardPage() {
   // ownership is pending. Publish it automatically after Platform Owner approval.
   const logoPublishAttempted = useRef(new Set());
   useEffect(() => {
-    if (isDemo || !isSuperAdmin || !institutionId ||
+    const requestedCode = user?.user_metadata?.pending_institution_application?.code;
+    // Never transfer a staged logo to a different institution on a shared account.
+    if (isDemo || !isSuperAdmin || !institutionId || !user?.email ||
+        !requestedCode || selectedInstitution?.code !== requestedCode ||
         logoPublishAttempted.current.has(institutionId)) return;
     logoPublishAttempted.current.add(institutionId);
     publishStagedInstitutionLogo(institutionId, user.email)
       .then(published => {if (published) refreshBranding();})
       .catch(err => console.warn("Signup logo can be uploaded from Settings:",err.message));
-  }, [institutionId,isSuperAdmin,refreshBranding]);
+  }, [institutionId,isSuperAdmin,selectedInstitution?.code,user?.email,user?.user_metadata?.pending_institution_application?.code,refreshBranding]);
 
 
   const setInstitutionId = useCallback(
