@@ -81,9 +81,29 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
       }
     };
 
+    const preventEscape = (event) => {
+      if (event.key === "Escape" && details?.student_status === "in progress") {
+        // Browsers may still allow Escape to exit fullscreen.
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    // Primary event, with a backup check for missed state changes.
     document.addEventListener("fullscreenchange", updateFullscreen);
+    document.addEventListener("visibilitychange", updateFullscreen);
+    window.addEventListener("focus", updateFullscreen);
+    document.addEventListener("keydown", preventEscape, true);
+    const fullscreenCheck = window.setInterval(updateFullscreen, 1000);
     updateFullscreen();
-    return () => document.removeEventListener("fullscreenchange", updateFullscreen);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", updateFullscreen);
+      document.removeEventListener("visibilitychange", updateFullscreen);
+      window.removeEventListener("focus", updateFullscreen);
+      document.removeEventListener("keydown", preventEscape, true);
+      window.clearInterval(fullscreenCheck);
+    };
   }, [details?.student_status, studentId]);
 
   // ------------------------------------------
