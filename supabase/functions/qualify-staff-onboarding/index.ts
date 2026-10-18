@@ -61,7 +61,7 @@ Deno.serve(async(req)=>{
    if(activateError)throw Error("Password changed. Staff activation needs administrator support.");
    return respond({success:true});
   }
-  if(!["request","verify","list"].includes(args.action))return bad("Invalid action");
+  if(!["request","verify","list","cancel"].includes(args.action))return bad("Invalid action");
   const institutionId=String(args.institutionId||"");
   if(!/^[0-9a-f-]{36}$/.test(institutionId))return bad("Invalid institution");
   const {data:member}=await db.from("institution_members").select("role").eq("institution_id",institutionId).eq("user_id",user.id).eq("role","institution_super_admin").eq("status","active").maybeSingle();
@@ -71,6 +71,18 @@ Deno.serve(async(req)=>{
    const {data,error}=await db.from("qualify_staff_otp_invites").select("id,staff_name,invited_email,status,created_at,expires_at,verified_at").eq("institution_id",institutionId).order("created_at",{ascending:false}).limit(50);
    if(error)throw error;
    return respond({items:data||[]});
+  }
+  if(args.action==="cancel"){
+   const inviteId=String(args.inviteId||"");
+   if(!/^[0-9a-f-]{36}$/.test(inviteId))return bad("Invalid invitation");
+   // Atomic conditional update: a verified or provisioned invitation cannot be cancelled.
+   const {data:cancelled,error:cancelError}=await db.from("qualify_staff_otp_invites")
+     .update({status:"cancelled",cancelled_at:new Date().toISOString(),cancelled_by:user.id,updated_at:new Date().toISOString()})
+     .eq("id",inviteId).eq("institution_id",institutionId).eq("status","pending")
+     .select("id").maybeSingle();
+   if(cancelError)throw cancelError;
+   if(!cancelled)return bad("This invitation is no longer pending",409);
+   return respond({success:true,message:"Staff invitation cancelled. Its OTP can no longer be used."});
   }
   if(args.action==="request"){
    const email=String(args.email||"").trim().toLowerCase(),name=String(args.name||"").trim();
