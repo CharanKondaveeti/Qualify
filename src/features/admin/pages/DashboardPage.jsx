@@ -65,6 +65,7 @@ export default function DashboardPage() {
   const cache = useQueryClient();
   const dispatch = useDispatch();
   const signingOutRef = useRef(false);
+  const signOutConfirmationRef = useRef(false);
   const dialog = useAppDialog();
 
   // Only confirm when browser Back/Forward leaves the admin workspace.
@@ -238,7 +239,19 @@ export default function DashboardPage() {
   );
 
   async function logout() {
-    if (signingOutRef.current) return;
+    if (signingOutRef.current || signOutConfirmationRef.current) return;
+    signOutConfirmationRef.current = true;
+    let confirmed = false;
+    try {
+      confirmed = await dialog.confirm(
+        "Are you sure you want to sign out?",
+        { title: "Sign out?", confirmLabel: "Sign out", cancelLabel: "Cancel" },
+      );
+    } finally {
+      signOutConfirmationRef.current = false;
+    }
+    if (!confirmed || signingOutRef.current) return;
+
     signingOutRef.current = true;
     setSigningOut(true);
     setError("");
