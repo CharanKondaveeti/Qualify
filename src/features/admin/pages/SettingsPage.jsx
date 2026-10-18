@@ -438,14 +438,16 @@ export default function SettingsPage() {
                       htmlFor="setting-logo"
                     >
                       <FiCamera /> Choose logo
+                      {/* Keep the file input inside its visible label so
+                          browser focus never scrolls to the dashboard origin. */}
+                      <input
+                        id="setting-logo"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        onChange={selectLogo}
+                        disabled={Boolean(busy)}
+                      />
                     </label>
-                    <input
-                      id="setting-logo"
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp"
-                      onChange={selectLogo}
-                      disabled={Boolean(busy)}
-                    />
                     {(logoPath || logoFile) && (
                       <button
                         type="button"
