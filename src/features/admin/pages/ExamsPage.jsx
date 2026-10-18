@@ -18,6 +18,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getExams, deleteExam } from "../../../services/examService";
+import { listInstitutionMembers } from "../../../services/institutionService";
 import { duplicateExamFromTemplate } from "../../../services/examDuplicationService";
 import { formatDate } from "../../../utils/dateAndStorage";
 import { useAdminWorkspace } from "../context/AdminWorkspaceContext";
@@ -36,7 +37,7 @@ const STATS = [
 
 export default function ExamsPage() {
   const navigate = useNavigate();
-  const { institutionId } = useAdminWorkspace();
+  const { institutionId, isSuperAdmin } = useAdminWorkspace();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
@@ -56,6 +57,22 @@ export default function ExamsPage() {
     queryFn: () => getExams(institutionId),
     refetchInterval: 15000,
   });
+
+  const { data: staff = [], isLoading: staffLoading } = useQuery({
+    queryKey: ["exam-responsible-staff", institutionId],
+    queryFn: () => listInstitutionMembers(institutionId),
+    enabled: Boolean(isSuperAdmin && institutionId && !isDemo),
+    staleTime: 60_000,
+  });
+  const staffById = useMemo(
+    () => new Map(staff.map(person => [person.user_id, person])),
+    [staff],
+  );
+  const responsibleName = exam => {
+    if (!exam.created_by) return "Not assigned";
+    const owner = staffById.get(exam.created_by);
+    return owner?.name || owner?.email || (staffLoading ? "Loading…" : "Staff unavailable");
+  };
 
   const deleteExamMutation = useMutation({
     mutationFn: deleteExam,
@@ -86,11 +103,11 @@ export default function ExamsPage() {
     return exams.filter(
       (exam) =>
         (activeFilter === "all" || exam.exam_status === activeFilter) &&
-        `${exam.title || ""} ${exam.course || ""}`
+        `${exam.title || ""} ${exam.course || ""} ${isSuperAdmin ? (staffById.get(exam.created_by)?.name || "") + " " + (staffById.get(exam.created_by)?.email || "") : ""}`
           .toLocaleLowerCase()
           .includes(query),
     );
-  }, [exams, searchQuery, activeFilter]);
+  }, [exams, searchQuery, activeFilter, staffById, isSuperAdmin]);
 
   useEffect(() => {
     if (!openMenuId) return;
@@ -170,7 +187,7 @@ export default function ExamsPage() {
     if (isLoading) {
       return (
         <tr>
-          <td colSpan={6} className="exams-table-message">
+          <td colSpan={isSuperAdmin ? 7 : 6} className="exams-table-message">
             <PageLoader label="Loading examinations…" />
           </td>
         </tr>
@@ -180,7 +197,7 @@ export default function ExamsPage() {
     if (isError) {
       return (
         <tr>
-          <td colSpan={6} className="exams-table-message" role="alert">
+          <td colSpan={isSuperAdmin ? 7 : 6} className="exams-table-message" role="alert">
             {error?.message || "Could not load examinations."}
           </td>
         </tr>
@@ -190,7 +207,7 @@ export default function ExamsPage() {
     if (!filteredExams.length) {
       return (
         <tr>
-          <td colSpan={6} className="exams-table-message">
+          <td colSpan={isSuperAdmin ? 7 : 6} className="exams-table-message">
             No examinations match your search.
           </td>
         </tr>
@@ -214,6 +231,14 @@ export default function ExamsPage() {
       >
         <td className="exam-name-cell">{exam.title}</td>
         <td>{exam.course}</td>
+        {isSuperAdmin && (
+          <td className="exam-responsible-cell">
+            <span className="exam-responsible-name">{responsibleName(exam)}</span>
+            {staffById.get(exam.created_by)?.email && (
+              <small className="exam-responsible-email">{staffById.get(exam.created_by).email}</small>
+            )}
+          </td>
+        )}
         <td>
           <span className="exam-meta-value">
             <FiCalendar aria-hidden="true" />
@@ -372,6 +397,7 @@ export default function ExamsPage() {
               <tr>
                 <th>Exam Name</th>
                 <th>Course</th>
+                {isSuperAdmin && <th>Staff in charge</th>}
                 <th>Date &amp; Time</th>
                 <th>Timing</th>
                 <th>Status</th>
