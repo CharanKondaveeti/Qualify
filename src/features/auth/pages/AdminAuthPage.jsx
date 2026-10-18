@@ -46,8 +46,8 @@ export default function AdminAuthPage({ signup = false }) {
     if (password.length < 8) { setErrorMsg('Use a password of at least 8 characters.'); return; }
     setBusy(true);
     try {
-      if (registrationMode === 'institution' && institutionLogo) await stageSignupLogo(institutionLogo);
-      if (registrationMode !== 'institution') await clearStagedSignupLogo().catch(() => {});
+      if (registrationMode === 'institution' && institutionLogo) await stageSignupLogo(institutionLogo, email.trim());
+      if (registrationMode !== 'institution') await clearStagedSignupLogo(email.trim()).catch(() => {});
       await signupAdmin(email.trim(), password, name.trim(), registrationMode === 'institution' ? institutionForm : null);
       setSuccess(registrationMode === 'institution'
         ? 'Account created. Verify your email, then sign in. Your institution application will be submitted automatically for Platform Owner review.'
