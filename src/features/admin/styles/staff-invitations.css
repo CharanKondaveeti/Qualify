@@ -14,3 +14,6 @@
 .qt-invites{max-height:305px;overflow-y:auto}.qt-invite-row{display:grid;grid-template-columns:minmax(145px,1fr) auto auto auto;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid #edf1f5}.qt-invite-row>div{min-width:0}.qt-invite-row strong{display:block;font-size:13px;color:#2d445f;overflow-wrap:anywhere}.qt-invite-row small{display:block;font-size:11px;color:#7e8fa2;margin-top:3px;overflow-wrap:anywhere}.qt-time{font-size:11px;color:#8996a8}
 @media(max-width:970px){.qualify-team-top{grid-template-columns:1fr}.qt-owner{flex-direction:column;align-items:stretch}.qt-owner form{max-width:unset}}
 @media(max-width:640px){.qualify-team .qt-panel{padding:17px}.qt-invite-row{grid-template-columns:minmax(0,1fr) auto}.qt-time{display:none}.qt-owner form{flex-direction:column;align-items:stretch}.qt-buttons>*{flex:1}}
+
+.qt-form .qt-input-select{height:43px;border:1px solid #cdd8e4;border-radius:7px;background:#fff;color:#243850;padding:9px 12px;min-width:0;width:100%;font-size:13px}
+.qt-form .qt-input-select:focus{outline:0;border-color:#3970ba;box-shadow:0 0 0 3px #3970ba1b}
