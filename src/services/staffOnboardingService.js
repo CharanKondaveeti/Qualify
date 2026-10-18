@@ -25,6 +25,8 @@ export const sendStaffOtp = (institutionId, email, name) =>
   staffAction("request", { institutionId, email, name });
 export const verifyStaffOtp = (institutionId, inviteId, otp) =>
   staffAction("verify", { institutionId, inviteId, otp });
+export const cancelStaffOtpInvite = (institutionId, inviteId) =>
+  staffAction("cancel", { institutionId, inviteId });
 export const listStaffOtpInvites = (institutionId) =>
   staffAction("list", { institutionId });
 export const completeStaffFirstPassword = (password) =>
