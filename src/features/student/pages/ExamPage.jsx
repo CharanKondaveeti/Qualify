@@ -51,6 +51,40 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
   const [accepted, setAccepted] = useState(false);
 
   const submitting = useRef(false);
+  const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
+  const [fullscreenError, setFullscreenError] = useState("");
+  const hadFullscreen = useRef(Boolean(document.fullscreenElement));
+
+  const requestExamFullscreen = () => {
+    setFullscreenError("");
+
+    if (!document.fullscreenEnabled || !document.documentElement.requestFullscreen) {
+      setFullscreenError("Fullscreen is not supported in this browser. Use an updated desktop browser.");
+      return;
+    }
+
+    // Must be called directly from a click, before any awaited API calls.
+    document.documentElement.requestFullscreen().catch(() => {
+      setFullscreenError("Fullscreen was blocked. Click Enter fullscreen again and allow the browser request.");
+    });
+  };
+
+  useEffect(() => {
+    const updateFullscreen = () => {
+      const full = Boolean(document.fullscreenElement);
+      setIsFullscreen(full);
+      if (full) {
+        hadFullscreen.current = true;
+        setFullscreenError("");
+      } else if (hadFullscreen.current && details?.student_status === "in progress") {
+        logExamEvent(studentId, "fullscreen_exit");
+      }
+    };
+
+    document.addEventListener("fullscreenchange", updateFullscreen);
+    updateFullscreen();
+    return () => document.removeEventListener("fullscreenchange", updateFullscreen);
+  }, [details?.student_status, studentId]);
 
   // ------------------------------------------
   // SERVER CLOCK SYNCHRONIZATION
@@ -382,12 +416,6 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
       }
     };
 
-    const fullscreenExit = () => {
-      if (!document.fullscreenElement) {
-        detect("fullscreen_exit");
-      }
-    };
-
     const copyAttempt = (event) => {
       event.preventDefault();
       detect("copy_attempt");
@@ -414,8 +442,6 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
 
     document.addEventListener("visibilitychange", hidden);
 
-    document.addEventListener("fullscreenchange", fullscreenExit);
-
     document.addEventListener("copy", copyAttempt);
 
     document.addEventListener("paste", pasteAttempt);
@@ -428,8 +454,6 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
 
     return () => {
       document.removeEventListener("visibilitychange", hidden);
-
-      document.removeEventListener("fullscreenchange", fullscreenExit);
 
       document.removeEventListener("copy", copyAttempt);
 
@@ -496,16 +520,15 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
     setBusy(true);
     setError("");
 
+    // Request fullscreen while the Start Exam button click still has user activation.
+    requestExamFullscreen();
+
     try {
       const data = await beginStudent(examId, studentId);
 
       apply(data, true);
 
       setSaveStatus("Exam started");
-
-      document.documentElement.requestFullscreen?.().catch(() => {
-        // Browser may deny fullscreen.
-      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -518,7 +541,7 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
   // ------------------------------------------
 
   function answer(id, value) {
-    if (busy || expired) return;
+    if (!document.fullscreenElement || busy || expired) return;
 
     const next = {
       ...currentAnswers.current,
@@ -533,7 +556,7 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
   }
 
   function clearAnswer() {
-    if (busy || expired) return;
+    if (!document.fullscreenElement || busy || expired) return;
 
     const questionId = questions[index]?.question_id;
 
@@ -553,7 +576,7 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
   }
 
   function toggleFlag() {
-    if (busy || expired) return;
+    if (!document.fullscreenElement || busy || expired) return;
 
     const questionId = questions[index]?.question_id;
 
@@ -749,9 +772,79 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
       ),
     );
   };
-  const enterFullscreen = () => {
-    document.documentElement.requestFullscreen?.().catch(() => {});
-  };
+  const enterFullscreen = requestExamFullscreen;
+
+  // ------------------------------------------
+  // FULLSCREEN EXAM GATE
+  // Hide all questions when fullscreen is not active.
+  // The server timer and autosaving continue normally.
+  // ------------------------------------------
+
+  if (active && !isFullscreen) {
+    return (
+      <main
+        role="main"
+        style={{
+          minHeight: "100dvh",
+          display: "grid",
+          placeItems: "center",
+          padding: "24px",
+          background: "#f4f6f9",
+        }}
+      >
+        <section
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="fullscreen-gate-title"
+          aria-describedby="fullscreen-gate-desc"
+          style={{
+            width: "min(100%, 470px)",
+            padding: "32px",
+            borderRadius: "16px",
+            background: "#ffffff",
+            border: "1px solid #dce2ea",
+            boxShadow: "0 18px 50px rgba(15,23,42,.12)",
+            textAlign: "center",
+          }}
+        >
+          <div aria-hidden="true" style={{ fontSize: "32px", marginBottom: "8px" }}>⛶</div>
+          <h1 id="fullscreen-gate-title" style={{ margin: "0 0 12px", fontSize: "24px" }}>
+            Fullscreen required
+          </h1>
+          <p id="fullscreen-gate-desc" style={{ lineHeight: 1.6, color: "#475569" }}>
+            You must stay in fullscreen mode while taking this examination.
+            Your questions are hidden until you return to fullscreen.
+          </p>
+          <p style={{ fontWeight: 600, color: "#9a3412" }}>
+            Your exam timer is still running.
+          </p>
+          {fullscreenError && <p role="alert" style={{ color: "#b91c1c" }}>{fullscreenError}</p>}
+          {error && <p role="alert" style={{ color: "#b91c1c" }}>{error}</p>}
+          <button
+            type="button"
+            onClick={requestExamFullscreen}
+            style={{
+              width: "100%",
+              padding: "13px 18px",
+              border: 0,
+              borderRadius: "9px",
+              background: "#175cd3",
+              color: "white",
+              fontSize: "16px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Enter fullscreen to continue
+          </button>
+          <p style={{ marginTop: "16px", fontSize: "13px", color: "#64748b" }}>
+            Exiting fullscreen is recorded as exam activity. It does not automatically submit your exam.
+          </p>
+          <p style={{ fontSize: "13px", color: "#64748b" }} role="status">{saveStatus}</p>
+        </section>
+      </main>
+    );
+  }
 
   // ------------------------------------------
   // ACTIVE EXAM INTERFACE
