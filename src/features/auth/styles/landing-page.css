@@ -180,3 +180,9 @@
   .qhome-feature-card { min-height:0; }
   .qhome-process { padding:36px 0 42px; }
 }
+
+/* Smooth in-page menu navigation; respect the visitor's motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.qhome) { scroll-behavior: smooth; }
+}
+.qhome #features, .qhome #how-it-works, .qhome #help { scroll-margin-top: 24px; }
