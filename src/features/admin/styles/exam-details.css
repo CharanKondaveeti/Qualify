@@ -600,3 +600,6 @@
     width: 160px;
   }
 }
+
+/* Allow an additional responsible-staff label without overflowing the header. */
+.exam-report-exam-meta { flex-wrap: wrap; row-gap: 10px; }
