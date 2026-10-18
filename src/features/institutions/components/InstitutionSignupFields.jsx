@@ -17,7 +17,7 @@ const STATES=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh
 "Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh",
 "Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 
-export default function InstitutionSignupFields({ value=emptyInstitution,onChange,logo,onLogo }) {
+export default function InstitutionSignupFields({ value=emptyInstitution,onChange,logo,onLogo,showLogo=true }) {
   const [query,setQuery]=useState("");
   const [suggestions,setSuggestions]=useState([]);
   const [loading,setLoading]=useState(false);
@@ -125,13 +125,13 @@ export default function InstitutionSignupFields({ value=emptyInstitution,onChang
         <textarea id="signup-notes" rows={3} maxLength={1500} value={value.details||""}
          onChange={e=>set("details",e.target.value)} placeholder="Your position and information that will help the Platform Owner verify the institution"/>
       </div>
-      <div className="adminAuth-input-group qa-wide">
+      {showLogo && <div className="adminAuth-input-group qa-wide">
         <label htmlFor="signup-logo"><FiUploadCloud style={{verticalAlign:"middle"}}/> Institution logo (optional)</label>
         <input id="signup-logo" type="file" accept="image/png,image/jpeg,image/webp"
          onChange={e=>onLogo(e.target.files?.[0]||null)}/>
         {logo&&<small className="qa-directory-note"><FiCheckCircle/> {logo.name} selected. This file is saved locally until verification; if you switch browsers, you may need to upload it from Settings.</small>}
         <small className="qa-directory-note">PNG / JPG / WebP, max 1 MB. Logo publication requires approved institutional access.</small>
-      </div>
+      </div>}
     </div>
   </section>;
 }
