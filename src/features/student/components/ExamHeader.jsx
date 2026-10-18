@@ -1,8 +1,8 @@
-import { FiClock, FiMaximize2 } from "react-icons/fi";
+import { FiClock } from "react-icons/fi";
 import { formatTime } from "../../../utils/formatTime";
 import "../styles/exam-header.css";
 
-function ExamHeader({ studentExamDetails, timeLeft, onEnterFullscreen }) {
+function ExamHeader({ studentExamDetails, timeLeft }) {
   const studentName = studentExamDetails.studentName || "Student";
   const initial = studentName.trim().charAt(0).toUpperCase() || "S";
 
@@ -33,10 +33,6 @@ function ExamHeader({ studentExamDetails, timeLeft, onEnterFullscreen }) {
             <time className="examBoard__timer-text">{formatTime(timeLeft)}</time>
           </div>
         </div>
-        <button type="button" className="examBoard__fullscreen" onClick={onEnterFullscreen}>
-          <FiMaximize2 aria-hidden="true" />
-          <span>Enter fullscreen</span>
-        </button>
       </div>
     </header>
   );
