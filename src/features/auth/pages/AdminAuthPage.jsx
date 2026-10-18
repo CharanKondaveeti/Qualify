@@ -16,7 +16,7 @@ export default function AdminAuthPage({ signup = false }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState('');
   const [busy, setBusy] = useState(false);
-  const [registrationMode, setRegistrationMode] = useState('institution');
+  const [registrationMode] = useState('institution');
   const [institutionForm, setInstitutionForm] = useState({ ...emptyInstitution });
   const [institutionLogo, setInstitutionLogo] = useState(null);
   const navigate = useNavigate();
@@ -62,11 +62,8 @@ export default function AdminAuthPage({ signup = false }) {
     <section className={`adminAuth-card ${!isLogin && registrationMode === 'institution' ? 'qa-signup-wide' : ''}`} aria-labelledby="auth-title">
       <h1 className="qa-brand">QUALIFY <span>EXAMINATION PLATFORM</span></h1>
       <h1 id="auth-title">{isLogin ? 'Welcome' : 'Create your account'}</h1>
-      <p className="adminAuth-logo-subtext">{isLogin ? 'Sign in to continue to your institutional workspace.' : 'Register your institution with full details now, or create an account to accept an existing staff invitation.'}</p>
-      {!isLogin && <div className="qa-register-purpose" role="group" aria-label="Registration purpose">
-        <button type="button" className={registrationMode === 'institution' ? 'selected' : ''} onClick={() => setRegistrationMode('institution')}>Register an institution</button>
-        <button type="button" className={registrationMode === 'staff' ? 'selected' : ''} onClick={() => setRegistrationMode('staff')}>Joining as staff</button>
-      </div>}
+      <p className="adminAuth-logo-subtext">{isLogin ? 'Sign in to continue to your institutional workspace.' : 'Register your institution with full details. Staff Admin accounts are created by your institution after email verification.'}</p>
+
       <form className="adminAuth-form" onSubmit={isLogin ? handleLogin : handleSignup}>
         {!isLogin && <div className="adminAuth-input-group"><label htmlFor="auth-name">Full name</label><div className="qa-input-wrap"><FiUser /><input id="auth-name" type="text" autoComplete="name" placeholder="Your full name" value={name} maxLength={120} onChange={e=>setName(e.target.value)} required /></div></div>}
         <div className="adminAuth-input-group"><label htmlFor="auth-email">Email address</label><div className="qa-input-wrap"><FiMail /><input id="auth-email" type="email" autoComplete="email" placeholder="you@institution.edu" value={email} onChange={e => setEmail(e.target.value)} required /></div></div>
