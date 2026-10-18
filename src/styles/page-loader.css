@@ -1,1 +1,106 @@
-.qualify-page-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:210px;padding:30px;color:#536579;font-size:13px;letter-spacing:.01em;text-align:center}.qualify-page-loading--full{min-height:100dvh;background:#f8fafc}.qualify-page-loading__svg{filter:drop-shadow(0 3px 10px rgba(32,64,104,.08))}.qualify-page-loading__orbit{transform-origin:27px 27px;animation:qualify-orbit 1.3s cubic-bezier(.48,.13,.35,.88) infinite}@keyframes qualify-orbit{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.qualify-page-loading__orbit{animation:none;stroke-dasharray:140 0}}
+/* Shared QUALIFY brand loading state. */
+.qualify-page-loading {
+  display: flex;
+  min-height: 210px;
+  padding: 30px 22px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  color: #50637e;
+  text-align: center;
+}
+.qualify-page-loading--full {
+  min-height: 100dvh;
+  background: #f8fafc;
+}
+.qualify-page-loading__brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  animation: qualify-brand-appear .32s ease-out both;
+}
+.qualify-page-loading__mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 13px;
+  color: #fff;
+  background: linear-gradient(145deg, #163767 48%, #246ad8 50%);
+  box-shadow: 0 8px 24px #174b9b22;
+  animation: qualify-mark-breathe 1.6s ease-in-out infinite;
+}
+.qualify-page-loading__mark svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2;
+}
+.qualify-page-loading__wordmark {
+  color: #163767;
+  font-size: clamp(22px, 4vw, 27px);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: 1;
+}
+.qualify-page-loading__track {
+  position: relative;
+  display: block;
+  width: 116px;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e1e8f4;
+}
+.qualify-page-loading__track::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 43%;
+  border-radius: inherit;
+  background: #2b64cc;
+  animation: qualify-track-slide .85s ease-in-out infinite alternate;
+}
+.qualify-page-loading__label {
+  font-size: 12px;
+  letter-spacing: .02em;
+}
+@keyframes qualify-mark-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes qualify-brand-appear {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes qualify-track-slide {
+  from { transform: translateX(-2%); }
+  to { transform: translateX(140%); }
+}
+/* The tiny navigation veil is in the router shell, never in exam answer controls. */
+.qualify-navigation-veil {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(248, 250, 253, .96);
+  backdrop-filter: blur(3px);
+  pointer-events: auto;
+  animation: qualify-veil-appear .14s ease-out both;
+}
+.qualify-navigation-veil .qualify-page-loading {
+  min-height: 0;
+  padding: 20px;
+}
+@keyframes qualify-veil-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qualify-page-loading__brand,
+  .qualify-page-loading__mark,
+  .qualify-page-loading__track::after,
+  .qualify-navigation-veil { animation: none; }
+}
