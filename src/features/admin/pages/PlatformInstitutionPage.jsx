@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { listPlatformInstitutions, listInstitutionMembers, getInstitutionBranding } from '../../../services/institutionService';
+import { listPlatformInstitutions, listInstitutionMembers } from '../../../services/institutionService';
 import PageLoader from '../../../shared/components/PageLoader';
 export default function PlatformInstitutionPage(){
  const {institutionId}=useParams(); const [institution,setInstitution]=useState(null),[members,setMembers]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState('');

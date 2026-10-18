@@ -33,7 +33,6 @@ function downloadCsv(filename, rows) {
 
 export default function ExamOperations({
   exam,
-  questions,
   students,
   view = "overview",
 }) {

@@ -39,13 +39,6 @@ const QuestionTable = ({ questions }) => {
 
           <tbody>
             {processedQuestions.map((question) => {
-              const totalAttempts =
-                question.correctAnswers + question.incorrectAnswers;
-              const accuracy =
-                totalAttempts > 0
-                  ? Math.round((question.correctAnswers / totalAttempts) * 100)
-                  : 0;
-
               return (
                 <tr key={question.id} className="exam-report-table-row">
                   <td>{question.text}</td>

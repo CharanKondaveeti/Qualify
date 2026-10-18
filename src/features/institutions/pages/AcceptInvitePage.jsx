@@ -1,14 +1,13 @@
 import PageLoader from '../../../shared/components/PageLoader';
 import { useEffect, useState } from 'react';
 import { FiCheckCircle, FiMail, FiShield, FiUserCheck, FiXCircle } from 'react-icons/fi';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   acceptStaffInvitation, listMyPendingStaffInvitations, respondToStaffInvitation,
 } from '../../../services/institutionService';
 import '../../auth/styles/admin-auth.css';
 
 export default function AcceptInvitePage() {
-  const navigate = useNavigate();
   const [params] = useSearchParams();
   const token = params.get('token') || '';
   const [invitations, setInvitations] = useState([]);
