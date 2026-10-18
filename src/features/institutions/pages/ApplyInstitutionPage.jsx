@@ -19,7 +19,14 @@ export default function ApplyInstitutionPage() {
     setApplications(apps || []);
     setApproved(Boolean(access?.platform_owner || (access?.institutions || []).some(m => m.member_status === 'active' && m.institution_status === 'active')));
   }
-  useEffect(() => { reload().catch(e => setError(e.message)); }, []);
+  useEffect(() => {
+    const issue = sessionStorage.getItem("qualify-pending-application-error");
+    if (issue) {
+      sessionStorage.removeItem("qualify-pending-application-error");
+      setError(`Your institution application could not be submitted automatically: ${issue}. Review your details and try again.`);
+    }
+    reload().catch(e => setError(e.message));
+  }, []);
   async function submit(e) {
     e.preventDefault(); setBusy(true); setError(''); setMessage('');
     try {

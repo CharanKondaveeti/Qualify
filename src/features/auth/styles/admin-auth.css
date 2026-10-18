@@ -56,3 +56,27 @@
 .qa-application-item{padding:12px 0;border-bottom:1px solid #eef1f5;display:flex;justify-content:space-between;gap:15px;align-items:flex-start;font-size:12px}
 .qa-application-item strong{font-size:13px;display:block}.qa-application-item small{display:block;color:#718198;margin-top:3px}.qa-application-item span{color:#45658e;text-transform:capitalize}
 @media(max-width:560px){.adminAuth-card{padding:24px 19px;border-radius:10px}.qa-application-grid{grid-template-columns:1fr}.qa-auth-footer{flex-direction:column}.qa-invitation-actions{flex-direction:column}.qa-invitation-actions .adminAuth-button{width:100%}}
+
+/* Institution registration at account signup; applies only to the wider form. */
+.adminAuth-card.qa-signup-wide{max-width:860px;align-self:flex-start;margin:18px auto}
+.qa-register-purpose{display:flex;gap:8px;margin:0 0 18px;flex-wrap:wrap}
+.qa-register-purpose button{font:inherit;font-size:12px;font-weight:700;border:1px solid #d2deed;border-radius:9px;background:#f7f9fd;color:#49607f;min-height:40px;padding:9px 13px;cursor:pointer}
+.qa-register-purpose button.selected{border-color:#386fbd;color:#1e549f;background:#eaf2ff;box-shadow:inset 0 0 0 1px #386fbd}
+.qa-signup-institution{border-top:1px solid #e8edf6;padding-top:22px;margin-top:8px}
+.qa-signup-institution>header{margin-bottom:19px}
+.qa-signup-institution>header span{font-size:10px;font-weight:800;letter-spacing:.12em;color:#4f76a6}
+.qa-signup-institution>header h2{margin:5px 0 6px;font-size:20px}
+.qa-signup-institution>header p{font-size:12px;line-height:1.5;color:#70819a;margin:0}
+.qa-directory-search{display:flex;gap:9px;align-items:center;padding:0 12px;border:1px solid #cdd8e5;border-radius:8px;background:#fff}
+.qa-directory-search>svg{color:#7792b4;flex:none}
+.adminAuth-input-group .qa-directory-search input{border:0;box-shadow:none;padding:11px 0}
+.qa-directory-results{border:1px solid #dbe5f3;border-radius:9px;margin:6px 0;max-height:215px;overflow:auto;background:#fff}
+.qa-directory-results button{display:flex;flex-direction:column;gap:4px;width:100%;padding:10px 12px;background:#fff;border:0;border-bottom:1px solid #eff2f8;text-align:left;color:#1a3355;cursor:pointer}
+.qa-directory-results button:hover,.qa-directory-results button:focus-visible{background:#f2f6ff}
+.qa-directory-results button strong{font-size:12px}.qa-directory-results button small{font-size:11px;color:#71829c}
+.qa-directory-results p{margin:0;padding:11px 13px;color:#71829c;font-size:12px}
+.qa-manual-link{border:0;padding:4px 0;background:none;color:#245da8;text-align:left;text-decoration:underline;font-size:12px;font-weight:700;cursor:pointer}
+.qa-directory-note{display:block;font-size:11px;color:#72839c;line-height:1.45;margin-top:5px}
+.qa-directory-note svg{vertical-align:middle;color:#139a5d}
+.qa-signup-institution .qa-application-grid{margin:0}
+@media(max-width:600px){.adminAuth-card.qa-signup-wide{margin:0}.qa-signup-institution .qa-application-grid{grid-template-columns:1fr}}
