@@ -1,76 +1,60 @@
-import React from "react";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiCheck, FiChevronDown, FiEdit2, FiTrash2 } from "react-icons/fi";
 import "../styles/question-card.css";
 
+/** One compact, keyboard-accessible question row in the exam workspace. */
 export default function QuestionCard({
-  q,
-  index,
-  isExpanded,
-  onToggleExpand,
-  onEdit,
-  onDelete,
-  showActions = true,
-  marks = q.marks,
+  q, index, isExpanded = false, onToggleExpand, onEdit, onDelete,
+  showActions = false, marks = q.marks, disabled = false,
 }) {
+  const choices = Array.isArray(q.options) ? q.options : [];
+  const optionLabel = (n) => String.fromCharCode(65 + n);
+  const previewId = `qe-options-${q.question_id}`;
+
   return (
-    <div className="question-card">
-      <div
-        className="question-card__header"
-        onClick={() => onToggleExpand?.(q.question_id)}
-      >
-        <span className="question-card__number">{index + 1}</span>
-
-        <span className="question-card__text">{q.question_text}</span>
-
-        <small style={{ whiteSpace: "nowrap" }}>
-          {marks == null
-            ? "Set total marks"
-            : `${marks} mark${Number(marks) === 1 ? "" : "s"}`}
-        </small>
-
-        {showActions && (
-          <div className="question-card__actions">
-            <button
-              type="button"
-              className="question-card__edit-btn"
-              aria-label={`Edit question ${index + 1}`}
-              onClick={(event) => {
-                event.stopPropagation();
-                onEdit?.(q);
-              }}
-            >
-              <FiEdit2 />
-            </button>
-
-            <button
-              type="button"
-              className="question-card__delete-btn"
-              aria-label={`Delete question ${index + 1}`}
-              onClick={(event) => {
-                event.stopPropagation();
-                onDelete?.(q.question_id);
-              }}
-            >
-              <FiTrash2 />
-            </button>
-          </div>
-        )}
-      </div>
-
-      {isExpanded && (
-        <div className="question-card__options">
-          {q.options.map((opt, i) => (
-            <div
-              key={i}
-              className={`question-card__option ${
-                Number(i) === Number(q.correct_option) ? "correct" : ""
-              }`}
-            >
-              {opt}
-            </div>
-          ))}
+    <article className={`qe-question-card${isExpanded ? " is-expanded" : ""}`}>
+      <div className="qe-question-main">
+        <button type="button" className="qe-question-trigger"
+          aria-expanded={isExpanded} aria-controls={previewId}
+          onClick={() => onToggleExpand?.(q.question_id)}>
+          <span className="qe-question-number">{String(index + 1).padStart(2, "0")}</span>
+          <span className="qe-question-copy">
+            <span className="qe-question-text">{q.question_text}</span>
+            <span className="qe-question-meta">{choices.length} answer choices
+              <span aria-hidden="true">·</span>
+              {isExpanded ? "Hide choices" : "View choices"}
+            </span>
+          </span>
+          <FiChevronDown className="qe-question-chevron" aria-hidden="true" />
+        </button>
+        <div className="qe-question-tools">
+          <span className="qe-question-marks">
+            <strong>{marks ?? "—"}</strong> {Number(marks) === 1 ? "mark" : "marks"}
+          </span>
+          {showActions && <div className="qe-question-actions">
+            <button type="button" className="qe-question-edit" disabled={disabled}
+              onClick={() => onEdit?.(q)} aria-label={`Edit question ${index + 1}`}
+              title="Edit question"><FiEdit2 aria-hidden="true" /></button>
+            <button type="button" className="qe-question-delete" disabled={disabled}
+              onClick={() => onDelete?.(q)} aria-label={`Delete question ${index + 1}`}
+              title="Delete question"><FiTrash2 aria-hidden="true" /></button>
+          </div>}
         </div>
-      )}
-    </div>
+      </div>
+      <div id={previewId} hidden={!isExpanded} className="qe-question-answers">
+        <div className="qe-question-answers-heading">ANSWER OPTIONS
+          <span>Correct answer highlighted</span>
+        </div>
+        <div className="qe-question-options">
+          {choices.map((option, i) => {
+            const correct = i === Number(q.correct_option);
+            return <div key={i} className={`qe-question-choice${correct ? " is-correct" : ""}`}>
+              <span className="qe-question-letter">{optionLabel(i)}</span>
+              <span className="qe-question-option-text">{option}</span>
+              {correct && <span className="qe-question-correct"><FiCheck aria-hidden="true" /> Correct</span>}
+            </div>;
+          })}
+        </div>
+      </div>
+    </article>
   );
 }
