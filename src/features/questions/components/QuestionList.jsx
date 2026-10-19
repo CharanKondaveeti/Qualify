@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import {
-  FiAward, FiBookOpen, FiCheck, FiChevronDown, FiChevronUp, FiEdit2,
+  FiAward, FiBookOpen, FiCheck, FiChevronDown, FiChevronUp,
   FiPlus, FiSearch, FiShield, FiX,
 } from "react-icons/fi";
 import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
@@ -11,6 +11,7 @@ import {
 } from "../../../services/adminService";
 import QuestionCard from "./QuestionCard";
 import "../styles/question-list.css";
+import "../styles/exam-question-manager.css";
 
 const freshQuestion = () => ({
   question_text: "", options: ["", "", "", ""], correct_option: null, marks: 1,
@@ -38,7 +39,7 @@ function validateQuestion(q) {
   };
 }
 
-export default function QuestionList({ questions = [], exam, editAllowed = false, onUpdate, onAdd }) {
+export default function QuestionList({ questions = [], exam, editAllowed = false }) {
   const cache = useQueryClient();
   const dialog = useAppDialog();
   const [search, setSearch] = useState("");
@@ -50,6 +51,8 @@ export default function QuestionList({ questions = [], exam, editAllowed = false
   const editorRef = useRef(null);
   const textareaRef = useRef(null);
   const previousFocus = useRef(null);
+  const busyRef = useRef(busy);
+  busyRef.current = busy;
 
   // The parent verifies signed-in ownership and live exam timing; the backend
   // independently enforces the same policy even for direct API calls.
@@ -74,7 +77,7 @@ export default function QuestionList({ questions = [], exam, editAllowed = false
     document.body.style.overflow = "hidden";
     textareaRef.current?.focus();
     function keydown(event) {
-      if (event.key === "Escape" && !busy) {
+      if (event.key === "Escape" && !busyRef.current) {
         event.preventDefault();
         setEditor(null);
       }
@@ -96,7 +99,7 @@ export default function QuestionList({ questions = [], exam, editAllowed = false
       document.removeEventListener("keydown", keydown);
       previousFocus.current?.focus?.();
     };
-  }, [Boolean(editor), busy]);
+  }, [Boolean(editor)]);
 
   function startEditor(question = null) {
     if (!canEdit || busy) return;
@@ -136,10 +139,8 @@ export default function QuestionList({ questions = [], exam, editAllowed = false
     try {
       if (editor.mode === "edit") {
         await editQuestionInSupabase({ ...payload, question_id: editor.id });
-        onUpdate?.({ ...payload, question_id: editor.id });
       } else {
         await addQuestionToSupabase({ ...payload, exam_id: exam.exam_id });
-        onAdd?.({ ...payload, exam_id: exam.exam_id });
       }
       setEditor(null);
       await Promise.all([
@@ -259,9 +260,11 @@ export default function QuestionList({ questions = [], exam, editAllowed = false
           <fieldset className="qe-question-choices-fieldset" disabled={busy}>
             <legend>Answer choices <small>Choose one correct answer</small></legend>
             <div className="qe-question-edit-choices">
-              {draft.options.map((option, i) => <label key={i}
+              {draft.options.map((option, i) => <div key={i}
                 className={`qe-question-edit-choice${Number(draft.correct_option) === i && draft.correct_option !== null ? " is-correct" : ""}`}>
-                <input type="radio" name="qe-correct-option" checked={Number(draft.correct_option) === i && draft.correct_option !== null}
+                <input type="radio" name="qe-correct-option"
+                  aria-label={`Mark option ${i + 1} as the correct answer`}
+                  checked={Number(draft.correct_option) === i && draft.correct_option !== null}
                   onChange={() => setDraft(d => ({ ...d, correct_option: i }))} required />
                 <span className="qe-question-edit-letter">{String.fromCharCode(65 + i)}</span>
                 <input type="text" required value={option} placeholder={`Option ${i + 1}`}
@@ -272,7 +275,7 @@ export default function QuestionList({ questions = [], exam, editAllowed = false
                   })} />
                 {Number(draft.correct_option) === i && draft.correct_option !== null &&
                   <span className="qe-question-edit-correct"><FiCheck aria-hidden="true" /> Correct</span>}
-              </label>)}
+              </div>)}
             </div>
           </fieldset>
           <label className="qe-question-field qe-question-marks-field">Marks awarded
