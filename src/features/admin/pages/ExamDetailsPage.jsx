@@ -15,7 +15,6 @@ import ExamOperations from "../components/ExamOperations";
 import ExamTimingEditor from "../components/ExamTimingEditor";
 import ExamDetailsTabs from "../components/ExamDetailsTabs";
 import ExamHeader from "../components/ExamHeader";
-import ExamTimingSummary from "../components/ExamTimingSummary";
 import ExamRegrading from "../components/ExamRegrading";
 import "../styles/exam-details.css";
 import "../styles/exam-details-layout.css";
@@ -230,11 +229,10 @@ export default function ExamDetailsPage() {
 
   return (
     <div className={`view-exam-details qualify-exam-detail qe-workspace--${exam.exam_status}`}>
-      <ExamHeader exam={exam} studentCount={students.length}
+      <ExamHeader exam={exam}
         responsibleStaff={isSuperAdmin ? staff.find(member => member.user_id === exam.created_by) : exam.created_by === user?.id ? { name: user?.user_metadata?.full_name, email: user?.email } : null}
         showResponsibleStaff={isSuperAdmin || exam.created_by === user?.id} />
 
-      <ExamTimingSummary exam={exam} />
 
       {upcoming && <ExamRegistryLink examId={exam.exam_id} />}
 
