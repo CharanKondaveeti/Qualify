@@ -13,6 +13,7 @@ export const institutionTypes = [
 
 export const emptyInstitution = {
   name: "", code: "", institution_type: "", official_phone: "", official_email: "",
+  applicant_name: "", super_admin_designation: "",
   secondary_phone: "", contact_person: "", address_line: "", state: "",
   district: "", city: "", postal_code: "", website: "",
   affiliation: "", registration_number: "", directory_source: "manual",
@@ -21,13 +22,15 @@ export const emptyInstitution = {
 
 export function validateInstitution(form) {
   if ((form.name || "").trim().length < 3) return "Enter your official institution name.";
+  if ((form.applicant_name || "").trim().length < 2) return "Enter your full name.";
+  if ((form.super_admin_designation || "").trim().length < 2) return "Enter your designation at the institution.";
   if (!/^[a-z0-9][a-z0-9-]{2,39}$/.test(form.code || "")) return "Institution code must be 3–40 lowercase letters, numbers or hyphens.";
   if (!TYPES.includes(form.institution_type)) return "Select your institution type.";
   if (!/^[+0-9][0-9 ()-]{7,19}$/.test(form.official_phone || "")) return "Enter a valid phone number.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.official_email || "")) return "Enter the official institution email.";
   if ((form.address_line || "").trim().length < 8) return "Enter the complete street address.";
   if (["state","district","city"].some(k => (form[k] || "").trim().length < 2)) return "Enter the state, district and city.";
-  if (!/^[1-9][0-9]{5}$/.test(form.postal_code || "")) return "Enter a valid six-digit Indian PIN code.";
+  if (!/^[1-9][0-9]{5}$/.test(form.postal_code || "")) return "Enter a valid six-digit Indian postal ZIP code.";
   if (form.website && !/^https?:\/\//i.test(form.website)) return "Website must begin with https:// or http://.";
   return "";
 }
