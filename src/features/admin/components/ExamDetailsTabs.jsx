@@ -67,7 +67,7 @@ export default function ExamDetailsTabs({
   }
 
   async function deleteStudent(student) {
-    if (!upcoming || busyId) return;
+    if (!canEdit || busyId) return;
     if (!(await dialog.confirm(`Delete registration for ${student.student_name}? This cannot be undone.`, { title: "Delete registration", danger: true, confirmLabel: "Delete registration" }))) return;
     setBusyId(student.student_report_id);
     setError("");
@@ -84,7 +84,7 @@ export default function ExamDetailsTabs({
   }
 
   async function renewLink(student) {
-    if (!upcoming || busyId) return;
+    if (!canEdit || busyId) return;
     if (!(await dialog.confirm(`Replace the private exam link for ${student.student_name}? Their old link will stop working.`, { title: "Replace private link" }))) return;
     setBusyId(student.student_report_id);
     setError("");
@@ -201,11 +201,11 @@ export default function ExamDetailsTabs({
                         <td>{student.student_name}</td>
                         <td>{student.roll_no}</td>
                         <td>{student.email}</td>
-                        <td><div className="qualify-registration-list__buttons">
+                        <td>{canEdit ? <div className="qualify-registration-list__buttons">
                           <button type="button" disabled={disabled} onClick={() => beginEdit(student)} title="Edit registration" aria-label={`Edit ${student.student_name}`}><FiEdit2 /></button>
                           <button type="button" disabled={disabled} onClick={() => renewLink(student)} title="Replace private link" aria-label={`New private link for ${student.student_name}`}><FiLink /></button>
                           <button type="button" disabled={disabled} className="qualify-registration-list__danger" onClick={() => deleteStudent(student)} title="Delete registration" aria-label={`Delete ${student.student_name}`}><FiTrash2 /></button>
-                        </div></td>
+                        </div> : <span className="qe-locked-cell">Read-only</span>}</td>
                       </>
                     )}
                   </tr>
