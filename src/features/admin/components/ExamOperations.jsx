@@ -2,7 +2,7 @@ import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  FiActivity, FiAlertCircle, FiCheck, FiCheckCircle, FiClock, FiDownload,
+  FiActivity, FiAlertCircle, FiCheck, FiCheckCircle, FiClock, FiTrendingUp,
   FiEye, FiEyeOff, FiRefreshCw, FiSearch, FiShield, FiUsers,
 } from "react-icons/fi";
 import supabase, { isDemo } from "../../../lib/supabase";
@@ -313,7 +313,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
         <Metric label="Submitted" value={counts.submitted} Icon={FiUsers} />
         <Metric label="Average score" value={scores.length ? `${average} / ${exam.total_marks}` : "—"} Icon={FiActivity} />
         <Metric label="Passed" value={passed} Icon={FiCheckCircle} accent="green" />
-        <Metric label="Pass rate" value={passRate} Icon={FiAwardIcon} accent="blue" />
+        <Metric label="Pass rate" value={passRate} Icon={FiTrendingUp} accent="blue" />
       </div>
       <div className="qe-publication-row">
         <span className="qe-publication-icon"><FiEye aria-hidden="true" /></span>
@@ -330,4 +330,3 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     </>}
   </section>;
 }
-function FiAwardIcon(props) { return <FiActivity {...props} />; }
