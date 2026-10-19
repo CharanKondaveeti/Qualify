@@ -1,564 +1,333 @@
-import { useAppDialog } from '../../../shared/components/ConfirmDialogProvider';
+import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import supabase, { isDemo } from "../../../lib/supabase";
 import {
-  adminControl,
-  adminEvents,
-  adminClearEvents,
-} from "../../../services/secureExamService";
+  FiActivity, FiAlertCircle, FiCheck, FiCheckCircle, FiClock, FiDownload,
+  FiEye, FiEyeOff, FiRefreshCw, FiSearch, FiShield, FiUsers,
+} from "react-icons/fi";
+import supabase, { isDemo } from "../../../lib/supabase";
+import { adminControl, adminEvents, adminClearEvents } from "../../../services/secureExamService";
 import "../styles/operations.css";
+import "../styles/exam-students-results.css";
 
-function downloadCsv(filename, rows) {
-  const escapeCell = (value) => {
-    let text = String(value ?? "");
-    if (/^[=+@\-\t\r]/.test(text)) text = `\u0027${text}`;
-    return `"${text.replace(/"/g, '""')}"`;
-  };
+const STATUSES = [
+  { value: "all", title: "All" }, { value: "not started", title: "Not started" },
+  { value: "in progress", title: "In progress" }, { value: "submitted", title: "Submitted" },
+  { value: "revoked", title: "Revoked" },
+];
 
-  const content = rows.map((row) => row.map(escapeCell).join(",")).join("\r\n");
+const cleanStatus = value => String(value || "unknown").replace(/[^a-z]+/gi, "-").toLowerCase();
 
-  const url = URL.createObjectURL(
-    new Blob([content], {
-      type: "text/csv;charset=utf-8",
-    }),
-  );
-
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
+function Metric({ label, value, Icon, accent = "" }) {
+  return <div className={`qe-insight${accent ? ` qe-insight--${accent}` : ""}`}>
+    <div className="qe-insight-label"><span>{label}</span><Icon aria-hidden="true" /></div>
+    <strong>{value}</strong>
+  </div>;
 }
 
-export default function ExamOperations({
-  exam,
-  students,
-  view = "overview",
-}) {
+export default function ExamOperations({ exam, students = [], view = "overview" }) {
   const cache = useQueryClient();
   const dialog = useAppDialog();
-
   const [events, setEvents] = useState([]);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [working, setWorking] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState("all");
   const [studentSearch, setStudentSearch] = useState("");
   const [activitySearch, setActivitySearch] = useState("");
+  const [activityOpen, setActivityOpen] = useState(false);
 
-  const counts = useMemo(
-    () => ({
-      registered: students.length,
-      notStarted: students.filter((s) => s.student_status === "not started")
-        .length,
-      taking: students.filter((s) => s.student_status === "in progress").length,
-      submitted: students.filter((s) => s.student_status === "submitted")
-        .length,
-      revoked: students.filter((s) => s.student_status === "revoked").length,
-      offline: students.filter(
-        (s) =>
-          s.student_status === "in progress" &&
-          s.last_seen_at &&
-          Date.now() - new Date(s.last_seen_at).getTime() > 45000,
-      ).length,
-    }),
-    [students],
-  );
+  const completedExam = exam.exam_status === "completed";
+  const inExam = exam.exam_status === "active";
+  const counts = useMemo(() => ({
+    registered: students.length,
+    notStarted: students.filter(s => s.student_status === "not started").length,
+    taking: students.filter(s => s.student_status === "in progress").length,
+    submitted: students.filter(s => s.student_status === "submitted").length,
+    revoked: students.filter(s => s.student_status === "revoked").length,
+    offline: students.filter(s =>
+      s.student_status === "in progress" && s.last_seen_at &&
+      Date.now() - new Date(s.last_seen_at).getTime() > 45000,
+    ).length,
+  }), [students]);
 
-  const completed = students.filter(
-    (student) => student.student_status === "submitted",
-  );
-
-  const scores = completed.map((student) => Number(student.marks_scored) || 0);
-
+  const finished = students.filter(s => s.student_status === "submitted");
+  const scores = finished.map(s => Number(s.marks_scored)).filter(Number.isFinite);
   const average = scores.length
     ? (scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1)
     : "—";
-
-  const passed = completed.filter(
-    (student) => Number(student.marks_scored) >= Number(exam.pass_mark),
+  const passed = finished.filter(s =>
+    Number.isFinite(Number(s.marks_scored)) && Number(s.marks_scored) >= Number(exam.pass_mark),
   ).length;
-
-  const visibleStudents = students.filter(
-    (student) =>
-      (filter === "all" || student.student_status === filter) &&
-      `${student.student_name} ${student.roll_no} ${student.email}`
-        .toLowerCase()
-        .includes(studentSearch.trim().toLowerCase()),
-  );
+  const passRate = finished.length ? `${Math.round(passed / finished.length * 100)}%` : "—";
+  const visibleStudents = useMemo(() => {
+    const search = studentSearch.trim().toLowerCase();
+    return students.filter(s => (filter === "all" || s.student_status === filter) &&
+      [s.student_name, s.roll_no, s.email].some(v => String(v || "").toLowerCase().includes(search)));
+  }, [students, filter, studentSearch]);
 
   async function refresh() {
-    await cache.invalidateQueries({
-      queryKey: ["students-report", exam.exam_id],
-    });
+    if (refreshing) return;
+    setRefreshing(true);
+    setError("");
+    try {
+      await cache.invalidateQueries({ queryKey: ["students-report", exam.exam_id] });
+    } catch (err) {
+      setError(err.message || "Could not refresh student attempts.");
+    } finally {
+      setRefreshing(false);
+    }
   }
 
   useEffect(() => {
-    if (isDemo || view !== "students" || exam.exam_status === "upcoming") {
-      return;
-    }
-
+    if (isDemo || view !== "students" || exam.exam_status === "upcoming" || !activityOpen) return;
     let cancelled = false;
-
-    const update = () =>
-      adminEvents(exam.exam_id, activitySearch.trim())
-        .then((data) => {
-          if (!cancelled) {
-            setEvents(data ?? []);
-          }
-        })
-        .catch((err) => {
-          if (!cancelled) {
-            setError(err.message);
-          }
-        });
-
-    const delay = setTimeout(update, activitySearch.trim() ? 300 : 0);
-
-    const timer =
-      exam.exam_status === "active" ? setInterval(update, 15000) : null;
-
+    const update = () => adminEvents(exam.exam_id, activitySearch.trim())
+      .then(rows => { if (!cancelled) setEvents(rows ?? []); })
+      .catch(err => { if (!cancelled) setError(err.message || "Could not load activity."); });
+    const debounce = setTimeout(update, activitySearch.trim() ? 300 : 0);
+    const interval = inExam ? setInterval(update, 15000) : null;
     return () => {
       cancelled = true;
-      clearTimeout(delay);
-
-      if (timer) {
-        clearInterval(timer);
-      }
+      clearTimeout(debounce);
+      if (interval) clearInterval(interval);
     };
-  }, [exam.exam_id, exam.exam_status, activitySearch, view]);
+  }, [exam.exam_id, exam.exam_status, activitySearch, view, activityOpen, inExam]);
 
   async function control(attemptId, action, minutes = 0) {
-    if (
-      !(await dialog.confirm(`Apply ${action.replaceAll("_", " ")} to this student?`))
-    ) {
-      return;
-    }
-
+    if (working || !inExam) return;
+    if (!await dialog.confirm(`Apply ${action.replaceAll("_", " ")} to this student?`, {
+      title: "Confirm student control", confirmLabel: "Apply change",
+      danger: action === "revoke",
+    })) return;
     setWorking(true);
     setError("");
-
+    setInfo("");
     try {
       await adminControl(attemptId, action, minutes);
-
       setInfo("Student attempt updated.");
       await refresh();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Unable to change student attempt.");
     } finally {
       setWorking(false);
     }
   }
 
   async function clearActivity() {
-    if (exam.exam_status !== "completed" || isDemo) {
-      return;
-    }
-
-    if (
-      !(await dialog.confirm(
-        "Permanently delete the activity log for this CLOSED exam? Student answers and scores will NOT be deleted.", { title: "Delete activity logs", danger: true, confirmLabel: "Delete logs" }
-      ))
-    ) {
-      return;
-    }
-
+    if (!completedExam || isDemo || working) return;
+    if (!await dialog.confirm(
+      "Permanently delete the browser activity log for this closed exam? Registered students, answers and scores will be preserved.",
+      { title: "Delete activity log?", danger: true, confirmLabel: "Delete activity log" },
+    )) return;
     setWorking(true);
     setError("");
     setInfo("");
-
     try {
       const result = await adminClearEvents(exam.exam_id);
-
       setEvents([]);
-
-      setInfo(
-        `${result.deleted_count ?? 0} activity events deleted. Student scores and answers were preserved.`,
-      );
+      setInfo(`${result.deleted_count ?? 0} activity events deleted. Exam results are intact.`);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Unable to clear activity history.");
     } finally {
       setWorking(false);
     }
   }
 
   async function publish() {
-    if (exam.exam_status !== "completed") {
-      return;
-    }
-
-    if (
-      !(await dialog.confirm(
-        exam.results_published
-          ? "Hide published results?"
-          : "Publish results so students can view their scores?",
-      ))
-    ) {
-      return;
-    }
-
+    if (!completedExam || working) return;
+    if (!await dialog.confirm(
+      exam.results_published ? "Hide results from students? Recorded scores will not be changed." :
+        "Publish results? Students will be able to see their recorded exam results.",
+      { title: exam.results_published ? "Hide published results?" : "Publish examination results?",
+        confirmLabel: exam.results_published ? "Hide results" : "Publish results" },
+    )) return;
     setWorking(true);
     setError("");
-
+    setInfo("");
     try {
-      const { error: updateError } = await supabase
-        .from("exams")
-        .update({
-          results_published: !exam.results_published,
-        })
-        .eq("exam_id", exam.exam_id)
+      const { data, error: updateError } = await supabase.from("exams")
+        .update({ results_published: !exam.results_published })
+        .eq("exam_id", exam.exam_id).eq("exam_status", "completed")
         .select("exam_id");
-
-      if (updateError) {
-        throw updateError;
-      }
-
-      await cache.invalidateQueries({
-        queryKey: ["exams"],
-      });
-
-      setInfo("Result visibility updated.");
+      if (updateError) throw updateError;
+      if (!data?.length) throw new Error("Result visibility was not changed. Check your permissions.");
+      await cache.invalidateQueries({ queryKey: ["exams"] });
+      setInfo(exam.results_published ? "Results are now hidden from students." : "Results published successfully.");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Unable to update result visibility.");
     } finally {
       setWorking(false);
     }
   }
 
-  if (
-    exam.exam_status === "upcoming" ||
-    (view !== "students" && view !== "results")
-  ) {
-    return null;
-  }
+  if (exam.exam_status === "upcoming" || (view !== "students" && view !== "results")) return null;
 
-  return (
-    <section className="qualify-ops qualify-exam-operations">
-      <div aria-live="polite">
-        {error && (
-          <p role="alert" className="ops-error">
-            {error}
-          </p>
-        )}
+  return <section className="qualify-ops qualify-exam-operations qe-operations">
+    {(error || info) && <div className="qe-ops-messages" aria-live="polite">
+      {error && <p role="alert" className="ops-error">{error}</p>}
+      {info && <p role="status" className="ops-info">{info}</p>}
+    </div>}
 
-        {info && (
-          <p role="status" className="ops-info">
-            {info}
-          </p>
-        )}
+    {view === "students" && <>
+      <div className="qe-ops-heading">
+        <div>
+          <span className="qe-overline">{inExam ? "LIVE EXAMINATION" : "COMPLETED EXAMINATION"}</span>
+          <h2>{inExam ? "Student monitoring" : "Student attempts"}</h2>
+          <p>{inExam ? "Track registrations and live attempts. Activity indicators are signals, not proof of misconduct." :
+            "Review final attempt statuses and the exam's activity history."}</p>
+        </div>
+        <div className="qe-ops-heading-actions">
+          <span className={`qe-live-indicator${inExam ? " is-live" : ""}`}>
+            <span aria-hidden="true" />{inExam ? "Live · 15s refresh" : "Exam closed"}
+          </span>
+          <button type="button" className="qe-utility-button" onClick={refresh}
+            disabled={refreshing || working}><FiRefreshCw aria-hidden="true" />
+            {refreshing ? "Refreshing…" : "Refresh"}
+          </button>
+        </div>
       </div>
 
-      {/* STUDENT MONITORING */}
+      <div className="qe-insight-grid" aria-label="Student attempt summary">
+        <Metric label="Registered" value={counts.registered} Icon={FiUsers} />
+        <Metric label="Not started" value={counts.notStarted} Icon={FiClock} />
+        {inExam && <Metric label="In progress" value={counts.taking} Icon={FiActivity} accent="blue" />}
+        <Metric label="Submitted" value={counts.submitted} Icon={FiCheckCircle} accent="green" />
+        <Metric label="Revoked" value={counts.revoked} Icon={FiShield} />
+      </div>
 
-      {view === "students" && exam.exam_status !== "upcoming" && (
-        <>
-          <div className="qualify-exam-section-heading">
-            <div>
-              <h2>Student monitoring</h2>
+      <section className="qe-ops-panel" aria-labelledby="qe-students-title">
+        <header className="qe-ops-panel-head">
+          <div><h3 id="qe-students-title">Student directory</h3>
+            <p>Find a student and review their examination status.</p></div>
+          <span className="qe-counter">{visibleStudents.length} of {students.length}</span>
+        </header>
+        <div className="qe-ops-toolbar">
+          <label className="qe-ops-search"><FiSearch aria-hidden="true" />
+            <input type="search" aria-label="Search registered students"
+              placeholder="Search name, roll no. or email"
+              value={studentSearch} onChange={e => setStudentSearch(e.target.value)} />
+          </label>
+          <label className="qe-ops-select">Status
+            <select aria-label="Filter by student status" value={filter}
+              onChange={e => setFilter(e.target.value)}>
+              {STATUSES.filter(s => inExam || s.value !== "in progress").map(s =>
+                <option key={s.value} value={s.value}>{s.title}</option>)}
+            </select>
+          </label>
+        </div>
+        {inExam && counts.offline > 0 && <div className="qe-ops-attention">
+          <FiAlertCircle aria-hidden="true" /> {counts.offline} active attempt{counts.offline === 1 ? "" : "s"} may have lost connection. Check recent activity before taking action.
+        </div>}
+        <div className="qe-ops-table-scroll" role="region" aria-label="Student attempts" tabIndex={0}>
+          <table className="qe-ops-table">
+            <thead><tr>
+              <th>Student</th><th>Status</th>
+              <th>{inExam ? "Last contact" : "Submitted at"}</th>
+              <th>{inExam ? "Attempt controls" : "Attempt"}</th>
+            </tr></thead>
+            <tbody>
+              {visibleStudents.map(student => <tr key={student.student_report_id}>
+                <td><div className="qe-student-name">{student.student_name || "Unnamed student"}</div>
+                  <span className="qe-student-sub">{student.roll_no || "—"}{student.email ? ` · ${student.email}` : ""}</span></td>
+                <td><span className={`qe-attempt-status qe-attempt-status--${cleanStatus(student.student_status)}`}>
+                  <span aria-hidden="true" />{student.student_status || "Unknown"}</span></td>
+                <td className="qe-ops-time">
+                  {inExam
+                    ? (student.last_seen_at ? new Date(student.last_seen_at).toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" }) : "—")
+                    : (student.submitted_at ? new Date(student.submitted_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "—")}
+                </td>
+                <td>{inExam && student.student_status === "in progress" ?
+                  <div className="qe-attempt-controls">
+                    <button type="button" disabled={working} onClick={() => control(student.student_report_id, "reset_session")}>Reset device</button>
+                    {exam.timing_mode !== "time" && <button type="button" disabled={working}
+                      onClick={() => control(student.student_report_id, "extend_time", 5)}>+5 min</button>}
+                    <button type="button" className="qe-attempt-danger" disabled={working}
+                      onClick={() => control(student.student_report_id, "revoke")}>Revoke</button>
+                  </div> : <span className="qe-ops-placeholder">
+                    {completedExam ? "Read-only" : "No action needed"}</span>}</td>
+              </tr>)}
+              {!visibleStudents.length && <tr><td colSpan={4} className="qe-empty-table">
+                {students.length ? "No students match your search or status." : "No students have registered for this examination."}
+              </td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-              <p className="muted">
-                {exam.exam_status === "active"
-                  ? "Updates about every 15 seconds. Browser activity is a signal, not proof of cheating."
-                  : "Review final attempt statuses, connection history and recorded exam activity."}
-              </p>
-            </div>
-
-            <div className="ops-actions">
-              <button type="button" disabled={working} onClick={refresh}>
-                Refresh now
-              </button>
-            </div>
-          </div>
-
-          <div className="ops-cards ops-monitor-metrics" aria-label="Student status summary">
-            {[
-              ["Total registered", counts.registered, "total"],
-              ["Not started", counts.notStarted, "waiting"],
-              ["In progress", counts.taking, "running"],
-              ["Submitted", counts.submitted, "submitted"],
-              ["Revoked", counts.revoked, "revoked"],
-              ["Possibly disconnected", counts.offline, "offline"],
-            ].map(([label, value, kind]) => (
-              <div className={`ops-metric ops-metric--${kind}`} key={kind}>
-                <span className="ops-metric__label">{label}</span>
-                <strong className="ops-metric__value">{value}</strong>
-              </div>
-            ))}
-          </div>
-
-          <section className="ops-monitor-panel ops-student-controls" aria-labelledby="ops-student-controls-title">
-            <div className="ops-monitor-panel__head">
-              <div>
-                <h3 id="ops-student-controls-title">Student controls</h3>
-                <p>Find students, check their status and manage active attempts.</p>
-              </div>
-              <span className="ops-monitor-panel__counter">{visibleStudents.length} of {students.length} students</span>
-            </div>
-
-          <div className="ops-actions ops-monitor-toolbar">
-            <label className="ops-filter-label" htmlFor="student-status-filter">
-              <span>Status</span>
-              <select
-                id="student-status-filter"
-                value={filter}
-                onChange={(event) => setFilter(event.target.value)}
-              >
-                <option value="all">All</option>
-
-                {["not started", "in progress", "submitted", "revoked"].map(
-                  (status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ),
-                )}
-              </select>
+      <details className="qe-activity-details" open={activityOpen}
+        onToggle={event => setActivityOpen(event.currentTarget.open)}>
+        <summary className="qe-activity-summary">
+          <span className="qe-activity-summary-icon"><FiActivity aria-hidden="true" /></span>
+          <span><strong>Exam activity log</strong><small>Browser and attempt events · {activityOpen ? `${events.length} events loaded` : "Open to review"}</small></span>
+          <span className="qe-activity-expand">{activityOpen ? "Hide" : "View"} activity</span>
+        </summary>
+        <div className="qe-activity-content">
+          <div className="qe-activity-toolbar">
+            <label className="qe-ops-search"><FiSearch aria-hidden="true" />
+              <input type="search" aria-label="Search activity logs" placeholder="Search student or event"
+                value={activitySearch} onChange={e => setActivitySearch(e.target.value)} />
             </label>
-
-            <input
-              className="ops-search"
-              type="search"
-              aria-label="Search students by name, roll number or email"
-              placeholder="Search student name, roll or email"
-              value={studentSearch}
-              onChange={(event) => setStudentSearch(event.target.value)}
-            />
+            <div className="qe-activity-actions">
+              <span>{events.length} events · Latest 300 matches</span>
+              {completedExam && !isDemo && <button type="button" className="qe-delete-log" disabled={working}
+                onClick={clearActivity}>Delete activity log</button>}
+            </div>
           </div>
-
-          <div
-            className="ops-scroll ops-students-scroll"
-            role="region"
-            aria-label="Students table"
-            tabIndex={0}
-          >
-            <table>
-              <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Status</th>
-                  <th>Last contact</th>
-                  <th>Controls</th>
-                </tr>
-              </thead>
-
+          <div className="qe-ops-table-scroll qe-activity-scroll" role="region" aria-label="Exam activity" tabIndex={0}>
+            <table className="qe-ops-table">
+              <thead><tr><th>Student</th><th>Event</th><th>When</th></tr></thead>
               <tbody>
-                {visibleStudents.map((student) => (
-                  <tr key={student.student_report_id}>
-                    <td>
-                      {student.student_name}
-                      <small>{student.roll_no}</small>
-                    </td>
-
-                    <td>
-                      <span className={`ops-status ops-status--${String(student.student_status || "unknown").replace(/[^a-z]+/gi, "-").toLowerCase()}`}>
-                        {student.student_status}
-                      </span>
-                    </td>
-
-                    <td>
-                      {student.last_seen_at
-                        ? new Date(student.last_seen_at).toLocaleTimeString()
-                        : "—"}
-                    </td>
-
-                    <td>
-                      <div className="ops-actions">
-                        {exam.exam_status === "active" &&
-                          student.student_status === "in progress" && (
-                            <>
-                              <button
-                                type="button"
-                                disabled={working}
-                                onClick={() =>
-                                  control(
-                                    student.student_report_id,
-                                    "reset_session",
-                                  )
-                                }
-                              >
-                                Reset device
-                              </button>
-
-                              {exam.timing_mode !== "time" && (
-                                <button
-                                  type="button"
-                                  disabled={working}
-                                  onClick={() =>
-                                    control(
-                                      student.student_report_id,
-                                      "extend_time",
-                                      5,
-                                    )
-                                  }
-                                >
-                                  +5 min
-                                </button>
-                              )}
-
-                              <button
-                                type="button"
-                                disabled={working}
-                                onClick={() =>
-                                  control(student.student_report_id, "revoke")
-                                }
-                              >
-                                Revoke
-                              </button>
-                            </>
-                          )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-
-                {!visibleStudents.length && (
-                  <tr>
-                    <td colSpan={4}>No students match your filter.</td>
-                  </tr>
-                )}
+                {events.map((event, index) => <tr key={`${event.created_at}-${index}`}>
+                  <td><div className="qe-student-name">{event.student_name || "Student"}</div>
+                    <span className="qe-student-sub">{event.roll_no || "—"}</span></td>
+                  <td><span className="qe-activity-kind">{String(event.kind || "event").replaceAll("_", " ")}</span></td>
+                  <td className="qe-ops-time">{event.created_at ? new Date(event.created_at).toLocaleString("en-IN") : "—"}</td>
+                </tr>)}
+                {!events.length && <tr><td colSpan={3} className="qe-empty-table">No activity events found.</td></tr>}
               </tbody>
             </table>
           </div>
+          <p className="qe-activity-note"><FiShield aria-hidden="true" />
+            Browser activity is context for review, not definitive evidence of cheating.
+            {completedExam ? " Deleting these logs will not change student results." : ""}
+          </p>
+        </div>
+      </details>
+    </>}
 
-          </section>
-
-          {/* EXISTING ACTIVITY LOG */}
-
-          <section className="ops-monitor-panel ops-activity-panel" aria-labelledby="ops-activity-title">
-          <div className="ops-activity-heading ops-monitor-panel__head">
-            <div>
-              <h3 id="ops-activity-title">Recent exam activity</h3>
-              <p>Recorded browser and exam events. These signals require human review.</p>
-            </div>
-
-            {exam.exam_status === "completed" && !isDemo && (
-              <button
-                type="button"
-                className="ops-danger"
-                disabled={working}
-                onClick={clearActivity}
-              >
-                Delete activity log
-              </button>
-            )}
-          </div>
-
-          <div className="ops-actions ops-monitor-toolbar ops-activity-toolbar">
-            <input
-              className="ops-search"
-              type="search"
-              aria-label="Search recent exam activity by student or event"
-              placeholder="Search by student name, roll no. or activity"
-              value={activitySearch}
-              onChange={(event) => setActivitySearch(event.target.value)}
-            />
-
-            <span className="ops-count" role="status">
-              {events.length} events shown · Latest 300 matches
-            </span>
-          </div>
-
-          <div
-            className="ops-scroll ops-activity-scroll"
-            role="region"
-            aria-label="Recent exam activity, scrollable"
-            tabIndex={0}
-          >
-            <table>
-              <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Event</th>
-                  <th>When</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {events.map((event, index) => (
-                  <tr key={`${event.created_at}-${index}`}>
-                    <td>
-                      {event.student_name} ({event.roll_no})
-                    </td>
-
-                    <td><span className="ops-event-kind">{event.kind.replaceAll("_", " ")}</span></td>
-
-                    <td>{new Date(event.created_at).toLocaleString()}</td>
-                  </tr>
-                ))}
-
-                {!events.length && (
-                  <tr>
-                    <td colSpan={3}>No activity events recorded yet.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {exam.exam_status === "completed" && (
-            <p className="ops-helper">
-              This exam is closed. Clearing activity history does not delete
-              registrations, answers or results. This action cannot be undone.
-            </p>
-          )}
-          </section>
-        </>
-      )}
-
-      {/* RESULTS */}
-
-      {view === "results" && exam.exam_status === "completed" && (
-        <>
-          <h2>Results management</h2>
-
-          <div className="ops-cards qualify-exam-result-metrics">
-            <div>
-              <strong>{average}</strong>
-              <span>Average score</span>
-            </div>
-
-            <div>
-              <strong>{passed}</strong>
-              <span>Passed</span>
-            </div>
-          </div>
-
-          <div className="ops-actions">
-            <button
-              type="button"
-              disabled={working || exam.exam_status !== "completed"}
-              onClick={publish}
-            >
-              {exam.results_published ? "Hide results" : "Publish results"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                downloadCsv("qualify-results.csv", [
-                  ["Name", "Roll", "Email", "Status", "Score"],
-                  ...students.map((student) => [
-                    student.student_name,
-                    student.roll_no,
-                    student.email,
-                    student.student_status,
-                    student.marks_scored,
-                  ]),
-                ])
-              }
-            >
-              Export results CSV
-            </button>
-          </div>
-
-          {exam.exam_status !== "completed" && (
-            <p className="muted">
-              The exam must finish before results can be published.
-            </p>
-          )}
-        </>
-      )}
-    </section>
-  );
+    {view === "results" && completedExam && <>
+      <div className="qe-ops-heading qe-results-heading">
+        <div>
+          <span className="qe-overline">EXAMINATION REPORT</span>
+          <h2>Results overview</h2>
+          <p>Review recorded scores and manage when students can see their results.</p>
+        </div>
+        <span className={`qe-publish-state${exam.results_published ? " is-published" : ""}`}>
+          {exam.results_published ? <FiCheckCircle aria-hidden="true" /> : <FiEyeOff aria-hidden="true" />}
+          {exam.results_published ? "Published" : "Not published"}
+        </span>
+      </div>
+      <div className="qe-insight-grid qe-results-insights">
+        <Metric label="Submitted" value={counts.submitted} Icon={FiUsers} />
+        <Metric label="Average score" value={scores.length ? `${average} / ${exam.total_marks}` : "—"} Icon={FiActivity} />
+        <Metric label="Passed" value={passed} Icon={FiCheckCircle} accent="green" />
+        <Metric label="Pass rate" value={passRate} Icon={FiAwardIcon} accent="blue" />
+      </div>
+      <div className="qe-publication-row">
+        <span className="qe-publication-icon"><FiEye aria-hidden="true" /></span>
+        <div><strong>Student result visibility</strong>
+          <p>{exam.results_published ? "Results are available to students. You can hide them if needed." :
+            "Results are currently private. Publish when marking and review are complete."}</p>
+        </div>
+        <button type="button" className={`qe-publish-button${exam.results_published ? " is-unpublish" : ""}`}
+          disabled={working} onClick={publish}>
+          {exam.results_published ? <FiEyeOff aria-hidden="true" /> : <FiCheck aria-hidden="true" />}
+          {working ? "Updating…" : exam.results_published ? "Hide results" : "Publish results"}
+        </button>
+      </div>
+    </>}
+  </section>;
 }
+function FiAwardIcon(props) { return <FiActivity {...props} />; }
