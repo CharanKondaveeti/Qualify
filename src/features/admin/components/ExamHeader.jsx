@@ -1,78 +1,57 @@
-import {
-  FiArrowLeft, FiArrowRight, FiAward, FiBookOpen, FiCalendar,
-  FiCheckCircle, FiClock, FiEdit2, FiUsers, FiUser,
-} from "react-icons/fi";
+import { FiArrowLeft, FiAward, FiBookOpen, FiCalendar, FiUser, FiUsers } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { isDemo } from "../../../lib/supabase";
 import { useAdminWorkspace } from "../context/AdminWorkspaceContext";
 
-const STATE = {
-  upcoming: { label: "Upcoming", Icon: FiClock },
-  active: { label: "Active", Icon: FiClock },
-  completed: { label: "Completed", Icon: FiCheckCircle },
-};
+function formatDate(value) {
+  if (!value) return "Not scheduled";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Not scheduled" :
+    date.toLocaleString("en-IN", {
+      day: "numeric", month: "short", year: "numeric",
+      hour: "numeric", minute: "2-digit",
+    });
+}
 
+const STATUS_LABELS = { upcoming: "Upcoming", active: "In progress", completed: "Completed" };
+
+/** A familiar, concise exam hero inspired by the original Qualify layout. */
 export default function ExamHeader({
   exam, showResponsibleStaff = false, responsibleStaff = null,
-  studentCount = 0, canEdit = false, onNavigate,
+  studentCount = 0,
 }) {
   const navigate = useNavigate();
   const { institutionId } = useAdminWorkspace();
   const examsPath = isDemo ? "/demo/admin/exams"
     : `/app/i/${encodeURIComponent(institutionId)}/exams`;
-  const status = STATE[exam.exam_status] ? exam.exam_status : "upcoming";
-  const { Icon: StatusIcon, label } = STATE[status];
+  const status = STATUS_LABELS[exam.exam_status] ? exam.exam_status : "upcoming";
   const owner = responsibleStaff?.name || responsibleStaff?.email ||
     (exam.created_by ? "Staff unavailable" : "Not assigned");
-  const primaryTab = canEdit ? "edit" : status === "completed" ? "results" : "students";
-  const primaryLabel = canEdit ? "Edit exam" : status === "completed"
-    ? "View results" : status === "active" ? "Monitor students" : "View students";
 
   return <header className={`qe-header qe-header--${status}`}>
     <div className="qe-header-top">
       <button type="button" className="qe-back"
         onClick={() => navigate(examsPath, { replace: true })}>
-        <FiArrowLeft aria-hidden="true" /> All examinations
+        <FiArrowLeft aria-hidden="true" /> Back to Exams
       </button>
-      <span className="qe-header-context">EXAM DETAILS</span>
+      <span className="qe-header-context">EXAM WORKSPACE</span>
     </div>
-
     <div className="qe-header-main">
       <div className="qe-header-title">
-        <span className="qe-subject"><FiBookOpen aria-hidden="true" />
-          {exam.course || "Examination"}
-        </span>
         <h1>{exam.title}</h1>
-        {showResponsibleStaff && <div className="qe-responsible" title={responsibleStaff?.email || undefined}>
-          <FiUser aria-hidden="true" /> In charge: <strong>{owner}</strong>
-        </div>}
+        <div className="qe-header-meta">
+          <span><FiBookOpen aria-hidden="true" /> {exam.course || "Examination"}</span>
+          <span><FiCalendar aria-hidden="true" /> {formatDate(exam.scheduled_date)}</span>
+          <span><FiAward aria-hidden="true" /> {exam.total_marks ?? 0} marks</span>
+          {showResponsibleStaff && <span title={responsibleStaff?.email || undefined}>
+            <FiUser aria-hidden="true" /> Staff in charge: <strong>{owner}</strong>
+          </span>}
+          <span className="qe-header-registered"><FiUsers aria-hidden="true" /> {studentCount} students</span>
+        </div>
       </div>
-      <div className="qe-header-aside">
-        <span className={`qe-exam-status qe-exam-status--${status}`}>
-          <StatusIcon aria-hidden="true" /> {label}
-        </span>
-        {onNavigate && <button type="button" className="qe-header-cta"
-          onClick={() => onNavigate(primaryTab)}>
-          {canEdit ? <FiEdit2 aria-hidden="true" /> : status === "completed"
-            ? <FiAward aria-hidden="true" /> : <FiUsers aria-hidden="true" />}
-          {primaryLabel} <FiArrowRight aria-hidden="true" />
-        </button>}
-      </div>
-    </div>
-
-    <div className="qe-header-facts">
-      <div className="qe-header-fact">
-        <span className="qe-fact-icon"><FiBookOpen aria-hidden="true" /></span>
-        <span><strong>{exam.total_questions ?? 0}</strong><small>Questions</small></span>
-      </div>
-      <div className="qe-header-fact">
-        <span className="qe-fact-icon"><FiAward aria-hidden="true" /></span>
-        <span><strong>{exam.total_marks ?? 0}</strong><small>Total marks</small></span>
-      </div>
-      <div className="qe-header-fact">
-        <span className="qe-fact-icon"><FiUsers aria-hidden="true" /></span>
-        <span><strong>{studentCount}</strong><small>Registered students</small></span>
-      </div>
+      <span className={`qe-exam-status qe-exam-status--${status}`}>
+        <span className="qe-status-dot" aria-hidden="true" />{STATUS_LABELS[status]}
+      </span>
     </div>
   </header>;
 }
