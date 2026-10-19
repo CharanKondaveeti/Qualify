@@ -5,9 +5,10 @@ import { emptyInstitution, institutionTypes, searchInstitutionDirectory } from "
 const LABELS = {
  name:"Official institution name", institution_type:"Institution category",
  code:"Institution code",official_phone:"Official phone number",official_email:"Official email",
- contact_person:"Principal / contact person (optional)",secondary_phone:"Alternate phone (optional)",
+ applicant_name:"Your full name",super_admin_designation:"Your designation at the institution",
+ secondary_phone:"Alternate phone (optional)",
  address_line:"Address",city:"City / town",district:"District",state:"State / UT",
- postal_code:"6-digit PIN code", website:"Official website (optional)",
+ postal_code:"Postal ZIP code", website:"Official website (optional)",
  affiliation:"Board / university affiliation (optional)",
  registration_number:"Affiliation / registration number (optional)"
 };
@@ -18,49 +19,47 @@ const STATES=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh
 "Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 
 export default function InstitutionSignupFields({ value=emptyInstitution,onChange,logo,onLogo,showLogo=true }) {
-  const [query,setQuery]=useState("");
+  const [focused,setFocused]=useState(false);
   const [suggestions,setSuggestions]=useState([]);
   const [loading,setLoading]=useState(false);
   const [lookupError,setLookupError]=useState("");
-  const [manual,setManual]=useState(false);
   const set = (field,v) => onChange(previous => ({...previous,[field]:v}));
   useEffect(() => {
-    if (manual || query.trim().length < 3) {setSuggestions([]);setLoading(false);return;}
+    if (value.name.trim().length < 3 || !focused) {setSuggestions([]);setLoading(false);return;}
     let cancelled=false;
     const timer=setTimeout(() => {
       setLoading(true);
-      searchInstitutionDirectory(query,value.institution_type)
+      searchInstitutionDirectory(value.name,value.institution_type)
         .then(rows => {if(!cancelled){setSuggestions(rows);setLookupError("");}})
         .catch(() => {if(!cancelled){setSuggestions([]);setLookupError("Directory suggestions unavailable. You can enter your institution manually.");}})
         .finally(() => {if(!cancelled)setLoading(false);});
     },300);
     return()=>{cancelled=true;clearTimeout(timer);};
-  },[query,value.institution_type,manual]);
+  },[value.name,value.institution_type,focused]);
 
   function choose(result){
     onChange(old=>({...old,name:result.name,institution_type:result.type||old.institution_type,
       state:result.state||old.state,district:result.district||old.district,
       city:result.city||old.city,directory_source:result.source||"manual",
       directory_id:result.source_id||"",directory_name:result.name}));
-    setQuery(result.name);setSuggestions([]);
+    setSuggestions([]);setFocused(false);
   }
 
   function field(key,type="text",extra={}){
     return <div className="adminAuth-input-group" key={key}>
       <label htmlFor={`signup-${key}`}>{LABELS[key]}</label>
       <input id={`signup-${key}`} name={key} type={type} value={value[key]||""}
-        onChange={e=>set(key,e.target.value)} required={!key.includes("optional") && !["contact_person","secondary_phone","website","affiliation","registration_number"].includes(key)}
+        onChange={e=>set(key,e.target.value)} required={!key.includes("optional") && !["secondary_phone","website","affiliation","registration_number"].includes(key)}
         {...extra}/>
     </div>;
   }
-  function manualEntry(){
-    setManual(true);setSuggestions([]);
-    onChange(old=>({...old,name:query.trim()||old.name,directory_source:"manual",directory_id:"",directory_name:""}));
-  }
+
 
   return <section className="qa-signup-institution" aria-label="Institution details">
-    <header><span>INSTITUTION REGISTRATION</span><h2>Institution details</h2><p>Complete these details now. QUALIFY will submit them after email verification for Platform Owner approval.</p></header>
+    <header><span>INSTITUTION REGISTRATION</span><h2>Institution details</h2><p>Your email has been verified. Complete the institution application for Platform Owner approval.</p></header>
     <div className="qa-application-grid">
+      {field("applicant_name","text",{maxLength:120,placeholder:"Your full name",autoComplete:"name"})}
+      {field("super_admin_designation","text",{maxLength:120,placeholder:"e.g. Principal, Dean, Director or Registrar"})}
       <div className="adminAuth-input-group">
         <label htmlFor="signup-category">Institution category</label>
         <select id="signup-category" value={value.institution_type} required onChange={e=>set("institution_type",e.target.value)}>
@@ -75,37 +74,34 @@ export default function InstitutionSignupFields({ value=emptyInstitution,onChang
          onChange={e=>set("code",e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,""))}/>
       </div>
       <div className="adminAuth-input-group qa-wide">
-        <label htmlFor="signup-search">Find your institution in the directory</label>
+        <label htmlFor="signup-search">Official institution name</label>
         <div className="qa-directory-search"><FiSearch/>
-          <input id="signup-search" type="search" autoComplete="off"
-            placeholder="Search a school or college, or enter manually"
-            value={query} onChange={e=>{setQuery(e.target.value);if(manual)set("name",e.target.value);}}/>
+          <input id="signup-search" name="name" type="text" autoComplete="off" required
+            minLength={3} maxLength={160} placeholder="Search colleges or type the complete registered name"
+            value={value.name||""}
+            onFocus={()=>setFocused(true)}
+            onBlur={()=>setTimeout(()=>setFocused(false),150)}
+            onChange={e=>{
+              onChange(old=>({...old,name:e.target.value,directory_source:"manual",directory_id:"",directory_name:""}));
+              setFocused(true);
+            }}/>
         </div>
-        {!manual&&query.trim().length>=3&&(
+        {focused&&value.name.trim().length>=3&&(
           <div className="qa-directory-results" role="listbox" aria-label="Matching institutions">
-            {loading&&<p>Searching…</p>}
+            {loading&&<p>Searching institutions…</p>}
             {!loading&&suggestions.map((row,i)=><button key={`${row.source}-${row.source_id}-${i}`} type="button"
               role="option" aria-selected={value.directory_id===row.source_id}
-              onClick={()=>choose(row)}>
-              <strong>{row.name}</strong><small>{[row.city,row.district,row.state].filter(Boolean).join(", ")||"Directory entry"}</small>
+              onMouseDown={e=>e.preventDefault()} onClick={()=>choose(row)}>
+              <strong>{row.name}</strong>
+              <small>{[row.city,row.district,row.state].filter(Boolean).join(", ")||"Directory entry"}</small>
             </button>)}
-            {!loading&&!suggestions.length&&<p>No directory matches found. You can still register.</p>}
+            {!loading&&!suggestions.length&&<p>No match? Your typed full institution name will be used.</p>}
           </div>
         )}
         {lookupError&&<small className="qa-directory-note">{lookupError}</small>}
-        {!manual&&<button type="button" className="qa-manual-link" onClick={manualEntry}>My institution is not listed — enter manually</button>}
-        {manual&&<small className="qa-directory-note">Manual entry selected. You can enter the institution's exact registered name.</small>}
-        <small className="qa-directory-note">The directory includes only currently available imported entries. Selection does not verify institutional authority.</small>
-      </div>
-      <div className="adminAuth-input-group qa-wide">
-        <label htmlFor="signup-name">{LABELS.name}</label>
-        <input id="signup-name" required minLength={3} maxLength={160} value={value.name||""}
-         placeholder="Full official registered name"
-         onChange={e=>onChange(old=>({...old,name:e.target.value,directory_source:"manual",directory_id:"",directory_name:""}))}/>
+        <small className="qa-directory-note">Select a directory suggestion or enter the full registered name in this same field.</small>
       </div>
       {field("official_phone","tel",{maxLength:20,placeholder:"+91 ...",autoComplete:"tel"})}
-      {field("official_email","email",{maxLength:254,placeholder:"office@institution.edu"})}
-      {field("contact_person","text",{maxLength:120})}
       {field("secondary_phone","tel",{maxLength:20})}
       {field("address_line","text",{maxLength:250,placeholder:"Building, street and locality"})}
       <div className="adminAuth-input-group">
@@ -123,7 +119,7 @@ export default function InstitutionSignupFields({ value=emptyInstitution,onChang
       <div className="adminAuth-input-group qa-wide">
         <label htmlFor="signup-notes">Verification notes (optional)</label>
         <textarea id="signup-notes" rows={3} maxLength={1500} value={value.details||""}
-         onChange={e=>set("details",e.target.value)} placeholder="Your position and information that will help the Platform Owner verify the institution"/>
+         onChange={e=>set("details",e.target.value)} placeholder="Additional information that will help the Platform Owner verify your institution"/>
       </div>
       {showLogo && <div className="adminAuth-input-group qa-wide">
         <label htmlFor="signup-logo"><FiUploadCloud style={{verticalAlign:"middle"}}/> Institution logo (optional)</label>
