@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FiActivity, FiArrowRight, FiBuilding, FiCheckCircle, FiChevronRight,
+  FiActivity, FiArrowRight, FiHome, FiCheckCircle, FiChevronRight,
   FiClock, FiLayers, FiPlus, FiRefreshCw, FiSearch, FiShield,
   FiSlash, FiUsers, FiX,
 } from 'react-icons/fi';
@@ -309,7 +309,7 @@ export default function InstitutionsPage() {
                   </button>
                 </td>
               </tr>) : <tr><td colSpan={5} className="qi-table-empty">
-                <div className="qi-empty-icon"><FiBuilding aria-hidden="true" /></div>
+                <div className="qi-empty-icon"><FiHome aria-hidden="true" /></div>
                 <strong>{search ? 'No matches found' : filter !== 'all' ? 'No institutions in this category' : 'No institutions registered yet'}</strong>
                 <span>{search ? 'Try another name or institution code.' : 'Institutions will appear here when added or approved.'}</span>
                 {(search || filter !== 'all') && <button type="button" className="qi-clear" onClick={() => { setSearch(''); setFilter('all'); }}>Clear filters</button>}
@@ -328,7 +328,7 @@ export default function InstitutionsPage() {
     }}>
       <aside ref={drawerRef} className="qi-drawer" role="dialog" aria-modal="true" aria-labelledby="qi-create-title" aria-describedby="qi-create-description">
         <div className="qi-drawer-header">
-          <div className="qi-drawer-label"><FiBuilding aria-hidden="true" /> INSTITUTION SETUP</div>
+          <div className="qi-drawer-label"><FiHome aria-hidden="true" /> INSTITUTION SETUP</div>
           <button className="qi-drawer-close" type="button" disabled={Boolean(busyId)} onClick={closeCreate} aria-label="Close institution form"><FiX aria-hidden="true" /></button>
           <h2 id="qi-create-title">Create institution</h2>
           <p id="qi-create-description">Add an institution directly to Qualify and appoint its first Super Admin.</p>
