@@ -66,7 +66,7 @@ function validate(raw:unknown,email:string){
   const source=get("directory_source")||"manual",id=get("directory_id"),directoryName=get("directory_name");
   if(!sources.has(source)||id.length>160||directoryName.length>160)throw Error("Invalid directory details");
   return {name,code,website:site||null,details:details||null,
-    profile_details:{institution_type:type,official_phone:phone,official_email:email,
+    profile_details:{registration_flow:"preauth_otp_v2",institution_type:type,official_phone:phone,official_email:email,
       secondary_phone:secondary,address_line:address,state,district,city,postal_code:postal,
       website:site,affiliation,registration_number:registration,
       applicant_name:applicantName,super_admin_designation:designation,
