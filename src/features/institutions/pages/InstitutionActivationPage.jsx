@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiCheckCircle, FiLock, FiShield } from "react-icons/fi";
 import { activateRegistration } from "../../../services/institutionRegistrationService";
@@ -9,9 +9,11 @@ export default function InstitutionActivationPage(){
   const [token]=useState(()=>{
     const hash=new URLSearchParams(window.location.hash.slice(1));
     const value=hash.get("token")||"";
-    window.history.replaceState(window.history.state,"",window.location.pathname+window.location.search);
     return value;
   });
+  useEffect(()=>{
+    window.history.replaceState(window.history.state,"",window.location.pathname+window.location.search);
+  },[]);
   const [password,setPassword]=useState("");
   const [confirm,setConfirm]=useState("");
   const [busy,setBusy]=useState(false);
