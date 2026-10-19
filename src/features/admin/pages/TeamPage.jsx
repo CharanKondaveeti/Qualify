@@ -255,7 +255,7 @@ export default function TeamPage() {
         cancelLabel: "Cancel", danger: true }
     )) return;
     await run(
-      () => removeInstitutionStaff(institutionId, retry ? member.user_id : member.user_id),
+      () => removeInstitutionStaff(institutionId, member.user_id),
       "Staff account permanently removed."
     );
   }
