@@ -11,7 +11,7 @@ import { adminIssueLink, studentLink } from "../../../services/secureExamService
 import "../styles/exam-details-tabs.css";
 
 export default function ExamDetailsTabs({
-  students, studentsLoading = false, questions, exam, passMark, setPassMark, mode = "questions",
+  students, studentsLoading = false, questions, exam, passMark, setPassMark, mode = "questions", editable = false,
 }) {
   const cache = useQueryClient();
   const dialog = useAppDialog();
@@ -22,6 +22,7 @@ export default function ExamDetailsTabs({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const upcoming = exam.exam_status === "upcoming";
+  const canEdit = upcoming && editable;
 
   const visibleStudents = students.filter((student) =>
     `${student.student_name || ""} ${student.roll_no || ""} ${student.email || ""}`
@@ -29,7 +30,7 @@ export default function ExamDetailsTabs({
   );
 
   function beginEdit(student) {
-    if (!upcoming) return;
+    if (!canEdit) return;
     setError("");
     setMessage("");
     setEditingId(student.student_report_id);
@@ -41,7 +42,7 @@ export default function ExamDetailsTabs({
   }
 
   async function saveStudent(id) {
-    if (!upcoming || busyId) return;
+    if (!canEdit || busyId) return;
     if (!form.name.trim() || !form.email.trim() || !form.rollNo.trim()) {
       setError("Name, email and hall ticket number are required.");
       return;
@@ -106,7 +107,7 @@ export default function ExamDetailsTabs({
   }
 
   async function updateQuestion(question) {
-    if (!upcoming) return;
+    if (!canEdit) return;
     setError("");
     try {
       await editQuestionInSupabase(question);
@@ -120,13 +121,13 @@ export default function ExamDetailsTabs({
     return (
       <div className="upcoming-exam-details">
         {error && <p className="ops-error" role="alert">{error}</p>}
-        {upcoming ? (
+        {canEdit ? (
           <div className="questions-section">
-            <QuestionList questions={questions} onUpdate={updateQuestion} examId={exam.exam_id} exam={exam} />
+            <QuestionList questions={questions} onUpdate={updateQuestion} examId={exam.exam_id} exam={exam} editAllowed={canEdit} />
           </div>
         ) : (
           <>
-            <p className="qualify-registration-help">Questions are read-only once the exam has started.</p>
+            <p className="qualify-registration-help">Question editing is available only to the assigned staff member or Super Admin before the exam starts.</p>
             <QuestionTable questions={questions} />
           </>
         )}
@@ -149,7 +150,7 @@ export default function ExamDetailsTabs({
       <div className="qualify-registration-list__header">
         <div>
           <h2>Registered students <span>({students.length})</span></h2>
-          <p>Review and edit registrations before the exam starts.</p>
+          <p>{canEdit ? "Review and edit registrations before the exam starts." : "View registrations. Editing is unavailable once the exam starts."}</p>
         </div>
         <input type="search" aria-label="Search registered students"
           value={search} onChange={(event) => setSearch(event.target.value)}
