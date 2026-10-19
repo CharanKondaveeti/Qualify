@@ -211,6 +211,18 @@
   color:var(--ex-ink);font-weight:775;
 }
 
+/* Avoid nested white-on-white containers around live monitoring and result tables. */
+.qualify-exam-detail .qualify-exam-panel > .qe-operations {
+  padding:0;margin:0;border:0;border-radius:0;
+  background:transparent;box-shadow:none;
+}
+.qualify-exam-detail .qe-results-table-section .qe-scoreboard {
+  padding:0;border:0;border-radius:0;box-shadow:none;
+}
+.qualify-exam-detail .qe-questions-panel > .upcoming-exam-details {
+  padding:0;
+}
+
 /* Upcoming: complete setup editor. */
 .qualify-exam-detail .qe-setup-card{padding:0;overflow:hidden}
 .qualify-exam-detail .qe-setup-heading{
