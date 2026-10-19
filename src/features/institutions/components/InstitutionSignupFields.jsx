@@ -56,7 +56,7 @@ export default function InstitutionSignupFields({ value=emptyInstitution,onChang
 
 
   return <section className="qa-signup-institution" aria-label="Institution details">
-    <header><span>INSTITUTION REGISTRATION</span><h2>Institution details</h2><p>Your email has been verified. Complete the institution application for Platform Owner approval.</p></header>
+    <header><span>INSTITUTION REGISTRATION</span><h2>Institution details</h2><p>Complete your institution details for Platform Owner review.</p></header>
     <div className="qa-application-grid">
       {field("applicant_name","text",{maxLength:120,placeholder:"Your full name",autoComplete:"name"})}
       {field("super_admin_designation","text",{maxLength:120,placeholder:"e.g. Principal, Dean, Director or Registrar"})}
