@@ -32,6 +32,7 @@ const QuestionList = ({
       mutationFn: deleteQuestionFromSupabase,
       onSuccess: () => {
         queryClient.invalidateQueries({queryKey:["questions", exam.exam_id]});
+        queryClient.invalidateQueries({queryKey:["exams"]});
         toast.success("Question deleted successfully!");
       },
       onError: (error) => {
