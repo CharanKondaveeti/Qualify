@@ -304,7 +304,7 @@ export default function LandingPage() {
               <div className="qhome-primary-actions">
                 <Link
                   className="qhome-button qhome-button-primary"
-                  to="/institutions/apply"
+                  to="/signup"
                 >
                   <FiBookOpen aria-hidden="true" /> Register your institution{" "}
                   <FiArrowRight
@@ -420,7 +420,7 @@ export default function LandingPage() {
                     Apply to register your institution. Workspace access begins
                     after approval.
                   </p>
-                  <Link to="/institutions/apply">
+                  <Link to="/signup">
                     Register institution <FiArrowRight aria-hidden="true" />
                   </Link>
                 </div>
