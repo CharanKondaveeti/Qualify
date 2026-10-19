@@ -19,9 +19,10 @@ import ExamTimingSummary from "../components/ExamTimingSummary";
 import ExamRegrading from "../components/ExamRegrading";
 import "../styles/exam-details.css";
 import "../styles/exam-details-layout.css";
+import "../styles/exam-workspace.css";
 
 const TABS = [
-  { id: "edit", label: "Edit" },
+  { id: "edit", label: "Exam setup" },
   { id: "students", label: "Students" },
   { id: "questions", label: "Questions" },
   { id: "results", label: "Results" },
