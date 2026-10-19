@@ -31,3 +31,7 @@ export const listStaffOtpInvites = (institutionId) =>
   staffAction("list", { institutionId });
 export const completeStaffFirstPassword = (password) =>
   staffAction("complete_password", { password });
+
+// Institution Super Admin only: permanently remove scoped Staff Admin Auth account.
+export const removeInstitutionStaff = (institutionId, staffId) =>
+  staffAction("remove", { institutionId, staffId });
