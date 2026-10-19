@@ -4,9 +4,8 @@ import { useState } from "react";
 import { FiCheck, FiEdit2, FiLink, FiTrash2, FiX } from "react-icons/fi";
 import { useQueryClient } from "@tanstack/react-query";
 import QuestionList from "../../questions/components/QuestionList";
-import QuestionTable from "../../questions/components/QuestionTable";
 import StudentTable from "../../reports/components/StudentTable";
-import { editQuestionInSupabase, updateStudentInSupabase, deleteStudentFromSupabase } from "../../../services/adminService";
+import { updateStudentInSupabase, deleteStudentFromSupabase } from "../../../services/adminService";
 import { adminIssueLink, studentLink } from "../../../services/secureExamService";
 import "../styles/exam-details-tabs.css";
 
@@ -106,31 +105,11 @@ export default function ExamDetailsTabs({
     }
   }
 
-  async function updateQuestion(question) {
-    if (!canEdit) return;
-    setError("");
-    try {
-      await editQuestionInSupabase(question);
-      await cache.invalidateQueries({ queryKey: ["questions", exam.exam_id] });
-    } catch (err) {
-      setError(err.message || "Unable to update question.");
-    }
-  }
-
   if (mode === "questions") {
     return (
       <div className="upcoming-exam-details">
         {error && <p className="ops-error" role="alert">{error}</p>}
-        {canEdit ? (
-          <div className="questions-section">
-            <QuestionList questions={questions} onUpdate={updateQuestion} examId={exam.exam_id} exam={exam} editAllowed={canEdit} />
-          </div>
-        ) : (
-          <>
-            <p className="qualify-registration-help">Question editing is available only to the assigned staff member or Super Admin before the exam starts.</p>
-            <QuestionTable questions={questions} />
-          </>
-        )}
+        <QuestionList questions={questions} exam={exam} editAllowed={canEdit} />
       </div>
     );
   }
