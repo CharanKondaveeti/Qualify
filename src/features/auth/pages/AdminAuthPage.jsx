@@ -1,11 +1,14 @@
-import { isConfigured, isDemo } from '../../../lib/supabase';
-import { useState } from 'react';
+import supabase, { isConfigured, isDemo } from '../../../lib/supabase';
+import { useEffect, useState } from 'react';
 import { FiArrowRight, FiCheckCircle, FiLock, FiMail, FiShield, FiUser } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import InstitutionSignupFields from '../../institutions/components/InstitutionSignupFields';
 import { emptyInstitution,validateInstitution,stageSignupLogo,clearStagedSignupLogo } from '../../../services/institutionSignupService';
 import '../styles/admin-auth.css';
 import { loginAdmin, signupAdmin } from '../../../services/adminService';
+import { getInstitutionAccess, resolveWorkspace } from '../../../services/institutionService';
+import { staffSetupStatus } from '../../../services/staffOnboardingService';
+import PageLoader from '../../../shared/components/PageLoader';
 
 export default function AdminAuthPage({ signup = false }) {
   const [email, setEmail] = useState('');
@@ -16,10 +19,37 @@ export default function AdminAuthPage({ signup = false }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState('');
   const [busy, setBusy] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const [registrationMode] = useState('institution');
   const [institutionForm, setInstitutionForm] = useState({ ...emptyInstitution });
   const [institutionLogo, setInstitutionLogo] = useState(null);
   const navigate = useNavigate();
+
+  // Returning admins should go straight to their authorized workspace.
+  // Verify the session with Supabase rather than trusting stale local storage.
+  useEffect(() => {
+    if (!isLogin || !isConfigured || isDemo) {
+      setCheckingSession(false);
+      return;
+    }
+    let active = true;
+    setCheckingSession(true);
+    (async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data?.user) return;
+      const next = new URLSearchParams(window.location.search).get('next');
+      const safeInvite = next?.startsWith('/invitations') && !next.startsWith('//');
+      const destination = await staffSetupStatus()
+        ? '/staff/set-password'
+        : safeInvite ? next : resolveWorkspace(await getInstitutionAccess());
+      if (active) navigate(destination, { replace: true });
+    })().catch(() => {
+      // On verification failure, keep password sign-in available.
+    }).finally(() => {
+      if (active) setCheckingSession(false);
+    });
+    return () => { active = false; };
+  }, [isLogin, navigate]);
 
   async function handleLogin(e) {
     e.preventDefault(); if (busy) return;
@@ -58,6 +88,7 @@ export default function AdminAuthPage({ signup = false }) {
   }
 
   if (isDemo) return <div className="portal-message">Switching to secure Supabase login…</div>;
+  if (isLogin && checkingSession) return <PageLoader fullPage label="Checking your session…" />;
   return <main className="adminAuth-container">
     <section className={`adminAuth-card ${!isLogin && registrationMode === 'institution' ? 'qa-signup-wide' : ''}`} aria-labelledby="auth-title">
       <h1 className="qa-brand">QUALIFY <span>EXAMINATION PLATFORM</span></h1>
