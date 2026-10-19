@@ -102,3 +102,15 @@
 .qa-resubmit .qa-signup-institution>header{display:none}
 .qa-application-history summary{cursor:pointer;font-size:12px;color:#406298;font-weight:750;padding:9px 0}
 .qa-application-history .qa-application-item p{font-size:11px;color:#84616b;line-height:1.45}
+
+/* OTP-first institution application: status and rejected-application controls. */
+.qa-registration-actions { display:flex; flex-wrap:wrap; gap:12px; margin:18px 0; }
+.qa-registration-actions>.adminAuth-button { flex:1 1 210px; width:auto; }
+.qa-registration-actions>.qa-button-secondary { flex:1 1 210px; }
+.qa-registration-danger { color:#b42332; border-color:#f0c3ca; background:#fff; }
+.qa-registration-danger:hover:not(:disabled) { background:#fff4f5; }
+.qa-registration-actions svg { flex:none; width:15px; height:15px; }
+@media(max-width:550px) {
+  .qa-registration-actions { flex-direction:column; }
+  .qa-registration-actions>.adminAuth-button, .qa-registration-actions>.qa-button-secondary { flex:none; width:100%; }
+}
