@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { FiCheckCircle, FiClock, FiFileText, FiSearch, FiXCircle } from 'react-icons/fi';
-import { getInstitutionApplicationsForReview, reviewInstitutionApplication } from '../../../services/institutionService';
+import { getInstitutionApplicationsForReview } from '../../../services/institutionService';
+import { decideRegistration, resendRegistrationActivation } from '../../../services/institutionRegistrationService';
 import { useAppDialog } from '../../../shared/components/ConfirmDialogProvider';
 import PageLoader from '../../../shared/components/PageLoader';
 import './platform-applications.css';
@@ -19,15 +20,17 @@ function Details({ application }) {
     ['Institution code', application.requested_code],
     ['Institution type', p.institution_type?.replaceAll('_', ' ')],
     ['Applicant email', application.applicant_email],
+    ['Applicant name', p.applicant_name],
+    ['Super Admin designation', p.super_admin_designation],
     ['Official phone', p.official_phone],
-    ['Official email', p.official_email],
+
     ['Secondary phone', p.secondary_phone],
-    ['Contact person', p.contact_person],
+
     ['Street address', p.address_line],
     ['City / town', p.city],
     ['District', p.district],
     ['State / UT', p.state],
-    ['PIN code', p.postal_code],
+    ['Postal ZIP code', p.postal_code],
     ['Website', application.website || p.website],
     ['Affiliation / board / university', p.affiliation],
     ['Registration / affiliation number', p.registration_number],
@@ -100,13 +103,17 @@ export default function PlatformApplicationsPage() {
     if (!ok) return;
     setBusy(app.id); setError(''); setMessage('');
     try {
-      await reviewInstitutionApplication(app.id, approve, reason);
+      const result = await decideRegistration(app.id, approve, reason);
       await refresh();
       setTab(approve ? 'approved' : 'rejected');
       setSelectedId(app.id);
       setMessage(approve
-        ? 'Institution approved and the applicant was appointed Super Admin.'
-        : 'Application rejected. The feedback is now visible to the applicant.');
+        ? (result.emailed
+          ? 'Institution approved. An activation link was emailed to the Super Admin.'
+          : 'Institution approved, but the activation email failed. Use Resend activation link.')
+        : (result.emailed
+          ? 'Application rejected and feedback emailed to the applicant.'
+          : 'Application rejected. Email notification could not be sent.'));
     } catch (err) { setError(err.message); }
     finally { setBusy(''); }
   }
@@ -161,6 +168,14 @@ export default function PlatformApplicationsPage() {
             <small>Submitted {new Date(selected.created_at).toLocaleString('en-IN')}</small>
           </div>
           <Details application={selected}/>
+          {selected.status==="approved"&&<button type="button" className="action-btn"
+            disabled={Boolean(busy)} onClick={async()=>{
+              if(!await dialog.confirm("Invalidate the previous activation link and email a new one?",
+                {title:"Resend Super Admin activation",confirmLabel:"Send link"}))return;
+              setBusy(selected.id);setError("");setMessage("");
+              try{const result=await resendRegistrationActivation(selected.id);setMessage(result.message||"Activation email sent.");}
+              catch(e){setError(e.message);}finally{setBusy("");}
+            }}>Resend activation link</button>}
           {selected.status !== 'pending' ? <div className="qa-review-note qa-review-decision">
             <strong>{selected.status === 'rejected' ? 'Rejection feedback' : 'Owner review notes'}</strong>
             <p>{selected.review_notes || (selected.status === 'rejected'
@@ -179,7 +194,7 @@ export default function PlatformApplicationsPage() {
               <button type="button" className="integrated-danger" disabled={Boolean(busy)}
                 onClick={() => decide(selected, false)}>Reject with feedback</button>
             </div>
-            <p className="integrated-muted">Approving creates institutional access; rejecting keeps the application in review history.</p>
+            <p className="integrated-muted">Approving creates an Auth account and sends a one-time activation link; rejecting lets the applicant correct or delete their application.</p>
           </div>}
         </>}
       </div>
