@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { FiCheckCircle, FiClock, FiFileText, FiSearch, FiXCircle } from 'react-icons/fi';
-import { getInstitutionApplicationsForReview } from '../../../services/institutionService';
+import { getInstitutionApplicationsForReview, reviewInstitutionApplication } from '../../../services/institutionService';
 import { decideRegistration, resendRegistrationActivation } from '../../../services/institutionRegistrationService';
 import { useAppDialog } from '../../../shared/components/ConfirmDialogProvider';
 import PageLoader from '../../../shared/components/PageLoader';
@@ -103,17 +103,21 @@ export default function PlatformApplicationsPage() {
     if (!ok) return;
     setBusy(app.id); setError(''); setMessage('');
     try {
-      const result = await decideRegistration(app.id, approve, reason);
+      const usesNewFlow = !app.applicant_user_id;
+      const result = usesNewFlow
+        ? await decideRegistration(app.id, approve, reason)
+        : await reviewInstitutionApplication(app.id, approve, reason);
       await refresh();
       setTab(approve ? 'approved' : 'rejected');
       setSelectedId(app.id);
-      setMessage(approve
-        ? (result.emailed
-          ? 'Institution approved. An activation link was emailed to the Super Admin.'
-          : 'Institution approved, but the activation email failed. Use Resend activation link.')
-        : (result.emailed
-          ? 'Application rejected and feedback emailed to the applicant.'
-          : 'Application rejected. Email notification could not be sent.'));
+      setMessage(!usesNewFlow
+        ? (approve ? "Institution approved and its verified applicant appointed Super Admin."
+          : "Application rejected. Feedback is available to the applicant.")
+        : (approve
+          ? (result.emailed ? "Institution approved. Activation link emailed."
+            : "Institution approved, but activation email failed. Resend the activation link.")
+          : (result.emailed ? "Application rejected. Feedback emailed."
+            : "Application rejected. Applicant may return using email OTP.")));
     } catch (err) { setError(err.message); }
     finally { setBusy(''); }
   }
@@ -168,7 +172,7 @@ export default function PlatformApplicationsPage() {
             <small>Submitted {new Date(selected.created_at).toLocaleString('en-IN')}</small>
           </div>
           <Details application={selected}/>
-          {selected.status==="approved"&&<button type="button" className="action-btn"
+          {selected.status==="approved"&&selected.profile_details?.applicant_name&&<button type="button" className="action-btn"
             disabled={Boolean(busy)} onClick={async()=>{
               if(!await dialog.confirm("Invalidate the previous activation link and email a new one?",
                 {title:"Resend Super Admin activation",confirmLabel:"Send link"}))return;
