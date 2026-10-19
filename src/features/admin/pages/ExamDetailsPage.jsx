@@ -412,9 +412,7 @@ export default function ExamDetailsPage() {
         {/* RESULTS */}
 
         {activeTab === "results" && exam.exam_status === "completed" && (
-          <section className="qualify-exam-card">
-            <h2>Student results</h2>
-
+          <section className="qualify-exam-card qe-results-table-section">
             <ExamDetailsTabs
               mode="results"
               students={students}
