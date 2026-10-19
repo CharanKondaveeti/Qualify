@@ -1,4 +1,4 @@
-import { FiCalendar, FiClock, FiLogIn, FiInfo } from "react-icons/fi";
+import { FiAward, FiCalendar, FiClock, FiInfo, FiLogIn } from "react-icons/fi";
 
 function formatDate(value) {
   if (!value) return "Not set";
@@ -10,7 +10,6 @@ function formatDate(value) {
     });
 }
 
-/** Compact exam timetable: no decorative progress track or duplicated status. */
 export default function ExamTimingSummary({ exam }) {
   const fixed = exam.timing_mode === "time";
   const startTime = new Date(exam.scheduled_date).getTime();
@@ -19,29 +18,36 @@ export default function ExamTimingSummary({ exam }) {
     ? new Date(startTime + (Number.isFinite(entryMinutes) ? entryMinutes : 30) * 60000)
     : null;
   const metrics = [
-    { label: "Starts at", value: formatDate(exam.scheduled_date), Icon: FiCalendar },
+    { label: "Opens on", value: formatDate(exam.scheduled_date), Icon: FiCalendar },
     fixed
-      ? { label: "Closes at", value: formatDate(exam.ends_at), Icon: FiClock }
-      : { label: "Duration", value: `${exam.duration_minutes} minutes / student`, Icon: FiClock },
+      ? { label: "Scheduled closing", value: formatDate(exam.ends_at), Icon: FiClock }
+      : { label: "Duration per student", value: `${exam.duration_minutes} minutes`, Icon: FiClock },
     { label: "Last entry", value: formatDate(lastEntry), Icon: FiLogIn },
+    { label: "Total marks", value: `${exam.total_marks ?? 0} marks`, Icon: FiAward },
   ];
 
-  return <section className="qe-schedule" aria-label="Exam schedule">
-    <div className="qe-schedule-head">
-      <h2>Exam schedule</h2>
-      <span className="qe-schedule-type">{fixed ? "Fixed-time examination" : "Individual student timers"}</span>
-    </div>
-    <div className="qe-schedule-items">
-      {metrics.map(({ label, value, Icon }) => (
-        <div className="qe-schedule-item" key={label}>
-          <span className="qe-schedule-icon"><Icon aria-hidden="true" /></span>
-          <div><small>{label}</small><strong>{value}</strong></div>
+  return <section className="qe-schedule" aria-label="Exam timing">
+    <div className="qe-schedule-layout">
+      <div className="qe-schedule-intro">
+        <span className="qe-schedule-intro-icon"><FiClock aria-hidden="true" /></span>
+        <div>
+          <h2>Exam timing</h2>
+          <p>{fixed ? "All students share the same examination closing time." :
+            "Each student receives their own timed attempt."}</p>
         </div>
-      ))}
+      </div>
+      <div className="qe-schedule-items">
+        {metrics.map(({ label, value, Icon }) => (
+          <div className="qe-schedule-item" key={label}>
+            <span className="qe-schedule-icon"><Icon aria-hidden="true" /></span>
+            <div><small>{label}</small><strong>{value}</strong></div>
+          </div>
+        ))}
+      </div>
     </div>
     <p className="qe-schedule-note"><FiInfo aria-hidden="true" />
-      {fixed ? "Students share the same scheduled closing time." :
-        "Each student's timer begins when they start."}
+      {fixed ? "Late entries do not extend the shared closing time." :
+        "A student's timer starts when they begin. Approved time extensions apply only to that student."}
       {exam.emergency_stopped_at ? " This exam was stopped early." : ""}
     </p>
   </section>;
