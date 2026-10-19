@@ -13,7 +13,11 @@ export async function registrationAction(action,args={}){
   const {data,error}=await supabase.functions.invoke("qualify-institution-registration",{
     body:{action,...args},headers:token?{"x-applicant-session":token}:{}
   });
-  if(error||data?.error)throw new Error(data?.error||error?.context?.error||error?.message||"Registration service unavailable");
+  if (error) {
+    const payload = await error.context?.json?.().catch(() => null);
+    throw new Error(payload?.error || error.message || "Registration service unavailable");
+  }
+  if (data?.error) throw new Error(data.error);
   return data;
 }
 export const requestRegistrationOtp = email => registrationAction("request_otp",{email});
