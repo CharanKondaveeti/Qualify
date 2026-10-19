@@ -9,7 +9,7 @@ import {
   addInstitutionSuperAdmin, listInstitutionMembers, manageInstitutionMember,
 } from "../../../services/institutionService";
 import {
-  cancelStaffOtpInvite, listStaffOtpInvites, sendStaffOtp, verifyStaffOtp,
+  cancelStaffOtpInvite, listStaffOtpInvites, sendStaffOtp, verifyStaffOtp, removeInstitutionStaff,
 } from "../../../services/staffOnboardingService";
 import "../styles/operations.css";
 import "../styles/staff-invitations.css";
@@ -28,6 +28,7 @@ const statusLabel = {
   provisioned: "Awaiting first login", expired: "Expired",
   cancelled: "Cancelled", superseded: "Replaced",
   failed: "Failed", verified: "Verified", provisioning: "Processing",
+  removal_pending: "Removal pending",
 };
 const roleLabel = role => role === "institution_super_admin" ? "Super Admin" : "Staff Admin";
 
@@ -41,6 +42,7 @@ export default function TeamPage() {
   const canManage = isOwner || isSuperAdmin;
   const [members, setMembers] = useState([]);
   const [invites, setInvites] = useState([]);
+  const [removals, setRemovals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -63,6 +65,7 @@ export default function TeamPage() {
     ]);
     setMembers(people || []);
     setInvites(otpInvites?.items || []);
+    setRemovals(otpInvites?.removals || []);
     setNow(Date.now());
   }, [institutionId, canManage, isSuperAdmin]);
 
@@ -71,6 +74,7 @@ export default function TeamPage() {
     setLoading(true);
     setMembers([]);
     setInvites([]);
+    setRemovals([]);
     setModal(null);
     setSearch("");
     setTab("all");
@@ -87,6 +91,7 @@ export default function TeamPage() {
       if (!active) return;
       setMembers(people || []);
       setInvites(otpInvites?.items || []);
+      setRemovals(otpInvites?.removals || []);
     }).catch(e => {
       if (active) setError(e.message || "Unable to load staff.");
     }).finally(() => {
@@ -135,6 +140,9 @@ export default function TeamPage() {
       return result || { success: true };
     } catch (e) {
       setError(e.message || "Action failed. Try again.");
+      // Offboarding revokes membership before the Auth API deletion. Refresh the
+      // list even if deletion fails so the Super Admin can retry safely.
+      try { await load(); } catch { /* keep the original error visible */ }
       return null;
     } finally {
       setBusy(false);
@@ -235,6 +243,23 @@ export default function TeamPage() {
     );
   }
 
+  async function removeMember(member, retry = false) {
+    setMenuId(null);
+    if (!isSuperAdmin || (!retry && member.role !== "staff_admin")) return;
+    if (!await dialog.confirm(
+      retry
+        ? "Retry permanent account deletion for " + member.email + "? Existing institution access has already been revoked."
+        : "Suspend and permanently remove " + member.email + "? This revokes institution access, deletes their Staff Admin Auth account and personal question banks. Institutional exams and student results will be preserved. The staff member will need a completely new account and password to join another institution.",
+      { title: retry ? "Finish staff removal?" : "Suspend & remove Staff Admin?",
+        confirmLabel: retry ? "Retry removal" : "Suspend & remove",
+        cancelLabel: "Cancel", danger: true }
+    )) return;
+    await run(
+      () => removeInstitutionStaff(institutionId, retry ? member.user_id : member.user_id),
+      "Staff account permanently removed."
+    );
+  }
+
   async function submitOwner(e) {
     e.preventDefault();
     if (!isOwner || !ownerEmail.trim()) return;
@@ -267,18 +292,23 @@ export default function TeamPage() {
       role: "Staff Admin", status: inviteState(invite, now),
       invite,
     }));
-    const source = [...staffRows, ...invitationRows];
+    const removalRows = removals.map(removal => ({
+      kind: "removal", key: "removal-" + removal.user_id,
+      name: "Former staff member", email: removal.email,
+      role: "Staff Admin", status: "removal_pending", removal,
+    }));
+    const source = [...staffRows, ...invitationRows, ...removalRows];
     return source.filter(row => {
       if (tab === "active" && row.status !== "active") return false;
-      if (tab === "pending" && !["pending", "provisioned"].includes(row.status)) return false;
+      if (tab === "pending" && !["pending", "provisioned", "removal_pending"].includes(row.status)) return false;
       if (tab === "suspended" && row.status !== "suspended") return false;
       const haystack = [row.name, row.email, row.role, statusLabel[row.status] || row.status].join(" ").toLowerCase();
       return haystack.includes(search.trim().toLowerCase());
     });
-  }, [members, pendingInvites, tab, search, now]);
+  }, [members, pendingInvites, removals, tab, search, now]);
 
   const activeCount = members.filter(m => m.status === "active").length;
-  const pendingCount = pendingInvites.length;
+  const pendingCount = pendingInvites.length + removals.length;
 
   return (
     <section className="integrated-section qualify-team">
@@ -338,12 +368,13 @@ export default function TeamPage() {
                       <td><span className={"qt-status qt-" + row.status}>{statusLabel[row.status] || row.status}</span></td>
                       <td className="qt-row-detail">
                         {row.kind === "member" ? "Institution member" :
+                          row.kind === "removal" ? "Auth account deletion requires retry" :
                           row.status === "pending" ? "Expires " + new Date(row.invite.expires_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) :
                           row.status === "provisioned" ? "Password setup required" :
                           new Date(row.invite.created_at).toLocaleDateString()}
                       </td>
                       <td className="qt-actions">
-                        {(row.kind === "member" || row.status === "pending" || row.status === "expired") ? (
+                        {(row.kind === "member" || row.kind === "removal" || row.status === "pending" || row.status === "expired") ? (
                           <div className="qt-action-wrap">
                             <button type="button" className="qt-more" disabled={busy}
                               aria-label={"Actions for " + row.name} aria-expanded={menuId === row.key}
@@ -357,9 +388,17 @@ export default function TeamPage() {
                                     {row.member.role === "staff_admin" ? "Promote to Super Admin" : "Demote to Staff Admin"}
                                   </button>}
                                   <button type="button" onClick={() => changeMember(row.member, row.member.status === "active" ? "suspend" : "reactivate")}>
-                                    {row.member.status === "active" ? "Suspend access" : "Reactivate access"}
+                                    {row.member.status === "active" ? "Suspend" : "Reactivate access"}
                                   </button>
+                                  {isSuperAdmin && row.member.role === "staff_admin" && (
+                                    <button type="button" className="qt-menu-danger" onClick={() => removeMember(row.member)}>
+                                      Suspend & remove
+                                    </button>
+                                  )}
                                 </>
+                              ) : row.kind === "removal" ? (
+                                <button type="button" className="qt-menu-danger"
+                                  onClick={() => removeMember(row.removal, true)}>Retry permanent removal</button>
                               ) : (
                                 <>
                                   {row.status === "pending" && <button type="button" onClick={() => openVerify(row.invite)}>Verify OTP</button>}
