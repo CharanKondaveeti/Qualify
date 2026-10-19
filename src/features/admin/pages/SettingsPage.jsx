@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import {
   FiCamera,
   FiCheckCircle,
+  FiChevronRight,
+  FiArrowRight,
   FiLock,
   FiMail,
   FiShield,
@@ -10,6 +12,8 @@ import {
   FiHome,
   FiLogOut,
   FiTrash2,
+  FiSettings,
+  FiKey,
 } from "react-icons/fi";
 import supabase, { isDemo } from "../../../lib/supabase";
 import { useAdminWorkspace } from "../context/AdminWorkspaceContext";
@@ -48,6 +52,7 @@ export default function SettingsPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [busy, setBusy] = useState("");
+  const [activeSection, setActiveSection] = useState("profile");
   const [feedback, setFeedback] = useState({ type: "", text: "" });
   const role = isOwner
     ? "Platform Owner"
@@ -236,272 +241,247 @@ export default function SettingsPage() {
     });
   }
 
+  const avatarLabel = (user.user_metadata?.full_name || user.email || "QA")
+    .trim().split(/\s+/).slice(0, 2).map(part => part[0]?.toUpperCase()).join("") || "QA";
+
+  const sections = [
+    { id: "profile", label: "My profile", caption: "Your personal details", Icon: FiUser },
+    { id: "email", label: "Email address", caption: "Sign-in and recovery", Icon: FiMail },
+    { id: "security", label: "Password & security", caption: "Protect your account", Icon: FiShield },
+    ...(!isOwner ? [{
+      id: "institution", label: "Institution identity",
+      caption: "Name and branding", Icon: FiHome,
+    }] : []),
+  ];
+
+  function chooseSection(id) {
+    setActiveSection(id);
+    setFeedback({ type: "", text: "" });
+  }
+
   return (
     <section className="qualify-settings">
-      <header className="qualify-settings-title">
-        <span className="qualify-settings-eyebrow">YOUR WORKSPACE</span>
-        <h1>Settings</h1>
-        <p>Manage your profile, account security and institution identity.</p>
+      <header className="qs-page-header">
+        <div className="qs-page-heading">
+          <div className="qs-breadcrumb"><FiSettings aria-hidden="true" /> Account <FiChevronRight aria-hidden="true" /> Settings</div>
+          <h1>Settings</h1>
+          <p>Manage your account, protect your sign-in, and maintain institution identity.</p>
+        </div>
+        <span className="qs-role-pill"><FiShield aria-hidden="true" /> {role}</span>
       </header>
 
-      {feedback.text && (
-        <div
-          role={feedback.type === "error" ? "alert" : "status"}
-          className={`qualify-settings-message ${feedback.type}`}
-        >
-          {feedback.type === "success" ? <FiCheckCircle /> : <FiShield />}
-          {feedback.text}
+      <section className="qs-account-overview" aria-label="Signed-in account">
+        <span className="qs-account-avatar" aria-hidden="true">{avatarLabel}</span>
+        <div className="qs-account-summary">
+          <span className="qs-summary-eyebrow">SIGNED-IN ACCOUNT</span>
+          <h2>{user.user_metadata?.full_name || user.email || "Qualify administrator"}</h2>
+          <p><FiMail aria-hidden="true" /> {user.email || "No email address"}</p>
         </div>
-      )}
+        <div className="qs-account-status">
+          <span className="qs-account-status-indicator"><FiCheckCircle aria-hidden="true" /> {user.email_confirmed_at ? "Email verified" : "Account active"}</span>
+          <small>Account and sign-in settings</small>
+        </div>
+      </section>
 
-      <div className="qualify-settings-grid">
-        <div className="qualify-settings-stack">
-          <section className="qualify-settings-panel">
-            <div className="qualify-settings-panel-title">
-              <span className="qualify-settings-icon">
-                <FiUser />
-              </span>
-              <div>
-                <h2>My profile</h2>
-                <p>Your personal administrator details</p>
-              </div>
-            </div>
-            <form onSubmit={saveProfile} className="qualify-settings-form">
-              <label htmlFor="setting-name">Display name</label>
-              <input
-                id="setting-name"
-                value={displayName}
-                maxLength={80}
-                minLength={2}
-                required
-                disabled={Boolean(busy) || isDemo}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-              <label htmlFor="setting-role">Account role</label>
-              <input
-                id="setting-role"
-                readOnly
-                value={role}
-                className="qualify-settings-readonly"
-              />
-              <div className="qualify-settings-actions">
-                <button type="submit" disabled={Boolean(busy) || isDemo}>
-                  {busy === "profile" ? "Saving…" : "Save profile"}
-                </button>
-              </div>
-            </form>
-          </section>
-
-          <section className="qualify-settings-panel">
-            <div className="qualify-settings-panel-title">
-              <span className="qualify-settings-icon">
-                <FiLock />
-              </span>
-              <div>
-                <h2>Security</h2>
-                <p>Keep your account safe</p>
-              </div>
-            </div>
-            <form className="qualify-settings-form" onSubmit={changePassword}>
-              <h3>Change password</h3>
-              <label htmlFor="setting-current-password">Current password</label>
-              <input
-                id="setting-current-password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                disabled={Boolean(busy) || isDemo}
-              />
-              <label htmlFor="setting-new-password">New password</label>
-              <input
-                id="setting-new-password"
-                type="password"
-                autoComplete="new-password"
-                minLength={8}
-                required
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                disabled={Boolean(busy) || isDemo}
-              />
-              <label htmlFor="setting-confirm-password">
-                Confirm new password
-              </label>
-              <input
-                id="setting-confirm-password"
-                type="password"
-                autoComplete="new-password"
-                minLength={8}
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={Boolean(busy) || isDemo}
-              />
-              <div className="qualify-settings-actions">
-                <button disabled={Boolean(busy) || isDemo}>
-                  {busy === "password" ? "Updating…" : "Update password"}
-                </button>
-              </div>
-            </form>
-            <div className="qualify-settings-subsection">
-              <FiShield />
-              <div>
-                <strong>Other devices</strong>
-                <p>Sign out any other device currently using your account.</p>
-              </div>
-              <button
-                className="qualify-settings-secondary"
-                type="button"
-                disabled={Boolean(busy) || isDemo}
-                onClick={signOutOtherSessions}
-              >
-                <FiLogOut /> Sign out others
+      <div className="qs-settings-layout">
+        <nav className="qs-section-nav" aria-label="Settings sections">
+          <div className="qs-nav-caption">SETTINGS MENU</div>
+          <div className="qs-nav-items">
+            {sections.map(({ id, label, caption, Icon }) => (
+              <button key={id} type="button"
+                className={activeSection === id ? "qs-nav-item is-current" : "qs-nav-item"}
+                aria-current={activeSection === id ? "page" : undefined}
+                onClick={() => chooseSection(id)}>
+                <span className="qs-nav-icon"><Icon aria-hidden="true" /></span>
+                <span className="qs-nav-copy"><strong>{label}</strong><small>{caption}</small></span>
+                <FiChevronRight className="qs-nav-chevron" aria-hidden="true" />
               </button>
-            </div>
-          </section>
-        </div>
+            ))}
+          </div>
+          <div className="qs-nav-footer">
+            <FiShield aria-hidden="true" />
+            <p>Changes to your profile and security are protected by Supabase authentication.</p>
+          </div>
+        </nav>
 
-        <div className="qualify-settings-stack">
-          <section className="qualify-settings-panel">
-            <div className="qualify-settings-panel-title">
-              <span className="qualify-settings-icon">
-                <FiMail />
-              </span>
+        <main className="qs-settings-main" aria-label="Settings details">
+          {feedback.text && (
+            <div role={feedback.type === "error" ? "alert" : "status"}
+              className={`qs-notice ${feedback.type}`}>
+              {feedback.type === "success" ? <FiCheckCircle aria-hidden="true" /> : <FiShield aria-hidden="true" />}
+              <span>{feedback.text}</span>
+            </div>
+          )}
+
+          {activeSection === "profile" && <section className="qs-content-card" aria-labelledby="qs-profile-heading">
+            <div className="qs-content-head">
+              <span className="qs-section-symbol"><FiUser aria-hidden="true" /></span>
               <div>
-                <h2>Email address</h2>
-                <p>Used to sign in and recover your account</p>
+                <span className="qs-content-eyebrow">PERSONAL INFORMATION</span>
+                <h2 id="qs-profile-heading">My profile</h2>
+                <p>Keep your administrator identity up to date across Qualify.</p>
               </div>
             </div>
-            <form className="qualify-settings-form" onSubmit={changeEmail}>
-              <label htmlFor="setting-email">Account email</label>
-              <input
-                id="setting-email"
-                type="email"
-                autoComplete="email"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                required
-                disabled={Boolean(busy) || isDemo}
-              />
-              <p className="qualify-settings-hint">
-                Changing your email may require confirmation from your current
-                and new addresses.
-              </p>
-              <div className="qualify-settings-actions">
-                <button
-                  disabled={
-                    Boolean(busy) || isDemo || newEmail.trim() === user.email
-                  }
-                >
-                  {busy === "email" ? "Requesting…" : "Change email"}
+            <form onSubmit={saveProfile} className="qs-form">
+              <div className="qs-form-row">
+                <label className="qs-field" htmlFor="setting-name">
+                  <span>Display name</span>
+                  <input id="setting-name" value={displayName} minLength={2} maxLength={80}
+                    autoComplete="name" required disabled={Boolean(busy) || isDemo}
+                    onChange={event => setDisplayName(event.target.value)} placeholder="Your full name" />
+                  <small>This name is shown to administrators in your workspace.</small>
+                </label>
+                <label className="qs-field" htmlFor="setting-role">
+                  <span>Account role</span>
+                  <input id="setting-role" value={role} readOnly className="qs-readonly" />
+                  <small>Assigned through your institutional permissions.</small>
+                </label>
+              </div>
+              <div className="qs-form-footer">
+                <span><FiShield aria-hidden="true" /> Changes apply to your Qualify account.</span>
+                <button className="qs-primary" type="submit" disabled={Boolean(busy) || isDemo}>
+                  {busy === "profile" ? "Saving…" : "Save changes"} <FiArrowRight aria-hidden="true" />
                 </button>
               </div>
             </form>
-          </section>
+          </section>}
 
-          {!isOwner && <section className="qualify-settings-panel">
-            <div className="qualify-settings-panel-title">
-              <span className="qualify-settings-icon">
-                <FiHome />
-              </span>
+          {activeSection === "email" && <section className="qs-content-card" aria-labelledby="qs-email-heading">
+            <div className="qs-content-head">
+              <span className="qs-section-symbol"><FiMail aria-hidden="true" /></span>
               <div>
-                <h2>Institution identity</h2>
-                <p>
-                  Shared branding for your institution's administrators and
-                  students
-                </p>
+                <span className="qs-content-eyebrow">ACCOUNT ADDRESS</span>
+                <h2 id="qs-email-heading">Email address</h2>
+                <p>Your primary sign-in and account-recovery email.</p>
               </div>
             </div>
-            {institutionId ? (
-              <form className="qualify-settings-form" onSubmit={saveBranding}>
-                <div className="qualify-settings-brand-preview">
-                  {logoPreview ? (
-                    <span className="qualify-settings-logo-preview">
-                      <img
-                        src={logoPreview}
-                        alt="New institution logo preview"
-                      />
-                    </span>
-                  ) : (
-                    <InstitutionBrand
-                      name={institutionName || selectedInstitution?.name}
-                      logoPath={logoPath}
-                      subtitle="Institution logo"
-                    />
-                  )}
-                </div>
-                {canEditInstitution && (
-                  <div className="qualify-settings-logo-controls">
-                    <label
-                      className="qualify-settings-upload"
-                      htmlFor="setting-logo"
-                    >
-                      <FiCamera /> Choose logo
-                      {/* Keep the file input inside its visible label so
-                          browser focus never scrolls to the dashboard origin. */}
-                      <input
-                        id="setting-logo"
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp"
-                        onChange={selectLogo}
-                        disabled={Boolean(busy)}
-                      />
-                    </label>
-                    {(logoPath || logoFile) && (
-                      <button
-                        type="button"
-                        className="qualify-settings-remove"
-                        disabled={Boolean(busy)}
-                        onClick={() => {
-                          setLogoPath(null);
-                          setLogoFile(null);
-                        }}
-                      >
-                        <FiTrash2 /> Remove logo
-                      </button>
-                    )}
-                  </div>
-                )}
-                <p className="qualify-settings-hint">
-                  PNG, JPG or WebP · maximum 1 MB · square images look best.
-                </p>
-                <label htmlFor="setting-institution">
-                  Institution display name
-                </label>
-                <input
-                  id="setting-institution"
-                  minLength={3}
-                  maxLength={160}
-                  required
-                  value={institutionName}
-                  onChange={(e) => setInstitutionName(e.target.value)}
-                  readOnly={!canEditInstitution}
-                  disabled={Boolean(busy)}
-                  className={
-                    !canEditInstitution ? "qualify-settings-readonly" : ""
-                  }
-                />
-                {canEditInstitution ? (
-                  <div className="qualify-settings-actions">
-                    <button disabled={Boolean(busy)}>
-                      {busy === "branding"
-                        ? "Saving…"
-                        : "Save institution changes"}
-                    </button>
-                  </div>
-                ) : (
-                  <p className="qualify-settings-hint">
-                    Only your Institution Super Admin can edit institution
-                    branding.
-                  </p>
-                )}
-              </form>
-            ) : (
-              <p className="qualify-settings-hint">No institution selected.</p>
-            )}
+            <form onSubmit={changeEmail} className="qs-form">
+              <label className="qs-field qs-field-wide" htmlFor="setting-email">
+                <span>Account email</span>
+                <input id="setting-email" type="email" autoComplete="email" required
+                  value={newEmail} onChange={event => setNewEmail(event.target.value)}
+                  disabled={Boolean(busy) || isDemo} />
+                <small>Changing this address may require confirmation from both your current and new inboxes.</small>
+              </label>
+              <div className="qs-context-note"><FiShield aria-hidden="true" />
+                <p>For security, your email address will only be changed after Supabase verifies the request. Your existing login remains valid until the change is confirmed.</p>
+              </div>
+              <div className="qs-form-footer">
+                <span><FiMail aria-hidden="true" /> Verification may be required.</span>
+                <button className="qs-primary" type="submit"
+                  disabled={Boolean(busy) || isDemo || newEmail.trim() === user.email}>
+                  {busy === "email" ? "Requesting…" : "Request email change"} <FiArrowRight aria-hidden="true" />
+                </button>
+              </div>
+            </form>
           </section>}
-        </div>
+
+          {activeSection === "security" && <div className="qs-security-stack">
+            <section className="qs-content-card" aria-labelledby="qs-security-heading">
+              <div className="qs-content-head">
+                <span className="qs-section-symbol"><FiKey aria-hidden="true" /></span>
+                <div>
+                  <span className="qs-content-eyebrow">ACCOUNT SECURITY</span>
+                  <h2 id="qs-security-heading">Change password</h2>
+                  <p>Use a strong password that you do not share with anyone.</p>
+                </div>
+              </div>
+              <form onSubmit={changePassword} className="qs-form">
+                <label className="qs-field qs-field-wide" htmlFor="setting-current-password">
+                  <span>Current password</span>
+                  <input id="setting-current-password" type="password" autoComplete="current-password"
+                    value={currentPassword} required disabled={Boolean(busy) || isDemo}
+                    onChange={event => setCurrentPassword(event.target.value)} placeholder="Enter current password" />
+                </label>
+                <div className="qs-form-row">
+                  <label className="qs-field" htmlFor="setting-new-password">
+                    <span>New password</span>
+                    <input id="setting-new-password" type="password" autoComplete="new-password"
+                      minLength={8} required value={newPassword}
+                      onChange={event => setNewPassword(event.target.value)}
+                      disabled={Boolean(busy) || isDemo} placeholder="At least 8 characters" />
+                  </label>
+                  <label className="qs-field" htmlFor="setting-confirm-password">
+                    <span>Confirm new password</span>
+                    <input id="setting-confirm-password" type="password" autoComplete="new-password"
+                      minLength={8} required value={confirmPassword}
+                      onChange={event => setConfirmPassword(event.target.value)}
+                      disabled={Boolean(busy) || isDemo} placeholder="Re-enter new password" />
+                  </label>
+                </div>
+                <div className="qs-form-footer">
+                  <span><FiLock aria-hidden="true" /> You'll sign in again after updating your password.</span>
+                  <button type="submit" className="qs-primary" disabled={Boolean(busy) || isDemo}>
+                    {busy === "password" ? "Updating…" : "Update password"} <FiArrowRight aria-hidden="true" />
+                  </button>
+                </div>
+              </form>
+            </section>
+            <section className="qs-content-card qs-session-card" aria-labelledby="qs-session-heading">
+              <div className="qs-session-icon"><FiLogOut aria-hidden="true" /></div>
+              <div className="qs-session-copy">
+                <h2 id="qs-session-heading">Other signed-in devices</h2>
+                <p>Sign out other browsers and devices using this account without leaving your current session.</p>
+              </div>
+              <button className="qs-outline" type="button" disabled={Boolean(busy) || isDemo} onClick={signOutOtherSessions}>
+                {busy === "sessions" ? "Signing out…" : "Sign out other devices"}
+              </button>
+            </section>
+          </div>}
+
+          {activeSection === "institution" && !isOwner && <section className="qs-content-card" aria-labelledby="qs-branding-heading">
+            <div className="qs-content-head">
+              <span className="qs-section-symbol"><FiHome aria-hidden="true" /></span>
+              <div>
+                <span className="qs-content-eyebrow">INSTITUTION IDENTITY</span>
+                <h2 id="qs-branding-heading">Institution branding</h2>
+                <p>Manage the institution name and logo shown in administrator and student experiences.</p>
+              </div>
+            </div>
+            {institutionId ? <form className="qs-form" onSubmit={saveBranding}>
+              <div className="qs-brand-preview">
+                <span className="qs-brand-label">CURRENT IDENTITY</span>
+                {logoPreview ? (
+                  <div className="qs-logo-preview"><img src={logoPreview} alt="New institution logo preview" /></div>
+                ) : (
+                  <InstitutionBrand name={institutionName || selectedInstitution?.name}
+                    logoPath={logoPath} subtitle="Institution logo" />
+                )}
+                <span className="qs-brand-preview-note">{logoFile ? "New logo selected — save to apply" : "Preview of your institution identity"}</span>
+              </div>
+              {canEditInstitution && <div className="qs-logo-controls">
+                <label className="qs-logo-upload" htmlFor="setting-logo">
+                  <FiCamera aria-hidden="true" /> Choose logo
+                  <input id="setting-logo" type="file" accept="image/png,image/jpeg,image/webp"
+                    onChange={selectLogo} disabled={Boolean(busy)} />
+                </label>
+                {(logoPath || logoFile) && <button type="button" className="qs-logo-remove"
+                  disabled={Boolean(busy)} onClick={() => { setLogoPath(null); setLogoFile(null); }}>
+                  <FiTrash2 aria-hidden="true" /> Remove logo
+                </button>}
+                <small>PNG, JPG or WebP · Up to 1 MB · Square images look best.</small>
+              </div>}
+              <label className="qs-field qs-field-wide" htmlFor="setting-institution">
+                <span>Institution display name</span>
+                <input id="setting-institution" minLength={3} maxLength={160} required
+                  value={institutionName} onChange={event => setInstitutionName(event.target.value)}
+                  readOnly={!canEditInstitution} disabled={Boolean(busy)}
+                  className={!canEditInstitution ? "qs-readonly" : ""} />
+                <small>{canEditInstitution ? "Visible throughout your institution's workspace." : "Only an Institution Super Admin can update institution branding."}</small>
+              </label>
+              {canEditInstitution && <div className="qs-form-footer">
+                <span><FiHome aria-hidden="true" /> Updates will also appear on student exam pages.</span>
+                <button className="qs-primary" type="submit" disabled={Boolean(busy)}>
+                  {busy === "branding" ? "Saving…" : "Save institution changes"} <FiArrowRight aria-hidden="true" />
+                </button>
+              </div>}
+            </form> : <div className="qs-empty-institution">
+              <FiHome aria-hidden="true" />
+              <strong>No institution selected</strong>
+              <p>Select an institution workspace to view its identity settings.</p>
+            </div>}
+          </section>}
+        </main>
       </div>
     </section>
   );
