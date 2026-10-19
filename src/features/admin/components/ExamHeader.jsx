@@ -4,7 +4,7 @@ import { isDemo } from "../../../lib/supabase";
 import { useAdminWorkspace } from "../context/AdminWorkspaceContext";
 
 /** Compact exam identity. Schedule and actions follow in their own sections. */
-export default function ExamHeader({ exam, showResponsibleStaff = false, responsibleStaff = null }) {
+export default function ExamHeader({ exam, showResponsibleStaff = false, responsibleStaff = null, studentCount = 0 }) {
   const navigate = useNavigate();
   const { institutionId } = useAdminWorkspace();
   const examsPath = isDemo
@@ -37,7 +37,7 @@ export default function ExamHeader({ exam, showResponsibleStaff = false, respons
     <div className="qe-header-facts">
       <span><FiBookOpen aria-hidden="true" /><strong>{exam.total_questions ?? 0}</strong> Questions</span>
       <span><FiAward aria-hidden="true" /><strong>{exam.total_marks ?? 0}</strong> Marks</span>
-      <span><FiUsers aria-hidden="true" /> Institution examination</span>
+      <span><FiUsers aria-hidden="true" /><strong>{studentCount}</strong> Registered students</span>
     </div>
   </header>;
 }
