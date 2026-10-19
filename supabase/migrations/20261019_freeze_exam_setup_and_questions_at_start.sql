@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION public.qualify_exam_update_guard()
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 BEGIN
  IF OLD.exam_status='completed' AND NEW.exam_status IS DISTINCT FROM OLD.exam_status THEN
    RAISE EXCEPTION 'A completed exam cannot be reopened';
@@ -49,14 +49,14 @@ BEGIN
  END IF;
  RETURN NEW;
 END;
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.qualify_protect_questions()
  RETURNS trigger
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 BEGIN
  IF NOT EXISTS(SELECT 1 FROM public.exams e
    WHERE e.exam_id=OLD.exam_id AND e.exam_status='upcoming' AND e.scheduled_date > now())
@@ -67,14 +67,14 @@ BEGIN
  IF TG_OP='UPDATE' THEN RETURN NEW; END IF;
  RETURN OLD;
 END;
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.qualify_question_insert_guard()
  RETURNS trigger
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 BEGIN
  IF NOT EXISTS(SELECT 1 FROM public.exams e
    WHERE e.exam_id=NEW.exam_id AND e.exam_status='upcoming' AND e.scheduled_date > now())
@@ -84,4 +84,4 @@ BEGIN
  END IF;
  RETURN NEW;
 END;
-$function$
+$function$;
