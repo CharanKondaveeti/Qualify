@@ -27,9 +27,9 @@ const TABS = [
   { id: "results", label: "Results" },
 ];
 
-function visibleTabs(status) {
+function visibleTabs(status, editable) {
   return TABS.filter(({ id }) =>
-    (id !== "edit" || status === "upcoming") &&
+    (id !== "edit" || editable) &&
     (id !== "results" || status === "completed"),
   );
 }
@@ -37,12 +37,12 @@ function visibleTabs(status) {
 export default function ExamDetailsPage() {
   const { examId, tab } = useParams();
   const navigate = useNavigate();
-  const { institutionId, isSuperAdmin } = useAdminWorkspace();
+  const { institutionId, isSuperAdmin, user } = useAdminWorkspace();
   const tabPath = (id) => isDemo ? `/demo/admin/exams/${examId}/${id}` : `/app/i/${institutionId}/exams/${examId}/${id}`;
   const cache = useQueryClient();
   const dialog = useAppDialog();
 
-  const activeTab = tab || "students";
+  const [clock, setClock] = useState(() => Date.now());
   const [passMark, setPassMark] = useState(0);
   const [staff, setStaff] = useState([]);
   const [newOwner, setNewOwner] = useState("");
@@ -81,6 +81,17 @@ export default function ExamDetailsPage() {
   });
 
   useEffect(() => {
+    const timer = window.setInterval(() => setClock(Date.now()), 10000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const upcoming = exam?.exam_status === "upcoming";
+  const examStarted = students.some(student => Boolean(student.started_at));
+  const beforeStart = upcoming && new Date(exam?.scheduled_date).getTime() > clock && !examStarted;
+  const canEdit = Boolean(beforeStart && (isDemo || isSuperAdmin || exam?.created_by === user?.id));
+  const activeTab = tab || (canEdit ? "edit" : "students");
+
+  useEffect(() => {
     setNewOwner("");
   }, [examId]);
 
@@ -89,10 +100,10 @@ export default function ExamDetailsPage() {
   }, [exam?.pass_mark]);
 
   useEffect(() => {
-    if (exam && !visibleTabs(exam.exam_status).some((tab) => tab.id === activeTab)) {
+    if (exam && !visibleTabs(exam.exam_status, canEdit).some((item) => item.id === activeTab)) {
       navigate(tabPath("students"), { replace: true });
     }
-  }, [exam?.exam_status, activeTab, navigate, examId, institutionId]);
+  }, [exam?.exam_status, activeTab, canEdit, navigate, examId, institutionId]);
 
   useEffect(() => {
     if (!isSuperAdmin || !institutionId) {
@@ -188,8 +199,6 @@ export default function ExamDetailsPage() {
     );
   }
 
-  const upcoming = exam.exam_status === "upcoming";
-
   function selectTab(id) {
     // Tabs are views of one exam, not separate browser Back destinations.
     if (id !== activeTab) navigate(tabPath(id), { replace: true });
@@ -205,7 +214,7 @@ export default function ExamDetailsPage() {
 
     event.preventDefault();
 
-    const currentTabs = visibleTabs(exam.exam_status);
+    const currentTabs = visibleTabs(exam.exam_status, canEdit);
     const next = event.key === "Home"
       ? 0
       : event.key === "End"
@@ -223,14 +232,12 @@ export default function ExamDetailsPage() {
 
       <ExamTimingSummary exam={exam} />
 
-      {upcoming && <ExamRegistryLink examId={exam.exam_id} />}
-
       <div
         className="qualify-exam-tabs"
         role="tablist"
         aria-label="Exam details sections"
       >
-        {visibleTabs(exam.exam_status).map((tab, index) => (
+        {visibleTabs(exam.exam_status, canEdit).map((tab, index) => (
           <button
             key={tab.id}
             id={`qualify-tab-${tab.id}`}
@@ -256,10 +263,10 @@ export default function ExamDetailsPage() {
       >
         {activeTab === "edit" && upcoming && (
           <>
-            <ExamTimingEditor exam={exam} />
+            <ExamTimingEditor exam={exam} canEdit={canEdit} />
             <section className="qualify-exam-card qualify-edit-questions-note">
-              <h2>Edit questions</h2>
-              <p>Question text, answers and marks can be edited in the Questions tab.</p>
+              <h2>Questions & total marks</h2>
+              <p>Add, edit or remove questions, choose correct answers and change their marks. Total marks are recalculated automatically.</p>
               <button type="button" className="qualify-outline-action"
                 onClick={() => selectTab("questions")}>Open Questions tab</button>
             </section>
@@ -349,6 +356,8 @@ export default function ExamDetailsPage() {
           </section>
         )}
 
+        {activeTab === "students" && upcoming && <ExamRegistryLink examId={exam.exam_id} />}
+
         {activeTab === "students" && studentsError && (
           <p role="alert" className="ops-error">
             Unable to load students: {studentsError.message}
@@ -366,6 +375,7 @@ export default function ExamDetailsPage() {
               exam={exam}
               passMark={passMark}
               setPassMark={setPassMark}
+              editable={canEdit}
             />
           </section>
         )}
@@ -379,6 +389,7 @@ export default function ExamDetailsPage() {
 
               <ExamDetailsTabs
                 mode="questions"
+                editable={canEdit}
                 students={students}
                 questions={questions}
                 exam={exam}
