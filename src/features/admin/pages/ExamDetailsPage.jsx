@@ -387,9 +387,7 @@ export default function ExamDetailsPage() {
 
         {activeTab === "questions" && (
           <>
-            <section className="qualify-exam-card">
-              <h2>Exam questions</h2>
-
+            <section className="qualify-exam-card qe-questions-panel">
               <ExamDetailsTabs
                 mode="questions"
                 editable={canEdit}
