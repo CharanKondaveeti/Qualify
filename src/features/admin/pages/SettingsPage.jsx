@@ -290,7 +290,7 @@ export default function SettingsPage() {
             {sections.map(({ id, label, caption, Icon }) => (
               <button key={id} type="button"
                 className={activeSection === id ? "qs-nav-item is-current" : "qs-nav-item"}
-                aria-current={activeSection === id ? "page" : undefined}
+                aria-pressed={activeSection === id}
                 onClick={() => chooseSection(id)}>
                 <span className="qs-nav-icon"><Icon aria-hidden="true" /></span>
                 <span className="qs-nav-copy"><strong>{label}</strong><small>{caption}</small></span>
@@ -304,7 +304,7 @@ export default function SettingsPage() {
           </div>
         </nav>
 
-        <main className="qs-settings-main" aria-label="Settings details">
+        <div className="qs-settings-main" role="region" aria-label="Settings details">
           {feedback.text && (
             <div role={feedback.type === "error" ? "alert" : "status"}
               className={`qs-notice ${feedback.type}`}>
@@ -481,7 +481,7 @@ export default function SettingsPage() {
               <p>Select an institution workspace to view its identity settings.</p>
             </div>}
           </section>}
-        </main>
+        </div>
       </div>
     </section>
   );
