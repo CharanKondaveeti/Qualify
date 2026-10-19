@@ -229,7 +229,9 @@ export default function ExamDetailsPage() {
 
   return (
     <div className="view-exam-details qualify-exam-detail">
-      <ExamHeader exam={exam} responsibleStaff={isSuperAdmin ? staff.find(member => member.user_id === exam.created_by) : null} showResponsibleStaff={isSuperAdmin} />
+      <ExamHeader exam={exam} studentCount={students.length}
+        responsibleStaff={isSuperAdmin ? staff.find(member => member.user_id === exam.created_by) : exam.created_by === user?.id ? { name: user?.user_metadata?.full_name, email: user?.email } : null}
+        showResponsibleStaff={isSuperAdmin || exam.created_by === user?.id} />
 
       <ExamTimingSummary exam={exam} />
 
