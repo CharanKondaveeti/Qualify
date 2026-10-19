@@ -89,48 +89,48 @@
   box-shadow:0 0 0 3px rgba(255,255,255,.16);
 }
 
-/* Screenshot-inspired horizontal timing card, with four small icon metrics. */
-.qualify-exam-detail .qe-schedule{
-  margin-top:18px;padding:21px 24px 17px;
-  border:1px solid var(--ex-line);border-radius:17px;
-  background:#fff;box-shadow:var(--ex-shadow);
+/* One integrated exam overview: a floating white four-metric strip inside the hero. */
+.qualify-exam-detail .qe-header-main{
+  padding-bottom:25px;min-height:115px;
 }
-.qe-schedule-layout{display:grid;grid-template-columns:minmax(225px,1.15fr) minmax(0,2.65fr);gap:17px;align-items:center}
-.qe-schedule-intro{display:flex;gap:14px;align-items:center;min-width:0}
-.qe-schedule-intro-icon{
-  display:grid;place-items:center;flex:0 0 59px;width:59px;height:59px;
-  background:#ebefff;border-radius:14px;color:var(--ex-primary);
+.qualify-exam-detail .qe-header .qe-schedule{
+  margin:0 23px 23px;
+  padding:0;
+  border:1px solid rgba(227,233,255,.78);
+  border-radius:13px;
+  background:#fff;
+  box-shadow:0 4px 13px rgba(24,36,115,.09);
+  color:#142c50;
 }
-.qe-schedule-intro-icon svg{width:27px;height:27px}
-.qe-schedule-intro>div{min-width:0}
-.qe-schedule-intro h2{
-  margin:0 0 5px;color:#10274a;font-size:16px;font-weight:780;
+.qualify-exam-detail .qe-header .qe-schedule-items{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  align-items:center;
+  padding:15px 10px;
 }
-.qe-schedule-intro p{margin:0;color:#7186ac;font-size:11px;line-height:1.5}
-.qualify-exam-detail .qe-schedule-items{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;
+.qualify-exam-detail .qe-header .qe-schedule-item{
+  display:flex;align-items:center;gap:13px;
+  min-width:0;min-height:54px;
+  padding:8px 17px;
+  border:0;border-right:1px solid #e1e7f6;
 }
-.qualify-exam-detail .qe-schedule-item{
-  display:flex;gap:9px;align-items:center;min-width:0;
-  padding:8px 11px;border-left:1px solid #e5eaf6;border-right:0;
+.qualify-exam-detail .qe-header .qe-schedule-item:last-child{border-right:0}
+.qualify-exam-detail .qe-header .qe-schedule-item>div{
+  display:flex;flex-direction:column;gap:5px;min-width:0;
 }
-.qualify-exam-detail .qe-schedule-item:first-child{padding-left:11px}
-.qualify-exam-detail .qe-schedule-icon{
-  display:grid;place-items:center;flex:0 0 35px;width:35px;height:35px;
-  border-radius:10px;background:#edf0ff;color:#4b61ec;
+.qualify-exam-detail .qe-header .qe-schedule-icon{
+  display:grid;place-items:center;flex:0 0 42px;
+  width:42px;height:42px;border-radius:11px;
+  background:#edf0ff;color:#515df0;
 }
-.qualify-exam-detail .qe-schedule-icon svg{width:18px;height:18px}
-.qualify-exam-detail .qe-schedule-item>div{display:flex;flex-direction:column;min-width:0;gap:4px}
-.qualify-exam-detail .qe-schedule-item small{font-size:10px;color:#8494b2;line-height:1.3}
-.qualify-exam-detail .qe-schedule-item strong{
-  color:#172e55;font-size:11px;line-height:1.4;font-weight:750;overflow-wrap:anywhere;
+.qualify-exam-detail .qe-header .qe-schedule-icon svg{width:20px;height:20px}
+.qualify-exam-detail .qe-header .qe-schedule-item small{
+  color:#8192b0;font-size:11px;line-height:1.3;
 }
-.qualify-exam-detail .qe-schedule-note{
-  display:flex;align-items:center;gap:7px;margin:12px 0 0;
-  padding-left:73px;padding-top:0;border:0;
-  font-size:10px;line-height:1.55;color:#8395b3;
+.qualify-exam-detail .qe-header .qe-schedule-item strong{
+  color:#182e55;font-size:12px;font-weight:760;line-height:1.45;
+  overflow-wrap:anywhere;
 }
-.qualify-exam-detail .qe-schedule-note svg{flex:0 0 13px;width:13px;height:13px;color:#7e90c8}
 
 /* Registration card is visible before tabs for upcoming exams. */
 .qualify-exam-detail .qualify-registration-strip{
@@ -427,38 +427,33 @@
   background:#eff2fc;color:#5e7298;
 }
 
-/* Keep buttons and forms practical on tablets and mobile. */
-@media(max-width:1330px){
-  .qe-schedule-layout{grid-template-columns:1fr}
-  .qualify-exam-detail .qe-schedule-items{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .qualify-exam-detail .qe-schedule-item:first-child{border-left:0;padding-left:0}
-  .qualify-exam-detail .qe-schedule-note{padding-left:0}
+/* Keep the white inset strip legible at every screen width. */
+@media(max-width:1080px){
+  .qualify-exam-detail .qe-header .qe-schedule-items{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .qualify-exam-detail .qe-header .qe-schedule-item:nth-child(2){border-right:0}
+  .qualify-exam-detail .qe-header .qe-schedule-item:nth-child(n+3){border-top:1px solid #edf0f9}
+  .qualify-exam-detail .qe-header .qe-schedule-item{padding:11px 16px}
 }
 @media(max-width:870px){
   .qualify-exam-detail .qe-header-main{align-items:flex-start}
-  .qualify-exam-detail .qe-schedule-items{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .qualify-exam-detail .qe-schedule-item:nth-child(3){border-left:0;padding-left:0}
-  .qualify-exam-detail .qe-schedule-item{padding-top:12px;padding-bottom:12px}
 }
 @media(max-width:650px){
   .qualify-exam-detail .qe-header{border-radius:15px}
   .qualify-exam-detail .qe-header-top{padding:17px 18px 0}
   .qualify-exam-detail .qe-back{padding:9px 11px;min-height:37px}
   .qualify-exam-detail .qe-header-context{display:none}
-  .qualify-exam-detail .qe-header-main{padding:22px 19px;flex-direction:column;gap:17px;align-items:flex-start}
+  .qualify-exam-detail .qe-header-main{padding:21px 19px;flex-direction:column;gap:17px;align-items:flex-start;min-height:0}
   .qualify-exam-detail .qe-header h1{font-size:28px}
   .qe-header-meta{gap:8px 14px}
   .qe-header-meta>span{font-size:11px}
   .qualify-exam-detail .qe-exam-status{min-width:0;padding:8px 12px}
-  .qualify-exam-detail .qe-schedule{padding:17px 16px;border-radius:14px}
-  .qe-schedule-intro-icon{width:46px;height:46px;flex-basis:46px}
-  .qe-schedule-intro-icon svg{width:22px;height:22px}
-  .qualify-exam-detail .qe-schedule-items{grid-template-columns:1fr}
-  .qualify-exam-detail .qe-schedule-item,.qualify-exam-detail .qe-schedule-item:first-child,
-  .qualify-exam-detail .qe-schedule-item:nth-child(3){
-    padding:9px 0;border-left:0;border-top:1px solid #eef0fa;
-  }
-  .qualify-exam-detail .qe-schedule-note{margin-top:8px}
+  .qualify-exam-detail .qe-header .qe-schedule{margin:0 12px 13px;border-radius:11px}
+  .qualify-exam-detail .qe-header .qe-schedule-items{padding:7px 5px}
+  .qualify-exam-detail .qe-header .qe-schedule-item{gap:8px;padding:11px 9px}
+  .qualify-exam-detail .qe-header .qe-schedule-icon{width:33px;height:33px;flex-basis:33px;border-radius:9px}
+  .qualify-exam-detail .qe-header .qe-schedule-icon svg{width:16px;height:16px}
+  .qualify-exam-detail .qe-header .qe-schedule-item small{font-size:10px}
+  .qualify-exam-detail .qe-header .qe-schedule-item strong{font-size:11px}
   .qualify-exam-detail .qualify-registration-strip{padding:17px 15px;border-radius:14px}
   .qualify-exam-detail .qualify-registration-strip__actions{flex-wrap:wrap}
   .qualify-exam-detail .qualify-registration-strip__actions input{flex:1 1 100%}
@@ -472,6 +467,11 @@
   .qualify-exam-detail .qualify-registration-list__header{padding:17px 15px}
   .qualify-exam-detail .qe-question-overview{flex-wrap:wrap}
   .qualify-exam-detail .qe-ops-panel-head,.qualify-exam-detail .qe-scoreboard-header{padding:17px 15px}
+}
+@media(max-width:410px){
+  .qualify-exam-detail .qe-header .qe-schedule-items{grid-template-columns:1fr}
+  .qualify-exam-detail .qe-header .qe-schedule-item{border-right:0!important}
+  .qualify-exam-detail .qe-header .qe-schedule-item+.qe-schedule-item{border-top:1px solid #edf0f9}
 }
 @media(prefers-reduced-motion:reduce){
   .qualify-exam-detail *{transition:none!important}
