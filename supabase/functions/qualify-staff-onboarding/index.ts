@@ -61,7 +61,7 @@ Deno.serve(async(req)=>{
    if(activateError)throw Error("Password changed. Staff activation needs administrator support.");
    return respond({success:true});
   }
-  if(!["request","verify","list","cancel"].includes(args.action))return bad("Invalid action");
+  if(!["request","verify","list","cancel","remove"].includes(args.action))return bad("Invalid action");
   const institutionId=String(args.institutionId||"");
   if(!/^[0-9a-f-]{36}$/.test(institutionId))return bad("Invalid institution");
   const {data:member}=await db.from("institution_members").select("role").eq("institution_id",institutionId).eq("user_id",user.id).eq("role","institution_super_admin").eq("status","active").maybeSingle();
@@ -70,7 +70,39 @@ Deno.serve(async(req)=>{
   if(args.action==="list"){
    const {data,error}=await db.from("qualify_staff_otp_invites").select("id,staff_name,invited_email,status,created_at,expires_at,verified_at").eq("institution_id",institutionId).order("created_at",{ascending:false}).limit(50);
    if(error)throw error;
-   return respond({items:data||[]});
+   const {data:removals,error:removalError}=await db.from("qualify_staff_removal_jobs")
+     .select("user_id,email,created_at").eq("institution_id",institutionId).order("created_at",{ascending:false});
+   if(removalError)throw removalError;
+   return respond({items:data||[],removals:removals||[]});
+  }
+  if(args.action==="remove"){
+   const staffId=String(args.staffId||"");
+   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(staffId))
+     return bad("Choose a valid Staff Admin account");
+   if(staffId===user.id)return bad("You cannot remove your own account",403);
+   const anon=Deno.env.get("SUPABASE_ANON_KEY")||req.headers.get("apikey")||"";
+   if(!anon)return bad("Staff removal service not configured",503);
+   const scoped=createClient(url,anon,{auth:{persistSession:false,autoRefreshToken:false},
+     global:{headers:{Authorization:"Bearer "+jwt}}});
+   // Server-side transaction: membership, owned banks and personal onboarding records.
+   // Preserves institutional exams/results and reassigns required authorship FKs.
+   const {error:prepareError}=await scoped.rpc("qualify_prepare_staff_removal",{
+     p_institution:institutionId,p_staff:staffId
+   });
+   if(prepareError)return bad(prepareError.message,403);
+   // The account is now denied institution access even if Auth deletion fails.
+   const {data:oldAccount,error:lookupError}=await db.auth.admin.getUserById(staffId);
+   if(lookupError&&!/not found/i.test(lookupError.message))
+     return bad("Staff access removed, but Auth cleanup needs retry. Use Retry removal.",503);
+   if(oldAccount?.user){
+     const {error:deleteError}=await db.auth.admin.deleteUser(staffId);
+     if(deleteError)return bad("Staff access removed, but Auth account cleanup needs retry. Use Retry removal.",503);
+   }
+   const {error:finalizeError}=await scoped.rpc("qualify_finalize_staff_removal",{
+     p_institution:institutionId,p_staff:staffId
+   });
+   if(finalizeError)return bad("Auth account removed, but cleanup confirmation needs retry. Use Retry removal.",503);
+   return respond({success:true,message:"Staff access, personal data and Auth account permanently removed. Institution exam records are preserved."});
   }
   if(args.action==="cancel"){
    const inviteId=String(args.inviteId||"");
@@ -89,10 +121,7 @@ Deno.serve(async(req)=>{
    if(!emailOK(email)||name.length<2||name.length>120)return bad("Enter valid staff name and email");
    // Existing members are never issued a new credential by this flow.
    const {data:known}=await db.rpc("qualify_staff_existing_auth_user",{p_email:email});
-   if(known){
-    const {data:membership}=await db.from("institution_members").select("role").eq("institution_id",institutionId).eq("user_id",known).maybeSingle();
-    if(membership)return bad("Staff email already has institution membership");
-   }
+   if(known)return bad("This email already has a QUALIFY account. Staff accounts cannot be reused. The previous institution must Suspend & Remove the old account before new registration.",409);
    // Limit custom invitation emails to 20 per Super Admin every 24 hours.
    const {count:sentCount,error:quotaError}=await db.from("qualify_staff_otp_invites")
      .select("id",{count:"exact",head:true}).eq("requested_by",user.id)
@@ -128,13 +157,7 @@ Deno.serve(async(req)=>{
   if(!ok)return bad("OTP incorrect, expired, or exceeded five attempts");
   const {data:existingUser,error:lookupError}=await db.rpc("qualify_staff_existing_auth_user",{p_email:inv.invited_email});
   if(lookupError)throw lookupError;
-  if(existingUser){
-   const {error:e}=await db.from("qualify_staff_otp_invites").update({status:"provisioning"}).eq("id",inviteId);
-   if(e)throw e;
-   const {error:grantError}=await db.rpc("qualify_staff_activate",{p_invite:inviteId,p_user:existingUser,p_mode:"existing_account"});
-   if(grantError)throw grantError;
-   return respond({success:true,existing:true,message:"Existing verified QUALIFY account granted Staff Admin access; its password is unchanged."});
-  }
+  if(existingUser)return bad("This email still belongs to another QUALIFY Auth account. The previous institution must permanently remove it before a fresh Staff Admin setup.",409);
   const password=tempPass();
   const {data:created,error:createError}=await db.auth.admin.createUser({email:inv.invited_email,password,email_confirm:true,user_metadata:{full_name:inv.staff_name}});
   if(createError||!created.user){
