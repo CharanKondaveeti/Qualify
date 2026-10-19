@@ -230,12 +230,13 @@ export default function ExamDetailsPage() {
 
   return (
     <div className={`view-exam-details qualify-exam-detail qe-workspace--${exam.exam_status}`}>
-      <ExamHeader exam={exam} studentCount={students.length} canEdit={canEdit}
-        onNavigate={selectTab}
+      <ExamHeader exam={exam} studentCount={students.length}
         responsibleStaff={isSuperAdmin ? staff.find(member => member.user_id === exam.created_by) : exam.created_by === user?.id ? { name: user?.user_metadata?.full_name, email: user?.email } : null}
         showResponsibleStaff={isSuperAdmin || exam.created_by === user?.id} />
 
       <ExamTimingSummary exam={exam} />
+
+      {upcoming && <ExamRegistryLink examId={exam.exam_id} />}
 
       <div
         className="qualify-exam-tabs"
@@ -365,8 +366,6 @@ export default function ExamDetailsPage() {
             </div>
           </section>
         )}
-
-        {activeTab === "students" && upcoming && <ExamRegistryLink examId={exam.exam_id} />}
 
         {activeTab === "students" && studentsError && (
           <p role="alert" className="ops-error">
