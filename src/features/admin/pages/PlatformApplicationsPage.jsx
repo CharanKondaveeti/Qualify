@@ -172,7 +172,7 @@ export default function PlatformApplicationsPage() {
             <small>Submitted {new Date(selected.created_at).toLocaleString('en-IN')}</small>
           </div>
           <Details application={selected}/>
-          {selected.status==="approved"&&selected.profile_details?.applicant_name&&<button type="button" className="action-btn"
+          {selected.status==="approved"&&selected.profile_details?.registration_flow==="preauth_otp_v2"&&<button type="button" className="action-btn"
             disabled={Boolean(busy)} onClick={async()=>{
               if(!await dialog.confirm("Invalidate the previous activation link and email a new one?",
                 {title:"Resend Super Admin activation",confirmLabel:"Send link"}))return;
