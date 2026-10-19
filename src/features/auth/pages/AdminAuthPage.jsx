@@ -39,7 +39,7 @@ export default function AdminAuthPage({ signup = false }) {
     e.preventDefault(); if (busy) return;
     setErrorMsg(''); setSuccess('');
     if (registrationMode === 'institution') {
-      const validationError = validateInstitution(institutionForm);
+      const validationError = validateInstitution({...institutionForm,official_email:email.trim(),applicant_name:name.trim()});
       if (validationError) { setErrorMsg(validationError); return; }
     }
     if (password !== confirmPassword) { setErrorMsg('Passwords do not match.'); return; }
@@ -48,7 +48,7 @@ export default function AdminAuthPage({ signup = false }) {
     try {
       if (registrationMode === 'institution' && institutionLogo) await stageSignupLogo(institutionLogo, email.trim());
       if (registrationMode !== 'institution') await clearStagedSignupLogo(email.trim()).catch(() => {});
-      await signupAdmin(email.trim(), password, name.trim(), registrationMode === 'institution' ? institutionForm : null);
+      await signupAdmin(email.trim(), password, name.trim(), registrationMode === 'institution' ? {...institutionForm,official_email:email.trim(),applicant_name:name.trim()} : null);
       setSuccess(registrationMode === 'institution'
         ? 'Account created. Verify your email, then sign in. Your institution application will be submitted automatically for Platform Owner review.'
         : 'Account created. Verify your email, then sign in. Staff invitations for this address will appear automatically.');
