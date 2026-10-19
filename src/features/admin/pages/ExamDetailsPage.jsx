@@ -4,7 +4,6 @@ import { useAppDialog } from '../../../shared/components/ConfirmDialogProvider';
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiBarChart2, FiHelpCircle, FiSliders, FiUsers } from "react-icons/fi";
 import supabase from "../../../lib/supabase";
 import { getExams, getQuestions } from "../../../services/examService";
 import { getStudentsReport } from "../../../services/studentService";
@@ -24,10 +23,10 @@ import "../styles/exam-workspace.css";
 import "../styles/exam-workspace-polish.css";
 
 const TABS = [
-  { id: "edit", label: "Exam setup", Icon: FiSliders },
-  { id: "students", label: "Students", Icon: FiUsers },
-  { id: "questions", label: "Questions", Icon: FiHelpCircle },
-  { id: "results", label: "Results", Icon: FiBarChart2 },
+  { id: "edit", label: "Exam setup" },
+  { id: "students", label: "Students" },
+  { id: "questions", label: "Questions" },
+  { id: "results", label: "Results" },
 ];
 
 function visibleTabs(status, editable) {
@@ -244,7 +243,6 @@ export default function ExamDetailsPage() {
         aria-label="Exam details sections"
       >
         {visibleTabs(exam.exam_status, canEdit).map((item, index) => {
-          const Icon = item.Icon;
           const count = item.id === "students" ? students.length
             : item.id === "questions" ? questions.length
             : item.id === "results" ? students.filter(s => s.student_status === "submitted").length
@@ -261,8 +259,7 @@ export default function ExamDetailsPage() {
             onClick={() => selectTab(item.id)}
             onKeyDown={(event) => onTabKeyDown(event, index)}
           >
-            <span className="qe-tab-icon"><Icon aria-hidden="true" /></span>
-            <span className="qe-tab-label">{item.label}</span>
+            {item.label}
             {count !== null && <span className="qe-tab-count">{count}</span>}
           </button>;
         })}
