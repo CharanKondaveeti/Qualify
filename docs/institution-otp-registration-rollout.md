@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation is checked in, but **not enabled in production**. The required Supabase database migration has not been applied (the connector's database-write approval was declined/blocked). Do not set the Vercel feature switch until the migration and Edge Function are deployed and tested.
+The OTP-first registration flow is **permanent**. The database migration was applied and verified, the `qualify-institution-registration` Edge Function is deployed with `verify_jwt=false`, and the signup, application-status and activation routes are always available. There is no Vercel feature switch. The applicant has verified the end-to-end flow; continue operational monitoring of email delivery and activation errors.
 
 ## Design
 
@@ -15,15 +15,15 @@ Implementation is checked in, but **not enabled in production**. The required Su
 
 ## Installation
 
-1. Apply [`supabase/migrations/20261019_applicant_otp_activation.sql`](../supabase/migrations/20261019_applicant_otp_activation.sql) using the Supabase SQL Editor or an authorized migration run. It drops the `NOT NULL` constraint on `institution_applications.applicant_user_id` and adds applicant OTP/session/activation storage.
-2. Deploy [`supabase/functions/qualify-institution-registration/index.ts`](../supabase/functions/qualify-institution-registration/index.ts) as Edge Function `qualify-institution-registration` with **verify_jwt=false**. This is intentional: email-verified applicants do not have Auth JWTs. The function handles all applicant session checks and separately validates Platform Owner JWTs.
+1. **Applied and verified:** [`supabase/migrations/20261019_applicant_otp_activation.sql`](../supabase/migrations/20261019_applicant_otp_activation.sql) using the Supabase SQL Editor or an authorized migration run. It drops the `NOT NULL` constraint on `institution_applications.applicant_user_id` and adds applicant OTP/session/activation storage.
+2. **Deployed:** [`supabase/functions/qualify-institution-registration/index.ts`](../supabase/functions/qualify-institution-registration/index.ts) as Edge Function `qualify-institution-registration` with **verify_jwt=false**. This is intentional: email-verified applicants do not have Auth JWTs. The function handles all applicant session checks and separately validates Platform Owner JWTs.
 3. Confirm the function's secrets: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, `RESEND_API_KEY`, `QUALIFY_EMAIL_FROM`, `QUALIFY_OTP_HMAC_SECRET` (32+ random chars), `QUALIFY_SITE_ORIGIN` (for example https://www.qualifyexam.online).
 4. Test the full flow with a fresh email address not yet linked to an Auth account: OTP request, wrong OTP/attempt limit, verify, directory/manual entry, submit, reject, sign in via OTP, edit/resubmit, approve, receive activation email, set password, sign in. Test deletion of rejected application separately.
-5. In Vercel, set build-time `VITE_INSTITUTION_REGISTRATION_V2=true` for Production and redeploy `main` **only after** the preceding steps pass.
+5. Deploy the latest `main` branch on Vercel. No `VITE_INSTITUTION_REGISTRATION_V2` environment variable is required; the new workflow is the only public registration route.
 
 ## Operational cautions
 
-- The old `/signup` route and authenticated applicant review flow remain active while the feature switch is absent. Do not turn on the new route until the backend is ready.
+- `/signup` always serves email-OTP-first registration, `/application-status` the applicant status flow, and `/activate` password setup. Legacy `/institutions/apply` and `/institutions/application-status` URLs redirect to the new pages.
 - This migration preserves existing development applications rather than deleting them. Existing Auth-account-based applications can still use the original review action.
 - Auth signup emails and the applicant OTP are **different mechanisms**. The applicant OTP does not use Supabase Auth email OTP.
 - The full institution registration flow does not require a temporary password emailed to the applicant. Activation links are single-use and never supplied in the URL query string.
