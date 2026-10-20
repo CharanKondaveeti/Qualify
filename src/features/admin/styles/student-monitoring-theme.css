@@ -310,3 +310,18 @@
 .qe-student-floating-menu button.qe-attempt-danger{color:#c23e45}
 .qe-student-floating-menu button.qe-attempt-danger:hover:not(:disabled){background:#fff0f0}
 .qe-student-floating-menu button:disabled{opacity:.5;cursor:not-allowed}
+
+/* Student Directory: third column is the latest recorded event time. */
+.qualify-exam-detail .qe-directory-table th:nth-child(1){width:37%}
+.qualify-exam-detail .qe-directory-table th:nth-child(2){width:19%}
+.qualify-exam-detail .qe-directory-table th:nth-child(3){width:22%}
+.qualify-exam-detail .qe-directory-table th:nth-child(4){width:22%}
+.qualify-exam-detail .qe-directory-table .qe-last-activity{
+ color:#526b90;font-weight:650;font-size:11px;
+ white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.qualify-exam-detail .qe-directory-table .qe-last-activity span{color:#9aacbf}
+.qualify-exam-detail .qe-directory-table .qe-attempt-controls{flex-wrap:nowrap}
+@media(max-width:740px){
+ .qualify-exam-detail .qe-directory-table{min-width:760px}
+}
