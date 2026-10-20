@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   FiActivity, FiAlertCircle, FiCheck, FiCheckCircle, FiClock, FiTrendingUp,
-  FiEye, FiEyeOff, FiRefreshCw, FiSearch, FiShield, FiUsers, FiX,
+  FiEye, FiEyeOff, FiMoreHorizontal, FiRefreshCw, FiSearch, FiShield, FiUsers, FiX,
 } from "react-icons/fi";
 import supabase, { isDemo } from "../../../lib/supabase";
 import { adminControl, adminEvents, adminClearEvents } from "../../../services/secureExamService";
@@ -315,13 +315,26 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
                       title={`View exam activity for ${student.student_name}`}>
                       <FiEye aria-hidden="true" /> View activity
                     </button>
-                    {inExam && student.student_status === "in progress" && <>
-                      <button type="button" disabled={working} onClick={() => control(student.student_report_id, "reset_session")}>Reset device</button>
-                      {exam.timing_mode !== "time" && <button type="button" disabled={working}
-                        onClick={() => control(student.student_report_id, "extend_time", 5)}>+5 min</button>}
-                      <button type="button" className="qe-attempt-danger" disabled={working}
-                        onClick={() => control(student.student_report_id, "revoke")}>Revoke</button>
-                    </>}
+                    {inExam && student.student_status === "in progress" && <details className="qe-student-more">
+                      <summary aria-label={`More actions for ${student.student_name || "student"}`}
+                        title="More student actions"><FiMoreHorizontal aria-hidden="true" /></summary>
+                      <div className="qe-student-more-menu">
+                        <button type="button" disabled={working} onClick={event => {
+                          event.currentTarget.closest("details")?.removeAttribute("open");
+                          control(student.student_report_id, "reset_session");
+                        }}>Reset device</button>
+                        {exam.timing_mode !== "time" && <button type="button" disabled={working}
+                          onClick={event => {
+                            event.currentTarget.closest("details")?.removeAttribute("open");
+                            control(student.student_report_id, "extend_time", 5);
+                          }}>+5 min</button>}
+                        <button type="button" className="qe-attempt-danger" disabled={working}
+                          onClick={event => {
+                            event.currentTarget.closest("details")?.removeAttribute("open");
+                            control(student.student_report_id, "revoke");
+                          }}>Revoke access</button>
+                      </div>
+                    </details>}
                   </div></td>
                 </tr>)}
                 {!visibleStudents.length && <tr><td colSpan={3} className="qe-empty-table">
