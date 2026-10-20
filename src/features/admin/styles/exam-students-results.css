@@ -178,7 +178,11 @@
 .qe-scoreboard-toolbar>.qe-ops-search{flex:1 1 250px}
 .qe-scoreboard-selectors{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .qe-scoreboard-selectors .qe-ops-select select{min-width:120px}
-.qe-scoreboard-table-scroll{max-height:510px}
+.qe-scoreboard-table-scroll{
+ max-height:510px;
+ /* Chain wheel scrolling to the exam page at the table's top/bottom. */
+ overscroll-behavior-y:auto;
+}
 .qe-score-table{min-width:620px}
 .qe-roll-number{color:#617890;font-variant-numeric:tabular-nums}
 .qe-score-value{font-variant-numeric:tabular-nums;font-size:13px;font-weight:760;color:#2b4d71}
