@@ -283,3 +283,30 @@
  color:#bd353c!important;
 }
 .qualify-exam-detail .qe-directory-table .qe-student-more-menu .qe-attempt-danger:hover:not(:disabled){background:#fff0f0!important}
+
+/* Actual floating More menu: fixed-position portal, no table-row expansion. */
+.qualify-exam-detail .qe-directory-table .qe-student-more-trigger{
+ flex:0 0 38px;width:38px;height:34px;
+ display:inline-flex;align-items:center;justify-content:center;
+ padding:0;border:1px solid #d1dbf7;border-radius:8px;
+ background:#f5f6ff;color:#4d5de9;cursor:pointer;
+}
+.qualify-exam-detail .qe-directory-table .qe-student-more-trigger:hover,
+.qualify-exam-detail .qe-directory-table .qe-student-more-trigger[aria-expanded="true"]{
+ background:#e9ecff;
+}
+.qualify-exam-detail .qe-directory-table .qe-student-more-trigger svg{width:17px;height:17px}
+.qe-student-floating-menu{
+ width:178px;display:flex;flex-direction:column;gap:4px;
+ padding:8px;background:#fff;border:1px solid #dbe3f5;
+ border-radius:11px;box-shadow:0 12px 34px rgba(28,43,92,.2);
+}
+.qe-student-floating-menu button{
+ width:100%;min-height:35px;text-align:left;padding:8px 10px;
+ border:0;border-radius:7px;background:#fff;color:#31517e;
+ font-size:12px;font-weight:700;line-height:1.3;cursor:pointer;
+}
+.qe-student-floating-menu button:hover:not(:disabled){background:#edf2ff}
+.qe-student-floating-menu button.qe-attempt-danger{color:#c23e45}
+.qe-student-floating-menu button.qe-attempt-danger:hover:not(:disabled){background:#fff0f0}
+.qe-student-floating-menu button:disabled{opacity:.5;cursor:not-allowed}
