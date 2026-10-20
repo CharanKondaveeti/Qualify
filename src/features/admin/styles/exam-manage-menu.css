@@ -58,3 +58,28 @@
  .qualify-exam-detail .qe-header-top-actions{flex:1 1 100%;justify-content:space-between;gap:9px}
  .qualify-exam-detail .qe-header:has(.qe-manage-menu) .qe-header-main{padding-top:14px}
 }
+
+/* Consistent icon geometry and deliberate open-state feedback. */
+.qualify-exam-detail .qe-header-top-actions{gap:0}
+.qualify-exam-detail .qe-manage-trigger{
+ gap:9px;min-height:44px;padding:10px 15px;font-size:12px;line-height:1.2;
+}
+.qualify-exam-detail .qe-manage-trigger-icon{
+ width:16px;height:16px;flex:none;stroke-width:2.2;
+}
+.qualify-exam-detail .qe-manage-chevron{
+ width:15px;height:15px;flex:none;margin-left:6px;
+ transition:transform .16s ease;
+}
+.qualify-exam-detail .qe-manage-menu[open] .qe-manage-chevron{transform:rotate(180deg)}
+.qualify-exam-detail .qe-manage-group h3{
+ display:flex;align-items:center;gap:8px;
+}
+.qualify-exam-detail .qe-manage-group h3 svg{
+ width:15px;height:15px;flex:none;color:#5168ad;
+}
+.qualify-exam-detail .qe-manage-danger h3 svg{color:#b63d44}
+@media(max-width:690px){
+ .qualify-exam-detail .qe-header-top-actions{flex:0 0 auto;margin-left:auto;justify-content:flex-end}
+ .qualify-exam-detail .qe-header-top{align-items:center}
+}
