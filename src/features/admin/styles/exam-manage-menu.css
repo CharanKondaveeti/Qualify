@@ -1,0 +1,60 @@
+/* Super Admin-only exam menu in the existing exam hero.
+   Do not restyle Student Monitoring, Questions or Results. */
+.qualify-exam-detail .qe-header:has(.qe-manage-menu){overflow:visible;z-index:12}
+.qualify-exam-detail .qe-header-top-actions{display:flex;align-items:center;gap:14px;min-width:0}
+.qualify-exam-detail .qe-manage-menu{position:relative;z-index:30;flex:none}
+.qualify-exam-detail .qe-manage-trigger{
+ display:flex;align-items:center;justify-content:center;gap:10px;
+ border:1px solid rgba(255,255,255,.37);border-radius:9px;
+ background:rgba(255,255,255,.16);color:#fff;cursor:pointer;
+ padding:10px 15px;min-height:41px;font-weight:760;font-size:12px;
+ list-style:none;user-select:none;white-space:nowrap;
+}
+.qualify-exam-detail .qe-manage-trigger::-webkit-details-marker{display:none}
+.qualify-exam-detail .qe-manage-trigger:hover,
+.qualify-exam-detail .qe-manage-menu[open]>.qe-manage-trigger{background:rgba(255,255,255,.26)}
+.qualify-exam-detail .qe-manage-trigger span{font-size:15px}
+.qualify-exam-detail .qe-manage-popover{
+ position:absolute;top:calc(100% + 10px);right:0;
+ width:min(340px,calc(100vw - 36px));max-width:calc(100vw - 36px);
+ background:#fff;color:#253a5d;border:1px solid #dbe4f4;
+ border-radius:13px;box-shadow:0 18px 45px rgba(17,31,78,.22);
+ overflow:hidden;z-index:40;
+}
+.qualify-exam-detail .qe-manage-title{
+ display:flex;flex-direction:column;gap:5px;padding:16px 19px 13px;
+ background:#f6f8ff;border-bottom:1px solid #e3e9f7;
+}
+.qualify-exam-detail .qe-manage-title strong{font-size:14px;font-weight:810;color:#172e54}
+.qualify-exam-detail .qe-manage-title span{font-size:10px;color:#6f82a1}
+.qualify-exam-detail .qe-manage-group{display:flex;flex-direction:column;gap:9px;padding:17px 19px}
+.qualify-exam-detail .qe-manage-group+.qe-manage-group{border-top:1px solid #e5eaf4}
+.qualify-exam-detail .qe-manage-group h3{margin:0;color:#213b63;font-size:12px;font-weight:780}
+.qualify-exam-detail .qe-manage-group p{margin:0;color:#6c7d97;font-size:11px;line-height:1.55}
+.qualify-exam-detail .qe-manage-group label{font-size:10px;font-weight:750;color:#4d6385}
+.qualify-exam-detail .qe-manage-group select{
+ width:100%;height:39px;border:1px solid #d1dbed;border-radius:8px;
+ padding:8px 10px;background:#fff;color:#2b466d;font-size:12px;
+}
+.qualify-exam-detail .qe-manage-group button{
+ align-self:stretch;min-height:38px;border:1px solid #485ee6;
+ border-radius:8px;background:#485ee6;color:#fff;
+ font-weight:760;font-size:11px;cursor:pointer;padding:9px 12px;
+}
+.qualify-exam-detail .qe-manage-group button:hover:not(:disabled){background:#3349cd}
+.qualify-exam-detail .qe-manage-group button:disabled{opacity:.5;cursor:not-allowed}
+.qualify-exam-detail .qe-manage-danger{background:#fffafa}
+.qualify-exam-detail .qe-manage-danger h3{color:#b63d44}
+.qualify-exam-detail .qe-manage-danger button{
+ background:#fff;border-color:#e7a5aa;color:#ac343b;
+}
+.qualify-exam-detail .qe-manage-danger button:hover:not(:disabled){background:#fff0f0}
+.qualify-exam-detail .qe-manage-group .qe-manage-feedback{
+ color:#305c91;background:#edf4ff;padding:8px;border-radius:6px;overflow-wrap:anywhere;
+}
+.qualify-exam-detail .qe-manage-danger .qe-manage-feedback{color:#b03340;background:#fff0f0}
+@media(max-width:690px){
+ .qualify-exam-detail .qe-header-top{align-items:flex-start;flex-wrap:wrap}
+ .qualify-exam-detail .qe-header-top-actions{flex:1 1 100%;justify-content:space-between;gap:9px}
+ .qualify-exam-detail .qe-header:has(.qe-manage-menu) .qe-header-main{padding-top:14px}
+}
