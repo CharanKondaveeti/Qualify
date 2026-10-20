@@ -69,10 +69,6 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   }), [students]);
 
   const finished = students.filter(s => s.student_status === "submitted");
-  const scores = finished.map(s => Number(s.marks_scored)).filter(Number.isFinite);
-  const average = scores.length
-    ? (scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1)
-    : "—";
   const passed = finished.filter(s =>
     Number.isFinite(Number(s.marks_scored)) && Number(s.marks_scored) >= Number(exam.pass_mark),
   ).length;
