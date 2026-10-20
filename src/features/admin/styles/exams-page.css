@@ -501,3 +501,16 @@
 }
 .admin-dashboard .exams-pagination-actions button:hover:not(:disabled){background:#edf3ff}
 .admin-dashboard .exams-pagination-actions button:disabled{opacity:.45;cursor:default}
+
+/* The dashboard's content-wrapper is the page scroll container on desktop.
+   Keep it scrollable when 15 exam rows extend below the viewport. */
+.admin-dashboard:has(.exams-tab) .content-wrapper{
+ overflow-y:auto;
+ overflow-x:hidden;
+ min-height:0;
+ overscroll-behavior-y:auto;
+}
+.admin-dashboard:has(.exams-tab) .exams-tab{
+ height:auto;
+ max-height:none;
+}
