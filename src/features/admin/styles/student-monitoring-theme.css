@@ -214,3 +214,19 @@
 .qualify-exam-detail .qe-attempt-workspace .qe-activity-feed{
  max-height:none!important;overflow-y:visible!important;
 }
+
+/* Follow the student list without introducing an internal vertical scrollbar.
+   CSS sticky is constrained by the two-column workspace's lower boundary. */
+@media(min-width:1201px){
+ .qualify-exam-detail .qe-attempt-workspace>.qe-activity-panel--sticky{
+  position:sticky;
+  top:16px;
+  z-index:3;
+ }
+}
+@media(max-width:1200px){
+ .qualify-exam-detail .qe-attempt-workspace>.qe-activity-panel{
+  position:static;
+  top:auto;
+ }
+}
