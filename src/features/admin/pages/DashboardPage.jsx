@@ -165,6 +165,7 @@ export default function DashboardPage() {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session && event === "SIGNED_OUT" && !signingOutRef.current) {
         cache.clear();
+        dispatch(resetExam());
         navigate("/login", { replace: true });
       }
     });
@@ -172,7 +173,7 @@ export default function DashboardPage() {
       mounted = false;
       data.subscription.unsubscribe();
     };
-  }, [navigate, cache, refreshAccess]);
+  }, [navigate, cache, refreshAccess, dispatch]);
 
   // Reload branding whenever the institution changes (also updated after saving settings).
   const refreshBranding = useCallback(async () => {
@@ -259,6 +260,7 @@ export default function DashboardPage() {
       const { error: signOutError } = await supabase.auth.signOut();
       if (signOutError) throw signOutError;
       cache.clear();
+      dispatch(resetExam());
       navigate("/", { replace: true });
     } catch (e) {
       signingOutRef.current = false;
