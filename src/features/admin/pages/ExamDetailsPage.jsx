@@ -232,7 +232,7 @@ export default function ExamDetailsPage() {
   return (
     <div className={`view-exam-details qualify-exam-detail qe-workspace--${exam.exam_status}`}>
       <ExamHeader exam={exam}
-        managementControls={      {isSuperAdmin && !isDemo && <details className="qe-manage-menu">
+        managementControls={isSuperAdmin && !isDemo ? <details className="qe-manage-menu">
         <summary className="qe-manage-trigger">⚙ Manage Exam <span aria-hidden="true">⌄</span></summary>
         <div className="qe-manage-popover">
           <div className="qe-manage-title">
@@ -266,7 +266,7 @@ export default function ExamDetailsPage() {
             {stopError && <p role="alert" className="qe-manage-feedback">{stopError}</p>}
           </section>}
         </div>
-      </details>}}
+      </details> : null}
         responsibleStaff={isSuperAdmin ? staff.find(member => member.user_id === exam.created_by) : exam.created_by === user?.id ? { name: user?.user_metadata?.full_name, email: user?.email } : null}
         showResponsibleStaff={isSuperAdmin || exam.created_by === user?.id} />
 
