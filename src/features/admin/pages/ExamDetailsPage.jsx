@@ -20,6 +20,7 @@ import "../styles/exam-details.css";
 import "../styles/exam-details-layout.css";
 import "../styles/exam-workspace.css";
 import "../styles/exam-workspace-polish.css";
+import "../styles/exam-attempts-split.css";
 
 const TABS = [
   { id: "edit", label: "Exam setup" },
