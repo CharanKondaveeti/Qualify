@@ -222,3 +222,35 @@
  .qe-scoreboard-selectors .qe-ops-select{width:100%}
 }
 @media(prefers-reduced-motion:reduce){.qe-operations *,.qe-scoreboard *{transition:none!important}}
+
+/* Results overview: three readable, distinct summary tiles. */
+.qualify-exam-detail .qe-results-insights{
+ grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.qualify-exam-detail .qe-results-insights .qe-insight{
+ --qe-result-accent:#4a57da;--qe-result-bg:#eff1ff;--qe-result-border:#d4d9ff;
+ display:flex;align-items:flex-start;gap:13px;min-height:116px;
+ padding:17px 16px;border-radius:13px;
+ background:var(--qe-result-bg);border-color:var(--qe-result-border);
+}
+.qualify-exam-detail .qe-results-insights .qe-insight--green{
+ --qe-result-accent:#13865d;--qe-result-bg:#eaf8f0;--qe-result-border:#c8e8d4;
+}
+.qualify-exam-detail .qe-results-insights .qe-insight--blue{
+ --qe-result-accent:#7950d4;--qe-result-bg:#f2ecff;--qe-result-border:#dfd0fa;
+}
+.qualify-exam-detail .qe-results-insights .qe-monitoring-metric-icon{
+ background:var(--qe-result-accent);color:#fff;
+}
+.qualify-exam-detail .qe-results-insights .qe-monitoring-metric-copy .qe-insight-label{
+ color:var(--qe-result-accent);font-size:12px;font-weight:800;
+}
+.qualify-exam-detail .qe-results-insights .qe-monitoring-metric-copy .qe-monitoring-metric-value{
+ color:#102f58;font-size:29px;font-weight:830;line-height:1.12;
+}
+@media(max-width:740px){
+ .qualify-exam-detail .qe-results-insights{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:420px){
+ .qualify-exam-detail .qe-results-insights{grid-template-columns:1fr}
+}
