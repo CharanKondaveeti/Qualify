@@ -1,6 +1,7 @@
 import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { createPortal } from "react-dom";
 import {
   FiActivity, FiAlertCircle, FiCheck, FiCheckCircle, FiClock, FiTrendingUp,
   FiEye, FiEyeOff, FiMoreHorizontal, FiRefreshCw, FiSearch, FiShield, FiUsers, FiX,
@@ -48,6 +49,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [activityLoading, setActivityLoading] = useState(false);
   const [activityRefresh, setActivityRefresh] = useState(0);
+  const [moreMenu, setMoreMenu] = useState(null);
   const activityPanelRef = useRef(null);
   const [canStickActivity, setCanStickActivity] = useState(false);
 
@@ -114,6 +116,38 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     check();
     return () => { observer.disconnect(); window.removeEventListener("resize", check); };
   }, [view, exam.exam_status]);
+
+  useEffect(() => {
+    if (!moreMenu) return undefined;
+    const close = (event) => {
+      if (!event.target.closest?.("[data-student-menu-trigger], [data-student-menu-popup]")) setMoreMenu(null);
+    };
+    const closeKey = (event) => { if (event.key === "Escape") setMoreMenu(null); };
+    const closeScroll = () => setMoreMenu(null);
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", closeKey);
+    window.addEventListener("scroll", closeScroll, true);
+    window.addEventListener("resize", closeScroll);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", closeKey);
+      window.removeEventListener("scroll", closeScroll, true);
+      window.removeEventListener("resize", closeScroll);
+    };
+  }, [moreMenu]);
+
+  function toggleMoreMenu(student, event) {
+    if (moreMenu?.id === student.student_report_id) { setMoreMenu(null); return; }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const width = 178;
+    const menuHeight = exam.timing_mode === "time" ? 118 : 155;
+    setMoreMenu({
+      id: student.student_report_id,
+      x: Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8)),
+      y: rect.bottom + menuHeight + 8 > window.innerHeight && rect.top >= menuHeight + 8
+        ? rect.top - menuHeight - 6 : rect.bottom + 6,
+    });
+  }
 
   function viewStudentActivity(student) {
     setSelectedStudentId(student.student_report_id);
@@ -315,26 +349,12 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
                       title={`View exam activity for ${student.student_name}`}>
                       <FiEye aria-hidden="true" /> View activity
                     </button>
-                    {inExam && student.student_status === "in progress" && <details className="qe-student-more">
-                      <summary aria-label={`More actions for ${student.student_name || "student"}`}
-                        title="More student actions"><FiMoreHorizontal aria-hidden="true" /></summary>
-                      <div className="qe-student-more-menu">
-                        <button type="button" disabled={working} onClick={event => {
-                          event.currentTarget.closest("details")?.removeAttribute("open");
-                          control(student.student_report_id, "reset_session");
-                        }}>Reset device</button>
-                        {exam.timing_mode !== "time" && <button type="button" disabled={working}
-                          onClick={event => {
-                            event.currentTarget.closest("details")?.removeAttribute("open");
-                            control(student.student_report_id, "extend_time", 5);
-                          }}>+5 min</button>}
-                        <button type="button" className="qe-attempt-danger" disabled={working}
-                          onClick={event => {
-                            event.currentTarget.closest("details")?.removeAttribute("open");
-                            control(student.student_report_id, "revoke");
-                          }}>Revoke access</button>
-                      </div>
-                    </details>}
+                    {inExam && student.student_status === "in progress" && <button type="button"
+                      className="qe-student-more-trigger" data-student-menu-trigger
+                      aria-label={`More actions for ${student.student_name || "student"}`}
+                      aria-haspopup="menu" aria-expanded={moreMenu?.id === student.student_report_id}
+                      onClick={event => toggleMoreMenu(student, event)}
+                      title="More student actions"><FiMoreHorizontal aria-hidden="true" /></button>}
                   </div></td>
                 </tr>)}
                 {!visibleStudents.length && <tr><td colSpan={3} className="qe-empty-table">
@@ -436,6 +456,17 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
         </section>
       </div>
     </>}
+
+    {moreMenu && createPortal(<div className="qe-student-floating-menu" data-student-menu-popup
+      role="menu" aria-label="Student attempt actions"
+      style={{ position: "fixed", left: moreMenu.x, top: moreMenu.y, zIndex: 10000 }}>
+      <button type="button" role="menuitem" disabled={working}
+        onClick={() => { const id = moreMenu.id; setMoreMenu(null); control(id, "reset_session"); }}>Reset device</button>
+      {exam.timing_mode !== "time" && <button type="button" role="menuitem" disabled={working}
+        onClick={() => { const id = moreMenu.id; setMoreMenu(null); control(id, "extend_time", 5); }}>+5 min</button>}
+      <button type="button" role="menuitem" className="qe-attempt-danger" disabled={working}
+        onClick={() => { const id = moreMenu.id; setMoreMenu(null); control(id, "revoke"); }}>Revoke access</button>
+    </div>, document.body)}
 
     {view === "results" && completedExam && <>
       <div className="qe-ops-heading qe-results-heading">
