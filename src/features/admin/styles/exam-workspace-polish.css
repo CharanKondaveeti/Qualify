@@ -476,3 +476,39 @@
 @media(prefers-reduced-motion:reduce){
   .qualify-exam-detail *{transition:none!important}
 }
+
+/* Exam hero layout: readable title and consistent inset around timing card. */
+@media (min-width: 741px) {
+ .qualify-exam-detail .qe-header-main {
+  align-items:center;
+  gap:24px;
+  min-height:0;
+  padding:26px 32px 28px;
+ }
+ .qualify-exam-detail .qe-header h1 {
+  font-size:clamp(25px,2.15vw,33px);
+  line-height:1.2;
+  letter-spacing:-.025em;
+  margin-bottom:13px;
+ }
+ .qualify-exam-detail .qe-header .qe-schedule {
+  margin:0 28px 28px;
+  border-radius:13px;
+ }
+ .qualify-exam-detail .qe-header .qe-schedule-items {
+  padding:12px 10px;
+ }
+ .qualify-exam-detail .qe-header .qe-schedule-item {
+  padding:7px 14px;
+ }
+}
+@media (max-width: 740px) {
+ .qualify-exam-detail .qe-header h1 {
+  font-size:clamp(22px,5vw,28px);
+  line-height:1.23;
+  letter-spacing:-.025em;
+ }
+ .qualify-exam-detail .qe-header .qe-schedule {
+  margin-bottom:18px;
+ }
+}
