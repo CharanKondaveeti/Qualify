@@ -1,5 +1,5 @@
 import { useAppDialog } from "../../../shared/components/ConfirmDialogProvider";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   FiActivity, FiAlertCircle, FiCheck, FiCheckCircle, FiClock, FiTrendingUp,
@@ -48,6 +48,8 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [activityLoading, setActivityLoading] = useState(false);
   const [activityRefresh, setActivityRefresh] = useState(0);
+  const activityPanelRef = useRef(null);
+  const [canStickActivity, setCanStickActivity] = useState(false);
 
   const completedExam = exam.exam_status === "completed";
   const inExam = exam.exam_status === "active";
@@ -95,6 +97,23 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     currentActivityPage * EVENTS_PER_PAGE
   );
   useEffect(() => { setActivityPage(1); }, [selectedStudentId, activitySearch, exam.exam_id]);
+
+  useLayoutEffect(() => {
+    if (view !== "students" || exam.exam_status === "upcoming") return undefined;
+    const panel = activityPanelRef.current;
+    if (!panel || typeof ResizeObserver === "undefined") return undefined;
+    const check = () => {
+      // Never pin a taller panel: keep its pagination and final events accessible.
+      const narrow = window.matchMedia("(max-width: 1200px)").matches;
+      const reducedHeight = window.innerHeight - 32;
+      setCanStickActivity(!narrow && panel.getBoundingClientRect().height <= reducedHeight);
+    };
+    const observer = new ResizeObserver(check);
+    observer.observe(panel);
+    window.addEventListener("resize", check);
+    check();
+    return () => { observer.disconnect(); window.removeEventListener("resize", check); };
+  }, [view, exam.exam_status]);
 
   function viewStudentActivity(student) {
     setSelectedStudentId(student.student_report_id);
@@ -328,7 +347,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
           </footer>
         </section>
 
-        <section id="qe-student-activity" className="qe-activity-details qe-activity-panel"
+        <section id="qe-student-activity" ref={activityPanelRef} className={`qe-activity-details qe-activity-panel${canStickActivity ? " qe-activity-panel--sticky" : ""}`}
           aria-labelledby="qe-activity-title">
           <header className="qe-activity-summary">
             <span className="qe-activity-summary-icon"><FiActivity aria-hidden="true" /></span>
