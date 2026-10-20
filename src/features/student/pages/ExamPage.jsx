@@ -17,6 +17,7 @@ import ExamStartCard from "../components/ExamStartCard";
 import QuestionPalette from "../components/QuestionPalette";
 import QuestionHeader from "../components/QuestionHeader";
 import QuestionContent from "../components/QuestionContent";
+import { restoreCandidateDraft } from "../../../utils/restoreCandidateDraft";
 
 import "../styles/exam-page.css";
 import "../styles/secure-exam.css";
@@ -181,15 +182,13 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
             // Ignore invalid local draft.
           }
 
-          const restored = {
-            ...(data.answers || {}),
-            ...(draft.answers || {}),
-          };
-
-          const restoredFlags = {
-            ...(data.review_flags || {}),
-            ...(draft.flags || {}),
-          };
+          const { answers: restored, flags: restoredFlags } = restoreCandidateDraft(
+            data.questions,
+            data.answers,
+            draft?.answers,
+            data.review_flags,
+            draft?.flags,
+          );
 
           currentAnswers.current = restored;
           currentFlags.current = restoredFlags;
@@ -198,7 +197,7 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
           setFlags(restoredFlags);
 
           const restoredIndex = data.questions.findIndex(
-            (q) => q.question_id === draft.questionId,
+            (q) => q.question_id === draft?.questionId,
           );
 
           setIndex(Math.max(0, restoredIndex));
