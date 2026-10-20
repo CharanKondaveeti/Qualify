@@ -153,6 +153,7 @@ export default function ExamDetailsTabs({
           <p>Share the registration link above to invite students.</p>
         </div>
       ) : (
+        <>
         <div className="qualify-registration-list__scroll" role="region"
           aria-label="Registered students table" tabIndex={0}>
           <table className="students-table">
@@ -201,6 +202,7 @@ export default function ExamDetailsTabs({
               )}
             </tbody>
           </table>
+        </div>
           <nav className="qualify-registration-pagination" aria-label="Registration pages">
             <span>{visibleStudents.length ? `Showing ${(currentRegistrationPage - 1) * REGISTRATIONS_PER_PAGE + 1}–${Math.min(currentRegistrationPage * REGISTRATIONS_PER_PAGE, visibleStudents.length)} of ${visibleStudents.length} students` : "No matching students"}</span>
             {registrationPageCount > 1 && <div className="qualify-registration-pagination__actions">
@@ -209,7 +211,7 @@ export default function ExamDetailsTabs({
               <button type="button" disabled={currentRegistrationPage === registrationPageCount} onClick={() => { setRegistrationPage(p => Math.min(registrationPageCount, p + 1)); setEditingId(null); }}>Next</button>
             </div>}
           </nav>
-        </div>
+        </>
       )}
     </div>
   );
