@@ -438,7 +438,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
       </div>
       <div className="qe-insight-grid qe-results-insights">
         <Metric label="Submitted" value={counts.submitted} Icon={FiUsers} />
-        <Metric label="Average score" value={scores.length ? `${average} / ${exam.total_marks}` : "—"} Icon={FiActivity} />
+
         <Metric label="Passed" value={passed} Icon={FiCheckCircle} accent="green" />
         <Metric label="Pass rate" value={passRate} Icon={FiTrendingUp} accent="blue" />
       </div>
