@@ -237,7 +237,7 @@ export default function ExamsPage() {
           }
         }}
       >
-        <td className="exam-name-cell">{exam.title}</td>
+        <td className="exam-name-cell">{String(exam.title || "").replace(/\s+[—–-]\s+(?:Upcoming|Active|Completed)\s*$/i, "")}</td>
         <td>{exam.course}</td>
         {isSuperAdmin && (
           <td className="exam-responsible-cell">
