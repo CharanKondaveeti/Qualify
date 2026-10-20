@@ -1,7 +1,8 @@
 import { isDemo } from '../../../lib/supabase';
 import PageLoader from '../../../shared/components/PageLoader';
 import { useAppDialog } from '../../../shared/components/ConfirmDialogProvider';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { FiSettings, FiChevronDown, FiRepeat, FiAlertOctagon } from "react-icons/fi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import supabase from "../../../lib/supabase";
@@ -53,6 +54,7 @@ export default function ExamDetailsPage() {
   const [transferMessage, setTransferMessage] = useState("");
   const [stopBusy, setStopBusy] = useState(false);
   const [stopError, setStopError] = useState("");
+  const manageMenuRef = useRef(null);
 
   const {
     data: exams = [],
@@ -96,7 +98,27 @@ export default function ExamDetailsPage() {
 
   useEffect(() => {
     setNewOwner("");
+    if (manageMenuRef.current) manageMenuRef.current.open = false;
   }, [examId]);
+
+  useEffect(() => {
+    const closeOnOutside = (event) => {
+      const menu = manageMenuRef.current;
+      if (menu?.open && !menu.contains(event.target)) menu.open = false;
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape" && manageMenuRef.current?.open) {
+        manageMenuRef.current.open = false;
+        manageMenuRef.current.querySelector("summary")?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", closeOnOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
 
   useEffect(() => {
     setPassMark(exam?.pass_mark ?? 0);
@@ -232,15 +254,15 @@ export default function ExamDetailsPage() {
   return (
     <div className={`view-exam-details qualify-exam-detail qe-workspace--${exam.exam_status}`}>
       <ExamHeader exam={exam}
-        managementControls={isSuperAdmin && !isDemo ? <details className="qe-manage-menu">
-        <summary className="qe-manage-trigger">⚙ Manage Exam <span aria-hidden="true">⌄</span></summary>
+        managementControls={isSuperAdmin && !isDemo ? <details ref={manageMenuRef} className="qe-manage-menu">
+        <summary className="qe-manage-trigger"><FiSettings aria-hidden="true" className="qe-manage-trigger-icon" /> Manage Exam <FiChevronDown aria-hidden="true" className="qe-manage-chevron" /></summary>
         <div className="qe-manage-popover">
           <div className="qe-manage-title">
             <strong>Institution controls</strong>
             <span>Super Admin only</span>
           </div>
           <section className="qe-manage-group">
-            <h3>Transfer exam ownership</h3>
+            <h3><FiRepeat aria-hidden="true" /> Transfer exam ownership</h3>
             <p>Assign this examination to another active member of your institution.</p>
             <label htmlFor="qe-manage-owner">New exam owner</label>
             <select id="qe-manage-owner" value={newOwner}
@@ -258,7 +280,7 @@ export default function ExamDetailsPage() {
             {transferMessage && <p role="status" className="qe-manage-feedback">{transferMessage}</p>}
           </section>
           {exam.exam_status === "active" && <section className="qe-manage-group qe-manage-danger">
-            <h3>Emergency stop</h3>
+            <h3><FiAlertOctagon aria-hidden="true" /> Emergency stop</h3>
             <p>End the active examination and submit attempts using saved answers.</p>
             <button type="button" disabled={stopBusy} onClick={emergencyStop}>
               {stopBusy ? "Stopping…" : "Emergency Stop Exam"}
