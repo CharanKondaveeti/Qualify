@@ -102,3 +102,75 @@
 @media(max-width:690px){
  .qualify-exam-detail .qe-header-top-actions:not(:empty){flex:0 0 auto;justify-content:flex-end}
 }
+
+/* Exam hero: screenshot-matched deep blue with understated layered arcs.
+   This is visual-only; the existing Manage Exam menu stays functional. */
+.qualify-exam-detail .qe-header,
+.qualify-exam-detail .qe-header--active,
+.qualify-exam-detail .qe-header--completed{
+ isolation:isolate;
+ background:
+  radial-gradient(ellipse 66% 130% at 46% 105%,rgba(4,32,100,.45) 0%,rgba(5,39,112,.22) 58%,transparent 76%),
+  linear-gradient(108deg,#103777 0%,#0c3180 40%,#0950d9 100%);
+ box-shadow:0 10px 26px rgba(21,61,145,.15);
+ border-radius:17px;
+}
+.qualify-exam-detail .qe-header::before{
+ content:"";position:absolute;pointer-events:none;z-index:-1;
+ width:72%;height:185%;left:4%;top:6%;border-radius:50%;
+ background:linear-gradient(145deg,rgba(6,31,83,.24),rgba(5,54,154,.22));
+ transform:rotate(13deg);
+}
+.qualify-exam-detail .qe-header::after{
+ content:"";position:absolute;pointer-events:none;z-index:-1;
+ width:74%;height:240%;left:7%;top:-112%;border-radius:50%;
+ border:36px solid rgba(35,91,182,.13);
+ transform:rotate(-11deg);
+}
+.qualify-exam-detail .qe-header-top{
+ padding:23px 28px 0;
+}
+.qualify-exam-detail .qe-back{
+ min-height:44px;
+ background:rgba(255,255,255,.16);
+ border:1px solid rgba(255,255,255,.08);
+}
+.qualify-exam-detail .qe-header .qe-exam-status{
+ min-width:132px;padding:12px 18px;
+ background:rgba(43,107,221,.65);
+ border:1px solid rgba(123,165,239,.16);
+}
+.qualify-exam-detail .qe-header .qe-exam-status--completed{
+ background:rgba(45,111,224,.68);
+}
+.qualify-exam-detail .qe-header .qe-status-dot{
+ background:#68f2a7;box-shadow:0 0 0 4px rgba(111,241,176,.15);
+}
+.qualify-exam-detail .qe-header .qe-exam-status--upcoming .qe-status-dot{
+ background:#ffd18c;box-shadow:0 0 0 4px rgba(255,209,140,.18);
+}
+.qualify-exam-detail .qe-header .qe-schedule{
+ background:#fff;
+ box-shadow:0 5px 16px rgba(8,28,78,.13);
+}
+@media(min-width:741px){
+ .qualify-exam-detail .qe-header-main{
+  padding:30px 31px 27px;
+  gap:24px;
+ }
+ .qualify-exam-detail .qe-header h1{
+  font-size:clamp(26px,2.5vw,34px);
+  font-weight:790;letter-spacing:-.026em;
+ }
+ .qualify-exam-detail .qe-header .qe-schedule{
+  margin:0 28px 12px;
+ }
+ .qualify-exam-detail .qe-header .qe-schedule-items{
+  padding:12px 10px;
+ }
+}
+@media(max-width:740px){
+ .qualify-exam-detail .qe-header-top{padding:17px 17px 0}
+ .qualify-exam-detail .qe-header .qe-schedule{margin-bottom:14px}
+ .qualify-exam-detail .qe-header-main{padding-bottom:18px}
+}
