@@ -230,3 +230,21 @@
   top:auto;
  }
 }
+
+/* Allow normal wheel scroll chaining to the document across the monitoring area.
+   The directory may still scroll sideways on small screens. */
+.qualify-exam-detail .qe-attempt-workspace .qe-directory-scroll{
+ max-height:none!important;
+ overflow-y:clip!important;
+ overflow-x:auto;
+ overscroll-behavior-y:auto!important;
+}
+.qualify-exam-detail .qe-attempt-workspace .qe-activity-feed{
+ max-height:none!important;
+ overflow:visible!important;
+ overscroll-behavior-y:auto!important;
+}
+.qualify-exam-detail .qe-attempt-workspace .qe-directory-panel,
+.qualify-exam-detail .qe-attempt-workspace .qe-activity-panel{
+ overscroll-behavior-y:auto;
+}
