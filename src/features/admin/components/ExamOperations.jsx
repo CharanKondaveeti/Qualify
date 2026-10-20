@@ -9,6 +9,7 @@ import supabase, { isDemo } from "../../../lib/supabase";
 import { adminControl, adminEvents, adminClearEvents } from "../../../services/secureExamService";
 import "../styles/operations.css";
 import "../styles/exam-students-results.css";
+import "../styles/student-monitoring-theme.css";
 
 const STATUSES = [
   { value: "all", title: "All" }, { value: "not started", title: "Not started" },
@@ -18,10 +19,14 @@ const STATUSES = [
 
 const cleanStatus = value => String(value || "unknown").replace(/[^a-z]+/gi, "-").toLowerCase();
 
-function Metric({ label, value, Icon, accent = "" }) {
+function Metric({ label, value, Icon, accent = "", description = "" }) {
   return <div className={`qe-insight${accent ? ` qe-insight--${accent}` : ""}`}>
-    <div className="qe-insight-label"><span>{label}</span><Icon aria-hidden="true" /></div>
-    <strong>{value}</strong>
+    <span className="qe-monitoring-metric-icon"><Icon aria-hidden="true" /></span>
+    <div className="qe-monitoring-metric-copy">
+      <div className="qe-insight-label"><span>{label}</span></div>
+      {description && <span className="qe-monitoring-metric-description">{description}</span>}
+      <strong className="qe-monitoring-metric-value">{value}</strong>
+    </div>
   </div>;
 }
 
@@ -225,11 +230,11 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
       </div>
 
       <div className="qe-insight-grid" aria-label="Student attempt summary">
-        <Metric label="Registered" value={counts.registered} Icon={FiUsers} />
-        <Metric label="Not started" value={counts.notStarted} Icon={FiClock} />
-        {inExam && <Metric label="In progress" value={counts.taking} Icon={FiActivity} accent="blue" />}
-        <Metric label="Submitted" value={counts.submitted} Icon={FiCheckCircle} accent="green" />
-        <Metric label="Revoked" value={counts.revoked} Icon={FiShield} />
+        <Metric label="Registered" description="Total students" value={counts.registered} Icon={FiUsers} accent="registered" />
+        <Metric label="Not started" description="Awaiting their attempt" value={counts.notStarted} Icon={FiClock} accent="waiting" />
+        {inExam && <Metric label="In progress" description="Currently attempting" value={counts.taking} Icon={FiActivity} accent="blue" />}
+        <Metric label="Submitted" description="Completed attempts" value={counts.submitted} Icon={FiCheckCircle} accent="green" />
+        <Metric label="Revoked" description="Access revoked" value={counts.revoked} Icon={FiShield} accent="revoked" />
       </div>
 
       <div className="qe-attempt-workspace">
@@ -262,8 +267,10 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
               <tbody>
                 {visibleStudents.map(student => <tr key={student.student_report_id}
                   className={selectedStudentId === student.student_report_id ? "is-inspected" : ""}>
-                  <td><div className="qe-student-name">{student.student_name || "Unnamed student"}</div>
-                    <span className="qe-student-sub">{student.roll_no || "—"}{student.email ? ` · ${student.email}` : ""}</span></td>
+                  <td><div className="qe-monitoring-person">
+                    <span className="qe-monitoring-avatar" aria-hidden="true">{(student.student_name || "?").split(/\\s+/).filter(Boolean).slice(0,2).map(part => part[0]?.toUpperCase()).join("")}</span>
+                    <div><div className="qe-student-name">{student.student_name || "Unnamed student"}</div>
+                    <span className="qe-student-sub">{student.roll_no || "—"}{student.email ? ` · ${student.email}` : ""}</span></div></div></td>
                   <td><span className={`qe-attempt-status qe-attempt-status--${cleanStatus(student.student_status)}`}>
                     <span aria-hidden="true" />{student.student_status || "Unknown"}</span></td>
                   <td><div className="qe-attempt-controls">
@@ -335,7 +342,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
             {activityLoading ? <p className="qe-activity-empty">Loading exam events…</p>
               : activeEvents.length ? <ol className="qe-event-list">
                 {activeEvents.map((event, index) => <li key={`${event.created_at}-${index}`} className="qe-event">
-                  <span className="qe-event-dot" aria-hidden="true" />
+                  <span className="qe-event-dot" aria-hidden="true"><FiActivity /></span>
                   <div className="qe-event-copy">
                     <strong>{String(event.kind || "event").replaceAll("_", " ")}</strong>
                     {!selectedStudent && <span className="qe-event-student">
