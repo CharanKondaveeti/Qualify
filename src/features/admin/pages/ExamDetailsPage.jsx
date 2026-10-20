@@ -21,6 +21,7 @@ import "../styles/exam-details-layout.css";
 import "../styles/exam-workspace.css";
 import "../styles/exam-workspace-polish.css";
 import "../styles/exam-attempts-split.css";
+import "../styles/exam-manage-menu.css";
 
 const TABS = [
   { id: "edit", label: "Exam setup" },
@@ -231,6 +232,41 @@ export default function ExamDetailsPage() {
   return (
     <div className={`view-exam-details qualify-exam-detail qe-workspace--${exam.exam_status}`}>
       <ExamHeader exam={exam}
+        managementControls={      {isSuperAdmin && !isDemo && <details className="qe-manage-menu">
+        <summary className="qe-manage-trigger">⚙ Manage Exam <span aria-hidden="true">⌄</span></summary>
+        <div className="qe-manage-popover">
+          <div className="qe-manage-title">
+            <strong>Institution controls</strong>
+            <span>Super Admin only</span>
+          </div>
+          <section className="qe-manage-group">
+            <h3>Transfer exam ownership</h3>
+            <p>Assign this examination to another active member of your institution.</p>
+            <label htmlFor="qe-manage-owner">New exam owner</label>
+            <select id="qe-manage-owner" value={newOwner}
+              onChange={(event) => setNewOwner(event.target.value)}>
+              <option value="">Choose staff member</option>
+              {staff.filter(member => member.status === "active" && member.user_id !== exam.created_by)
+                .map(member => <option key={member.user_id} value={member.user_id}>
+                  {member.name || member.email} ({member.role === "staff_admin" ? "Staff" : "Super Admin"})
+                </option>)}
+            </select>
+            <button type="button" className="qe-manage-action"
+              disabled={!newOwner || transferBusy} onClick={transfer}>
+              {transferBusy ? "Transferring…" : "Transfer ownership"}
+            </button>
+            {transferMessage && <p role="status" className="qe-manage-feedback">{transferMessage}</p>}
+          </section>
+          {exam.exam_status === "active" && <section className="qe-manage-group qe-manage-danger">
+            <h3>Emergency stop</h3>
+            <p>End the active examination and submit attempts using saved answers.</p>
+            <button type="button" disabled={stopBusy} onClick={emergencyStop}>
+              {stopBusy ? "Stopping…" : "Emergency Stop Exam"}
+            </button>
+            {stopError && <p role="alert" className="qe-manage-feedback">{stopError}</p>}
+          </section>}
+        </div>
+      </details>}}
         responsibleStaff={isSuperAdmin ? staff.find(member => member.user_id === exam.created_by) : exam.created_by === user?.id ? { name: user?.user_metadata?.full_name, email: user?.email } : null}
         showResponsibleStaff={isSuperAdmin || exam.created_by === user?.id} />
 
@@ -292,79 +328,6 @@ export default function ExamDetailsPage() {
           students={students}
           view={activeTab}
         />
-
-        {/* SUPER ADMIN CONTROLS */}
-
-        {isSuperAdmin && ((upcoming && activeTab === "edit") || (!upcoming && activeTab === "students")) && (
-          <section className="qualify-ops">
-            <h2>Institution exam controls</h2>
-
-            <div className="qualify-exam-controls">
-              {exam.exam_status === "active" && (
-                <div className="qualify-exam-control-group">
-                  <h3>Emergency stop</h3>
-
-                  <button
-                    type="button"
-                    className="action-btn"
-                    disabled={stopBusy}
-                    onClick={emergencyStop}
-                  >
-                    {stopBusy ? "Stopping…" : "Emergency Stop Exam"}
-                  </button>
-
-                  {stopError && (
-                    <p role="alert" className="ops-error">
-                      {stopError}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              <div className="qualify-exam-control-group">
-                <h3>Transfer exam ownership</h3>
-
-                <p className="muted">
-                  Only institution Super Admins can transfer exams to active
-                  members of this institution.
-                </p>
-
-                <div className="ops-actions">
-                  <select
-                    aria-label="New exam owner"
-                    value={newOwner}
-                    onChange={(event) => setNewOwner(event.target.value)}
-                  >
-                    <option value="">Choose staff member</option>
-
-                    {staff
-                      .filter((member) => member.status === "active" && member.user_id !== exam.created_by)
-                      .map((member) => (
-                        <option key={member.user_id} value={member.user_id}>
-                          {member.name || member.email} (
-                          {member.role === "staff_admin"
-                            ? "Staff"
-                            : "Super Admin"}
-                          )
-                        </option>
-                      ))}
-                  </select>
-
-                  <button
-                    type="button"
-                    className="action-btn"
-                    disabled={!newOwner || transferBusy}
-                    onClick={transfer}
-                  >
-                    {transferBusy ? "Transferring…" : "Transfer ownership"}
-                  </button>
-                </div>
-
-                {transferMessage && <p role="status">{transferMessage}</p>}
-              </div>
-            </div>
-          </section>
-        )}
 
         {activeTab === "students" && studentsError && (
           <p role="alert" className="ops-error">
