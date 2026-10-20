@@ -17,6 +17,8 @@ export default function ExamDetailsTabs({
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState({ name: "", email: "", rollNo: "" });
   const [search, setSearch] = useState("");
+  const [registrationPage, setRegistrationPage] = useState(1);
+  const REGISTRATIONS_PER_PAGE = 15;
   const [busyId, setBusyId] = useState(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -27,6 +29,10 @@ export default function ExamDetailsTabs({
     `${student.student_name || ""} ${student.roll_no || ""} ${student.email || ""}`
       .toLowerCase().includes(search.trim().toLowerCase()),
   );
+
+  const registrationPageCount = Math.max(1, Math.ceil(visibleStudents.length / REGISTRATIONS_PER_PAGE));
+  const currentRegistrationPage = Math.min(registrationPage, registrationPageCount);
+  const pageStudents = visibleStudents.slice((currentRegistrationPage - 1) * REGISTRATIONS_PER_PAGE, currentRegistrationPage * REGISTRATIONS_PER_PAGE);
 
   function beginEdit(student) {
     if (!canEdit) return;
@@ -132,7 +138,7 @@ export default function ExamDetailsTabs({
           <p>{canEdit ? "Review and edit registrations before the exam starts." : "View registrations. Editing is unavailable once the exam starts."}</p>
         </div>
         <input type="search" aria-label="Search registered students"
-          value={search} onChange={(event) => setSearch(event.target.value)}
+          value={search} onChange={(event) => { setSearch(event.target.value); setRegistrationPage(1); }}
           placeholder="Search name, hall ticket or email" />
       </div>
 
@@ -156,7 +162,7 @@ export default function ExamDetailsTabs({
               </tr>
             </thead>
             <tbody>
-              {visibleStudents.map((student) => {
+              {pageStudents.map((student) => {
                 const id = student.student_report_id;
                 const editing = editingId === id;
                 const disabled = Boolean(busyId);
@@ -195,6 +201,14 @@ export default function ExamDetailsTabs({
               )}
             </tbody>
           </table>
+          <nav className="qualify-registration-pagination" aria-label="Registration pages">
+            <span>{visibleStudents.length ? `Showing ${(currentRegistrationPage - 1) * REGISTRATIONS_PER_PAGE + 1}–${Math.min(currentRegistrationPage * REGISTRATIONS_PER_PAGE, visibleStudents.length)} of ${visibleStudents.length} students` : "No matching students"}</span>
+            {registrationPageCount > 1 && <div className="qualify-registration-pagination__actions">
+              <button type="button" disabled={currentRegistrationPage === 1} onClick={() => { setRegistrationPage(p => Math.max(1, p - 1)); setEditingId(null); }}>Previous</button>
+              <span aria-live="polite">Page {currentRegistrationPage} of {registrationPageCount}</span>
+              <button type="button" disabled={currentRegistrationPage === registrationPageCount} onClick={() => { setRegistrationPage(p => Math.min(registrationPageCount, p + 1)); setEditingId(null); }}>Next</button>
+            </div>}
+          </nav>
         </div>
       )}
     </div>
