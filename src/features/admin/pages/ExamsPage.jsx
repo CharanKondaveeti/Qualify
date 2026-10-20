@@ -41,6 +41,8 @@ export default function ExamsPage() {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [examPage, setExamPage] = useState(1);
+  const EXAMS_PER_PAGE = 15;
   const [openMenuId, setOpenMenuId] = useState(null);
   const [deletingExamId, setDeletingExamId] = useState(null);
   const [duplicatingExamId, setDuplicatingExamId] = useState(null);
@@ -108,6 +110,12 @@ export default function ExamsPage() {
           .includes(query),
     );
   }, [exams, searchQuery, activeFilter, staffById, isSuperAdmin]);
+
+  const totalExamPages = Math.max(1, Math.ceil(filteredExams.length / EXAMS_PER_PAGE));
+  const currentExamPage = Math.min(examPage, totalExamPages);
+  const pagedExams = filteredExams.slice((currentExamPage - 1) * EXAMS_PER_PAGE, currentExamPage * EXAMS_PER_PAGE);
+  useEffect(() => { setExamPage(1); setOpenMenuId(null); }, [searchQuery, activeFilter]);
+  useEffect(() => { if (examPage > totalExamPages) setExamPage(totalExamPages); }, [examPage, totalExamPages]);
 
   useEffect(() => {
     if (!openMenuId) return;
@@ -214,7 +222,7 @@ export default function ExamsPage() {
       );
     }
 
-    return filteredExams.map((exam) => (
+    return pagedExams.map((exam) => (
       <tr
         key={exam.exam_id}
         className="exam-row"
@@ -390,7 +398,7 @@ export default function ExamsPage() {
           className="exams-table-container"
           tabIndex={0}
           role="region"
-          aria-label="Scrollable exam list"
+          aria-label="Examination list"
         >
           <table className="exams-table">
             <thead>
@@ -409,6 +417,14 @@ export default function ExamsPage() {
             <tbody>{renderRows()}</tbody>
           </table>
         </div>
+        {!isLoading && !isError && filteredExams.length > 0 && <nav className="exams-pagination" aria-label="Examination list pages">
+          <span>Showing {(currentExamPage - 1) * EXAMS_PER_PAGE + 1}–{Math.min(currentExamPage * EXAMS_PER_PAGE, filteredExams.length)} of {filteredExams.length} exams</span>
+          {totalExamPages > 1 && <div className="exams-pagination-actions">
+            <button type="button" disabled={currentExamPage === 1} onClick={() => { setExamPage(p => Math.max(1, p - 1)); setOpenMenuId(null); }}>Previous</button>
+            <span aria-live="polite">Page {currentExamPage} of {totalExamPages}</span>
+            <button type="button" disabled={currentExamPage === totalExamPages} onClick={() => { setExamPage(p => Math.min(totalExamPages, p + 1)); setOpenMenuId(null); }}>Next</button>
+          </div>}
+        </nav>}
       </section>
 
       <Modal
