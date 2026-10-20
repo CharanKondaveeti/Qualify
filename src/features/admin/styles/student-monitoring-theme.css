@@ -199,3 +199,18 @@
 }
 .qualify-exam-detail .qe-student-pagination-actions button:hover:not(:disabled){background:#eef2ff}
 .qualify-exam-detail .qe-student-pagination-actions button:disabled{opacity:.4;cursor:not-allowed}
+
+/* Independent heights: neither panel stretches to match its neighbour. */
+.qualify-exam-detail .qe-attempt-workspace{
+ align-items:start;
+}
+.qualify-exam-detail .qe-attempt-workspace>.qe-directory-panel,
+.qualify-exam-detail .qe-attempt-workspace>.qe-activity-panel{
+ align-self:start;height:auto;min-height:0;
+}
+.qualify-exam-detail .qe-activity-pagination{
+ background:#fafbff;
+}
+.qualify-exam-detail .qe-attempt-workspace .qe-activity-feed{
+ max-height:none!important;overflow-y:visible!important;
+}
