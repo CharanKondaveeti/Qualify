@@ -83,3 +83,22 @@
  .qualify-exam-detail .qe-header-top-actions{flex:0 0 auto;margin-left:auto;justify-content:flex-end}
  .qualify-exam-detail .qe-header-top{align-items:center}
 }
+
+/* Consistent, accessible header management control. */
+.qualify-exam-detail .qe-header-top-actions{gap:0}
+.qualify-exam-detail .qe-header-top-actions:empty{display:none}
+.qualify-exam-detail .qe-manage-trigger{
+ min-height:43px;padding:10px 14px;gap:9px;border-radius:10px;
+ font-size:12px;font-weight:760;
+}
+.qualify-exam-detail .qe-manage-trigger svg{width:16px;height:16px;flex:0 0 16px}
+.qualify-exam-detail .qe-manage-trigger>span{font-size:12px}
+.qualify-exam-detail .qe-manage-trigger .qe-manage-chevron{width:14px;height:14px;transition:transform .16s ease}
+.qualify-exam-detail .qe-manage-menu[open] .qe-manage-chevron{transform:rotate(180deg)}
+.qualify-exam-detail .qe-manage-menu:focus-within>.qe-manage-trigger{outline-offset:2px}
+.qualify-exam-detail .qe-manage-group h3{display:flex;align-items:center;gap:8px}
+.qualify-exam-detail .qe-manage-group h3 svg{width:15px;height:15px;flex:0 0 15px;color:#4d60d7}
+.qualify-exam-detail .qe-manage-danger h3 svg{color:#b63d44}
+@media(max-width:690px){
+ .qualify-exam-detail .qe-header-top-actions:not(:empty){flex:0 0 auto;justify-content:flex-end}
+}
