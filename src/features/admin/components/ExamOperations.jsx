@@ -40,6 +40,8 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState("all");
   const [studentSearch, setStudentSearch] = useState("");
+  const [studentPage, setStudentPage] = useState(1);
+  const STUDENTS_PER_PAGE = 15;
   const [activitySearch, setActivitySearch] = useState("");
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [activityLoading, setActivityLoading] = useState(false);
@@ -73,6 +75,10 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     return students.filter(s => (filter === "all" || s.student_status === filter) &&
       [s.student_name, s.roll_no, s.email].some(v => String(v || "").toLowerCase().includes(search)));
   }, [students, filter, studentSearch]);
+  const studentPageCount = Math.max(1, Math.ceil(visibleStudents.length / STUDENTS_PER_PAGE));
+  const currentStudentPage = Math.min(studentPage, studentPageCount);
+  const pageStudents = visibleStudents.slice((currentStudentPage - 1) * STUDENTS_PER_PAGE, currentStudentPage * STUDENTS_PER_PAGE);
+  useEffect(() => { setStudentPage(1); }, [filter, studentSearch, exam.exam_id]);
   const selectedStudent = useMemo(() =>
     students.find(s => s.student_report_id === selectedStudentId) || null,
     [students, selectedStudentId]);
@@ -265,7 +271,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
             <table className="qe-ops-table qe-directory-table">
               <thead><tr><th>Student</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody>
-                {visibleStudents.map(student => <tr key={student.student_report_id}
+                {pageStudents.map(student => <tr key={student.student_report_id}
                   className={selectedStudentId === student.student_report_id ? "is-inspected" : ""}>
                   <td><div className="qe-monitoring-person">
                     <span className="qe-monitoring-avatar" aria-hidden="true">{(student.student_name || "?").split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0]?.toUpperCase()).join("")}</span>
@@ -296,6 +302,16 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
               </tbody>
             </table>
           </div>
+          <nav className="qe-student-pagination" aria-label="Student directory pages">
+            <span>{visibleStudents.length ? `Showing ${(currentStudentPage - 1) * STUDENTS_PER_PAGE + 1}–${Math.min(currentStudentPage * STUDENTS_PER_PAGE, visibleStudents.length)} of ${visibleStudents.length} students` : "No students to display"}</span>
+            {studentPageCount > 1 && <div className="qe-student-pagination-actions">
+              <button type="button" disabled={currentStudentPage === 1}
+                onClick={() => setStudentPage(p => Math.max(1, p - 1))}>Previous</button>
+              <span aria-live="polite">Page {currentStudentPage} of {studentPageCount}</span>
+              <button type="button" disabled={currentStudentPage === studentPageCount}
+                onClick={() => setStudentPage(p => Math.min(studentPageCount, p + 1))}>Next</button>
+            </div>}
+          </nav>
           <footer className="qe-directory-footer">
             <FiShield aria-hidden="true" />{inExam
               ? "Student controls apply only to active attempts."
