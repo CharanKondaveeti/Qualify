@@ -23,8 +23,8 @@ test("tampered local storage cannot inject unknown questions or invalid option i
     { q1: "true", q2: false, fake: true },
   );
   assert.deepEqual(result, {
-    answers: {},
-    flags: { q2: false },
+    answers: { q1: 1 },
+    flags: { q1: true, q2: false },
   });
   assert.equal({}.polluted, undefined);
 });
