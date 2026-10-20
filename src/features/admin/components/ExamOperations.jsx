@@ -268,7 +268,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
                 {visibleStudents.map(student => <tr key={student.student_report_id}
                   className={selectedStudentId === student.student_report_id ? "is-inspected" : ""}>
                   <td><div className="qe-monitoring-person">
-                    <span className="qe-monitoring-avatar" aria-hidden="true">{(student.student_name || "?").split(/\\s+/).filter(Boolean).slice(0,2).map(part => part[0]?.toUpperCase()).join("")}</span>
+                    <span className="qe-monitoring-avatar" aria-hidden="true">{(student.student_name || "?").split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0]?.toUpperCase()).join("")}</span>
                     <div><div className="qe-student-name">{student.student_name || "Unnamed student"}</div>
                     <span className="qe-student-sub">{student.roll_no || "—"}{student.email ? ` · ${student.email}` : ""}</span></div></div></td>
                   <td><span className={`qe-attempt-status qe-attempt-status--${cleanStatus(student.student_status)}`}>
