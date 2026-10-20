@@ -248,3 +248,38 @@
 .qualify-exam-detail .qe-attempt-workspace .qe-activity-panel{
  overscroll-behavior-y:auto;
 }
+
+/* View Activity stays visible; secondary controls open in the row's More menu.
+   In-flow expansion avoids clipping inside the horizontally scrollable table. */
+.qualify-exam-detail .qe-directory-table .qe-attempt-controls{
+ align-items:flex-start;
+}
+.qualify-exam-detail .qe-student-more{
+ flex:0 0 auto;
+ min-width:38px;
+}
+.qualify-exam-detail .qe-student-more>summary{
+ display:flex;align-items:center;justify-content:center;
+ width:38px;height:34px;border:1px solid #d1dbf7;border-radius:8px;
+ color:#4d5de9;background:#f5f6ff;cursor:pointer;list-style:none;
+}
+.qualify-exam-detail .qe-student-more>summary::-webkit-details-marker{display:none}
+.qualify-exam-detail .qe-student-more>summary:hover,
+.qualify-exam-detail .qe-student-more[open]>summary{background:#e9ecff}
+.qualify-exam-detail .qe-student-more>summary svg{width:17px;height:17px}
+.qualify-exam-detail .qe-student-more-menu{
+ display:flex;flex-direction:column;gap:5px;width:148px;
+ margin-top:6px;padding:7px;background:#fff;border:1px solid #dbe3f5;
+ border-radius:10px;box-shadow:0 5px 15px #253f8314;
+}
+.qualify-exam-detail .qe-directory-table .qe-student-more-menu button{
+ width:100%;min-height:32px;text-align:left;justify-content:flex-start;
+ padding:8px 9px!important;border:0!important;border-radius:6px;
+ background:transparent!important;color:#31517e!important;
+ font-size:11px;font-weight:700;box-shadow:none!important;
+}
+.qualify-exam-detail .qe-directory-table .qe-student-more-menu button:hover:not(:disabled){background:#edf2ff!important}
+.qualify-exam-detail .qe-directory-table .qe-student-more-menu .qe-attempt-danger{
+ color:#bd353c!important;
+}
+.qualify-exam-detail .qe-directory-table .qe-student-more-menu .qe-attempt-danger:hover:not(:disabled){background:#fff0f0!important}
