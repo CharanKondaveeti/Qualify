@@ -24,7 +24,7 @@ export default function ExamHeader({
         onClick={() => navigate(examsPath, { replace: true })}>
         <FiArrowLeft aria-hidden="true" /> Back to Exams
       </button>
-      <div className="qe-header-top-actions"><span className="qe-header-context">EXAM WORKSPACE</span>{managementControls}</div>
+      {managementControls && <div className="qe-header-top-actions">{managementControls}</div>}
     </div>
     <div className="qe-header-main">
       <div className="qe-header-title">
