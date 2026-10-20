@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION public.qualify_begin(p_attempt uuid, p_token text, p_
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 DECLARE a public."studentReport"%ROWTYPE; e public.exams%ROWTYPE; q record;
   ord uuid[]; opt jsonb := '{}'::jsonb; indexes jsonb;
 BEGIN
@@ -58,7 +58,7 @@ BEGIN
    RAISE EXCEPTION 'Exam is not open or attempt already completed';
  END IF;
  RETURN public.qualify_attempt_payload_internal(p_attempt,true);
-END; $function$
+END; $function$;
 
 
 CREATE OR REPLACE FUNCTION public.qualify_student_state(p_attempt uuid, p_token text, p_session text DEFAULT NULL::text)
@@ -66,7 +66,7 @@ CREATE OR REPLACE FUNCTION public.qualify_student_state(p_attempt uuid, p_token 
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 DECLARE a public."studentReport"%ROWTYPE; ready boolean;
 BEGIN
   IF coalesce(p_token, '') !~ '^[0-9a-f]{64}$'
@@ -93,7 +93,7 @@ BEGIN
    UPDATE public."studentReport" SET last_seen_at=now() WHERE student_report_id=p_attempt;
  END IF;
  RETURN public.qualify_attempt_payload_internal(p_attempt,ready);
-END; $function$
+END; $function$;
 
 
 CREATE OR REPLACE FUNCTION public.qualify_results(p_attempt uuid, p_token text)
@@ -101,7 +101,7 @@ CREATE OR REPLACE FUNCTION public.qualify_results(p_attempt uuid, p_token text)
  LANGUAGE plpgsql
  STABLE SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 DECLARE a public."studentReport"%ROWTYPE; e public.exams%ROWTYPE;
 BEGIN
   IF coalesce(p_token, '') !~ '^[0-9a-f]{64}$' THEN
@@ -119,5 +119,5 @@ BEGIN
  RETURN jsonb_build_object('status','published','title',e.title,'student_name',a.student_name,
    'roll_no',a.roll_no,'score',a.marks_scored,'total_marks',e.total_marks,
    'pass_mark',e.pass_mark,'passed',a.marks_scored>=e.pass_mark,'submitted_at',a.submitted_at);
-END; $function$
+END; $function$;
 
