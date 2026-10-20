@@ -11,24 +11,24 @@ export function restoreCandidateDraft(questions, serverAnswers, draftAnswers, se
       .map(question => [question.question_id, question]),
   );
   const answers = {};
-  for (const [questionId, answer] of Object.entries({
-    ...asRecord(serverAnswers),
-    ...asRecord(draftAnswers),
-  })) {
-    const question = byId.get(questionId);
-    if (question && Array.isArray(question.options) &&
-        Number.isInteger(answer) && answer >= 0 && answer < question.options.length) {
-      answers[questionId] = answer;
+  // Apply the valid server snapshot first, then valid local changes.
+  // A corrupt local value must not erase a legitimate answer saved on the server.
+  for (const source of [serverAnswers, draftAnswers]) {
+    for (const [questionId, answer] of Object.entries(asRecord(source))) {
+      const question = byId.get(questionId);
+      if (question && Array.isArray(question.options) &&
+          Number.isInteger(answer) && answer >= 0 && answer < question.options.length) {
+        answers[questionId] = answer;
+      }
     }
   }
 
   const flags = {};
-  for (const [questionId, flag] of Object.entries({
-    ...asRecord(serverFlags),
-    ...asRecord(draftFlags),
-  })) {
-    if (byId.has(questionId) && typeof flag === "boolean") {
-      flags[questionId] = flag;
+  for (const source of [serverFlags, draftFlags]) {
+    for (const [questionId, flag] of Object.entries(asRecord(source))) {
+      if (byId.has(questionId) && typeof flag === "boolean") {
+        flags[questionId] = flag;
+      }
     }
   }
   return { answers, flags };
