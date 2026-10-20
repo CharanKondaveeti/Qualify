@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION public.qualify_begin(p_attempt uuid, p_token text, p_
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 DECLARE a public."studentReport"%ROWTYPE; e public.exams%ROWTYPE; q record;
   ord uuid[]; opt jsonb := '{}'::jsonb; indexes jsonb;
 BEGIN
@@ -66,7 +66,7 @@ CREATE OR REPLACE FUNCTION public.qualify_student_state(p_attempt uuid, p_token 
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 DECLARE a public."studentReport"%ROWTYPE; ready boolean;
 BEGIN
   IF coalesce(p_token, '') !~ '^[0-9a-f]{64}$'
@@ -101,7 +101,7 @@ CREATE OR REPLACE FUNCTION public.qualify_results(p_attempt uuid, p_token text)
  LANGUAGE plpgsql
  STABLE SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 DECLARE a public."studentReport"%ROWTYPE; e public.exams%ROWTYPE;
 BEGIN
   IF coalesce(p_token, '') !~ '^[0-9a-f]{64}$' THEN
