@@ -8,7 +8,7 @@ const STATUS_LABELS = { upcoming: "Upcoming", active: "In progress", completed: 
 
 /** Shared exam overview for upcoming, active, and completed examinations. */
 export default function ExamHeader({
-  exam, showResponsibleStaff = false, responsibleStaff = null,
+  exam, showResponsibleStaff = false, responsibleStaff = null, managementControls = null,
 }) {
   const navigate = useNavigate();
   const { institutionId } = useAdminWorkspace();
@@ -24,7 +24,7 @@ export default function ExamHeader({
         onClick={() => navigate(examsPath, { replace: true })}>
         <FiArrowLeft aria-hidden="true" /> Back to Exams
       </button>
-      <span className="qe-header-context">EXAM WORKSPACE</span>
+      <div className="qe-header-top-actions"><span className="qe-header-context">EXAM WORKSPACE</span>{managementControls}</div>
     </div>
     <div className="qe-header-main">
       <div className="qe-header-title">
