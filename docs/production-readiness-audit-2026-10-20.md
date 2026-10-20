@@ -47,3 +47,25 @@ References:
 - https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable
 - https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys
 - https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
+
+
+## Hardening implementation update — 2026-10-20
+
+### Applied to production
+- Supabase DDL migration restricts PUBLIC, anon and authenticated execution of legacy `qualify_api` and internal `rls_auto_enable`, `qualify_exam_in_active_institution`. Verified: direct grants denied. Eight candidate-specific anonymous SECURITY DEFINER RPCs intentionally remain; they are not proven safe by lint output alone.
+- RLS remains enabled for all inspected public tables. Anonymous role has no direct SELECT, INSERT or UPDATE grants on exams, questions, student reports, activity events, institution membership, institutions, platform admin tables. Attempted anonymous read of exams failed with permission denied.
+- Added HSTS and browser Permissions-Policy in `vercel.json`; existing CSP/frame restrictions retained.
+- Added GitHub Actions checks covering tests/build, lint and production dependencies; added security regression tests and a public-only `.env.example`.
+- Initial CI run found six high-severity production dependency findings, a missing `.env.example`, and an unused score variable. Corrected the code/test issues.
+- [Security dependency PR #12](https://github.com/CharanKondaveeti/Qualify/pull/12) passed all three CI jobs and was merged (commit `0de0286b56a9a7efcfe18688dddedbc86bcd9006`). Runtime dependencies updated and vulnerable `xlsx` replaced with `write-excel-file/browser`, retaining an XLSX exporter. The production Vercel deployment is READY. Browser Excel-export/role regression testing still required.
+
+### Not yet resolved — do not claim production security signoff
+- Supabase Auth leaked-password protection is **still disabled** per security advisor; enable it in Auth settings.
+- Staff onboarding currently emails plaintext temporary passwords; replace with single-use password setup links after staging tests.
+- Authenticated SECURITY DEFINER function authorization requires role-matrix negative tests across two institutions.
+- The public candidate registration endpoint requires abuse protection and load testing; CORS alone is not anti-bot protection.
+- Backups and restores, email provider quotas/delivery, real student concurrency/timeout tests, and authenticated browser regression tests have not been verified.
+- Supabase performance advisor indexing findings are informational, not evidence of breached RLS; prioritize based on actual queries and growth.
+- GitHub Actions passing does not itself prove penetration-test certification or resilience against all attacks.
+
+Follow-up review and go-live checklist: [Draft PR #11](https://github.com/CharanKondaveeti/Qualify/pull/11).
