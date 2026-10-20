@@ -43,6 +43,8 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   const [studentPage, setStudentPage] = useState(1);
   const STUDENTS_PER_PAGE = 15;
   const [activitySearch, setActivitySearch] = useState("");
+  const [activityPage, setActivityPage] = useState(1);
+  const EVENTS_PER_PAGE = 5;
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [activityLoading, setActivityLoading] = useState(false);
   const [activityRefresh, setActivityRefresh] = useState(0);
@@ -86,6 +88,13 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   const activeEvents = useMemo(() => selectedStudent
     ? events.filter(event => event.roll_no === selectedStudent.roll_no)
     : events, [events, selectedStudent]);
+  const activityPageCount = Math.max(1, Math.ceil(activeEvents.length / EVENTS_PER_PAGE));
+  const currentActivityPage = Math.min(activityPage, activityPageCount);
+  const visibleEvents = activeEvents.slice(
+    (currentActivityPage - 1) * EVENTS_PER_PAGE,
+    currentActivityPage * EVENTS_PER_PAGE
+  );
+  useEffect(() => { setActivityPage(1); }, [selectedStudentId, activitySearch, exam.exam_id]);
 
   function viewStudentActivity(student) {
     setSelectedStudentId(student.student_report_id);
@@ -356,8 +365,8 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
           <div className="qe-activity-feed" role="region" aria-label={selectedStudent
             ? `Exam activity for ${selectedStudent.student_name}` : "All exam activity"} tabIndex={0}>
             {activityLoading ? <p className="qe-activity-empty">Loading exam events…</p>
-              : activeEvents.length ? <ol className="qe-event-list">
-                {activeEvents.map((event, index) => <li key={`${event.created_at}-${index}`} className="qe-event">
+              : visibleEvents.length ? <ol className="qe-event-list">
+                {visibleEvents.map((event, index) => <li key={`${event.created_at}-${index}`} className="qe-event">
                   <span className="qe-event-dot" aria-hidden="true"><FiActivity /></span>
                   <div className="qe-event-copy">
                     <strong>{String(event.kind || "event").replaceAll("_", " ")}</strong>
@@ -378,6 +387,16 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
                   : "Exam events will appear here as students start and interact with their attempts."}</span>
               </div>}
           </div>
+          {!activityLoading && activeEvents.length > 0 && <nav className="qe-student-pagination qe-activity-pagination" aria-label="Exam activity pages">
+            <span>Showing {(currentActivityPage - 1) * EVENTS_PER_PAGE + 1}–{Math.min(currentActivityPage * EVENTS_PER_PAGE, activeEvents.length)} of {activeEvents.length} events</span>
+            {activityPageCount > 1 && <div className="qe-student-pagination-actions">
+              <button type="button" disabled={currentActivityPage === 1}
+                onClick={() => setActivityPage(p => Math.max(1, p - 1))}>Previous</button>
+              <span aria-live="polite">Page {currentActivityPage} of {activityPageCount}</span>
+              <button type="button" disabled={currentActivityPage === activityPageCount}
+                onClick={() => setActivityPage(p => Math.min(activityPageCount, p + 1))}>Next</button>
+            </div>}
+          </nav>}
           <p className="qe-activity-note"><FiShield aria-hidden="true" />
             Browser events are signals for review, not definitive evidence of cheating.
             {completedExam ? " Deleting the activity log does not change results." : ""}
