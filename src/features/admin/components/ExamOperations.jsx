@@ -35,6 +35,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   const cache = useQueryClient();
   const dialog = useAppDialog();
   const [events, setEvents] = useState([]);
+  const [directoryEvents, setDirectoryEvents] = useState([]);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [working, setWorking] = useState(false);
@@ -89,6 +90,15 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     students.find(s => s.student_report_id === selectedStudentId) || null,
     [students, selectedStudentId]);
   const eventQuery = selectedStudent ? selectedStudent.roll_no : activitySearch.trim();
+  const mostRecentEventByRoll = useMemo(() => {
+    const latest = new Map();
+    for (const event of directoryEvents) {
+      if (!event.roll_no || !event.created_at) continue;
+      const timestamp = new Date(event.created_at).getTime();
+      if (Number.isFinite(timestamp) && timestamp > (latest.get(event.roll_no) || 0)) latest.set(event.roll_no, timestamp);
+    }
+    return latest;
+  }, [directoryEvents]);
   const activeEvents = useMemo(() => selectedStudent
     ? events.filter(event => event.roll_no === selectedStudent.roll_no)
     : events, [events, selectedStudent]);
@@ -179,14 +189,21 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
 
   useEffect(() => {
     if (view !== "students" || exam.exam_status === "upcoming") return undefined;
-    if (isDemo) { setEvents([]); setActivityLoading(false); return undefined; }
+    if (isDemo) { setEvents([]); setDirectoryEvents([]); setActivityLoading(false); return undefined; }
     let cancelled = false;
     setEvents([]);
+    setDirectoryEvents([]);
     setActivityLoading(true);
     const update = async () => {
       try {
-        const rows = await adminEvents(exam.exam_id, eventQuery);
-        if (!cancelled) { setEvents(Array.isArray(rows) ? rows : []); setActivityLoading(false); }
+        const [rows, allRows] = eventQuery
+          ? await Promise.all([adminEvents(exam.exam_id, eventQuery), adminEvents(exam.exam_id, "")])
+          : [await adminEvents(exam.exam_id, ""), null];
+        if (!cancelled) {
+          setEvents(Array.isArray(rows) ? rows : []);
+          setDirectoryEvents(Array.isArray(allRows) ? allRows : (Array.isArray(rows) ? rows : []));
+          setActivityLoading(false);
+        }
       } catch (err) {
         if (!cancelled) {
           setActivityLoading(false);
@@ -235,6 +252,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     try {
       const result = await adminClearEvents(exam.exam_id);
       setEvents([]);
+      setDirectoryEvents([]);
       setInfo(`${result.deleted_count ?? 0} activity events deleted. Exam results are intact.`);
     } catch (err) {
       setError(err.message || "Unable to clear activity history.");
@@ -331,7 +349,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
           </div>}
           <div className="qe-ops-table-scroll qe-directory-scroll" role="region" aria-label="Student attempts" tabIndex={0}>
             <table className="qe-ops-table qe-directory-table">
-              <thead><tr><th>Student</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Student</th><th>Status</th><th>Last Activity</th><th>Actions</th></tr></thead>
               <tbody>
                 {pageStudents.map(student => <tr key={student.student_report_id}
                   className={selectedStudentId === student.student_report_id ? "is-inspected" : ""}>
@@ -341,6 +359,12 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
                     <span className="qe-student-sub">{student.roll_no || "—"}{student.email ? ` · ${student.email}` : ""}</span></div></div></td>
                   <td><span className={`qe-attempt-status qe-attempt-status--${cleanStatus(student.student_status)}`}>
                     <span aria-hidden="true" />{student.student_status || "Unknown"}</span></td>
+                  <td className="qe-last-activity">{mostRecentEventByRoll.has(student.roll_no)
+                    ? <time dateTime={new Date(mostRecentEventByRoll.get(student.roll_no)).toISOString()}
+                        title={new Date(mostRecentEventByRoll.get(student.roll_no)).toLocaleString("en-IN")}>
+                        {new Date(mostRecentEventByRoll.get(student.roll_no)).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "numeric", minute: "2-digit" })}
+                      </time>
+                    : <span title="No recorded exam event">—</span>}</td>
                   <td><div className="qe-attempt-controls">
                     <button type="button" className={`qe-view-activity${selectedStudentId === student.student_report_id ? " is-selected" : ""}`}
                       onClick={() => viewStudentActivity(student)}
@@ -357,7 +381,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
                       title="More student actions"><FiMoreHorizontal aria-hidden="true" /></button>}
                   </div></td>
                 </tr>)}
-                {!visibleStudents.length && <tr><td colSpan={3} className="qe-empty-table">
+                {!visibleStudents.length && <tr><td colSpan={4} className="qe-empty-table">
                   {students.length ? "No students match your search or status." : "No students have registered for this examination."}
                 </td></tr>}
               </tbody>
