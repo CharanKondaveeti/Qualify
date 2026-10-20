@@ -101,12 +101,14 @@ export default function StudentTable({ students = [], examId, exam, passMark, se
     if (exporting) return;
     setExporting(true);
     try {
-      const XLSX = await import("xlsx");
-      const rows = exportRows();
-      const sheet = XLSX.utils.aoa_to_sheet(rows);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, sheet, "Results");
-      XLSX.writeFile(workbook, `Qualify_Results_${examId}.xlsx`);
+      // Use a browser-focused XLSX writer instead of the vulnerable SheetJS npm package.
+      const { default: writeExcelFile } = await import("write-excel-file/browser");
+      const rows = exportRows().map((row, rowIndex) => row.map(value => {
+        const cell = typeof value === "number" ? value : String(value ?? "");
+        return rowIndex === 0 ? { value: String(cell), fontWeight: "bold" } : cell;
+      }));
+      await writeExcelFile(rows, { sheet: "Results", stickyRowsCount: 1 })
+        .toFile(`Qualify_Results_${examId}.xlsx`);
     } catch (err) {
       setSaveError(err.message || "Unable to export Excel file.");
     } finally { setExporting(false); }
