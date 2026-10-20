@@ -269,3 +269,28 @@
   transform: translateY(-10px);
   transition: all 0.3s ease;
 }
+/* Upcoming registration list: use page scroll and 15-student pagination. */
+.qualify-exam-detail .qualify-registration-list__scroll{
+ max-height:none!important;
+ overflow-x:auto;
+ overflow-y:clip!important;
+ overscroll-behavior-y:auto;
+}
+.qualify-exam-detail .qualify-registration-pagination{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:12px;flex-wrap:wrap;padding:14px 20px;
+ border-top:1px solid #e7edf7;background:#fafbff;
+ color:#667c9b;font-size:12px;
+}
+.qualify-exam-detail .qualify-registration-pagination__actions{
+ display:flex;gap:12px;align-items:center;
+}
+.qualify-exam-detail .qualify-registration-pagination__actions>span{
+ color:#324f80;font-weight:750;white-space:nowrap;
+}
+.qualify-exam-detail .qualify-registration-pagination__actions button{
+ padding:9px 14px;border-radius:8px;background:#fff;color:#2d5ec2;
+ border:1px solid #d4def3;cursor:pointer;font-size:12px;font-weight:730;
+}
+.qualify-exam-detail .qualify-registration-pagination__actions button:hover:not(:disabled){background:#edf2ff}
+.qualify-exam-detail .qualify-registration-pagination__actions button:disabled{opacity:.45;cursor:default}
