@@ -173,3 +173,29 @@
  .qualify-exam-detail .qe-operations:has(.qe-attempt-workspace) .qe-insight-grid{grid-template-columns:1fr 1fr}
  .qualify-exam-detail .qe-monitoring-metric-description{display:none}
 }
+
+/* Natural page scrolling; pagination replaces the directory's internal scrollbar. */
+.qualify-exam-detail .qe-attempt-workspace .qe-directory-scroll{
+ max-height:none;overflow-y:visible;overflow-x:auto;
+}
+.qualify-exam-detail .qe-attempt-workspace .qe-activity-feed{
+ max-height:none;min-height:148px;overflow:visible;
+}
+.qualify-exam-detail .qe-student-pagination{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+ padding:14px 18px;border-top:1px solid #e4eaf7;background:#fafbff;
+ color:#62789c;font-size:11px;
+}
+.qualify-exam-detail .qe-student-pagination-actions{
+ display:flex;align-items:center;gap:10px;
+}
+.qualify-exam-detail .qe-student-pagination-actions>span{
+ color:#2d4782;font-size:11px;font-weight:740;white-space:nowrap;
+}
+.qualify-exam-detail .qe-student-pagination-actions button{
+ padding:8px 12px;border-radius:8px;border:1px solid #cbd7f6;
+ background:#fff;color:#3155c6;font-size:11px;font-weight:740;
+ cursor:pointer;
+}
+.qualify-exam-detail .qe-student-pagination-actions button:hover:not(:disabled){background:#eef2ff}
+.qualify-exam-detail .qe-student-pagination-actions button:disabled{opacity:.4;cursor:not-allowed}
