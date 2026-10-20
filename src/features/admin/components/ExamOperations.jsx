@@ -83,7 +83,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     if (window.matchMedia("(max-width: 1050px)").matches) {
       window.requestAnimationFrame(() => {
         document.getElementById("qe-student-activity")?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
           block: "start",
         });
       });
@@ -314,8 +314,8 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
             <div><strong>{selectedStudent.student_name || "Unnamed student"}</strong>
               <span>{selectedStudent.roll_no || "No roll number"}{selectedStudent.email ? ` · ${selectedStudent.email}` : ""}</span></div>
             <span className={`qe-attempt-status qe-attempt-status--${cleanStatus(selectedStudent.student_status)}`}>
-              <span aria-hidden="true" />{selectedStudent.student_status}</span>
-          </span>
+              <span aria-hidden="true" />{selectedStudent.student_status}
+            </span>
           </div>}
 
           <div className="qe-activity-toolbar">
