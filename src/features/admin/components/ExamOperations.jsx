@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   FiActivity, FiAlertCircle, FiCheck, FiCheckCircle, FiClock, FiTrendingUp,
-  FiEye, FiEyeOff, FiRefreshCw, FiSearch, FiShield, FiUsers,
+  FiEye, FiEyeOff, FiRefreshCw, FiSearch, FiShield, FiUsers, FiX,
 } from "react-icons/fi";
 import supabase, { isDemo } from "../../../lib/supabase";
 import { adminControl, adminEvents, adminClearEvents } from "../../../services/secureExamService";
@@ -36,7 +36,9 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   const [filter, setFilter] = useState("all");
   const [studentSearch, setStudentSearch] = useState("");
   const [activitySearch, setActivitySearch] = useState("");
-  const [activityOpen, setActivityOpen] = useState(false);
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activityRefresh, setActivityRefresh] = useState(0);
 
   const completedExam = exam.exam_status === "completed";
   const inExam = exam.exam_status === "active";
@@ -66,6 +68,27 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     return students.filter(s => (filter === "all" || s.student_status === filter) &&
       [s.student_name, s.roll_no, s.email].some(v => String(v || "").toLowerCase().includes(search)));
   }, [students, filter, studentSearch]);
+  const selectedStudent = useMemo(() =>
+    students.find(s => s.student_report_id === selectedStudentId) || null,
+    [students, selectedStudentId]);
+  const eventQuery = selectedStudent ? selectedStudent.roll_no : activitySearch.trim();
+  const activeEvents = useMemo(() => selectedStudent
+    ? events.filter(event => event.roll_no === selectedStudent.roll_no)
+    : events, [events, selectedStudent]);
+
+  function viewStudentActivity(student) {
+    setSelectedStudentId(student.student_report_id);
+    setActivitySearch("");
+    // On mobile the activity panel sits underneath the directory.
+    if (window.matchMedia("(max-width: 1050px)").matches) {
+      window.requestAnimationFrame(() => {
+        document.getElementById("qe-student-activity")?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+          block: "start",
+        });
+      });
+    }
+  }
 
   async function refresh() {
     if (refreshing) return;
@@ -73,6 +96,7 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
     setError("");
     try {
       await cache.invalidateQueries({ queryKey: ["students-report", exam.exam_id] });
+      setActivityRefresh(v => v + 1);
     } catch (err) {
       setError(err.message || "Could not refresh student attempts.");
     } finally {
@@ -81,19 +105,30 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
   }
 
   useEffect(() => {
-    if (isDemo || view !== "students" || exam.exam_status === "upcoming" || !activityOpen) return;
+    if (view !== "students" || exam.exam_status === "upcoming") return undefined;
+    if (isDemo) { setEvents([]); setActivityLoading(false); return undefined; }
     let cancelled = false;
-    const update = () => adminEvents(exam.exam_id, activitySearch.trim())
-      .then(rows => { if (!cancelled) setEvents(rows ?? []); })
-      .catch(err => { if (!cancelled) setError(err.message || "Could not load activity."); });
-    const debounce = setTimeout(update, activitySearch.trim() ? 300 : 0);
+    setEvents([]);
+    setActivityLoading(true);
+    const update = async () => {
+      try {
+        const rows = await adminEvents(exam.exam_id, eventQuery);
+        if (!cancelled) { setEvents(Array.isArray(rows) ? rows : []); setActivityLoading(false); }
+      } catch (err) {
+        if (!cancelled) {
+          setActivityLoading(false);
+          setError(err.message || "Could not load examination activity.");
+        }
+      }
+    };
+    const debounce = setTimeout(update, eventQuery ? 250 : 0);
     const interval = inExam ? setInterval(update, 15000) : null;
     return () => {
       cancelled = true;
       clearTimeout(debounce);
       if (interval) clearInterval(interval);
     };
-  }, [exam.exam_id, exam.exam_status, activitySearch, view, activityOpen, inExam]);
+  }, [exam.exam_id, exam.exam_status, eventQuery, view, inExam, activityRefresh]);
 
   async function control(attemptId, action, minutes = 0) {
     if (working || !inExam) return;
@@ -197,104 +232,135 @@ export default function ExamOperations({ exam, students = [], view = "overview" 
         <Metric label="Revoked" value={counts.revoked} Icon={FiShield} />
       </div>
 
-      <section className="qe-ops-panel" aria-labelledby="qe-students-title">
-        <header className="qe-ops-panel-head">
-          <div><h3 id="qe-students-title">Student directory</h3>
-            <p>Find a student and review their examination status.</p></div>
-          <span className="qe-counter">{visibleStudents.length} of {students.length}</span>
-        </header>
-        <div className="qe-ops-toolbar">
-          <label className="qe-ops-search"><FiSearch aria-hidden="true" />
-            <input type="search" aria-label="Search registered students"
-              placeholder="Search name, roll no. or email"
-              value={studentSearch} onChange={e => setStudentSearch(e.target.value)} />
-          </label>
-          <label className="qe-ops-select">Status
-            <select aria-label="Filter by student status" value={filter}
-              onChange={e => setFilter(e.target.value)}>
-              {STATUSES.filter(s => inExam || s.value !== "in progress").map(s =>
-                <option key={s.value} value={s.value}>{s.title}</option>)}
-            </select>
-          </label>
-        </div>
-        {inExam && counts.offline > 0 && <div className="qe-ops-attention">
-          <FiAlertCircle aria-hidden="true" /> {counts.offline} active attempt{counts.offline === 1 ? "" : "s"} may have lost connection. Check recent activity before taking action.
-        </div>}
-        <div className="qe-ops-table-scroll" role="region" aria-label="Student attempts" tabIndex={0}>
-          <table className="qe-ops-table">
-            <thead><tr>
-              <th>Student</th><th>Status</th>
-              <th>{inExam ? "Last contact" : "Submitted at"}</th>
-              <th>{inExam ? "Attempt controls" : "Attempt"}</th>
-            </tr></thead>
-            <tbody>
-              {visibleStudents.map(student => <tr key={student.student_report_id}>
-                <td><div className="qe-student-name">{student.student_name || "Unnamed student"}</div>
-                  <span className="qe-student-sub">{student.roll_no || "—"}{student.email ? ` · ${student.email}` : ""}</span></td>
-                <td><span className={`qe-attempt-status qe-attempt-status--${cleanStatus(student.student_status)}`}>
-                  <span aria-hidden="true" />{student.student_status || "Unknown"}</span></td>
-                <td className="qe-ops-time">
-                  {inExam
-                    ? (student.last_seen_at ? new Date(student.last_seen_at).toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" }) : "—")
-                    : (student.submitted_at ? new Date(student.submitted_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "—")}
-                </td>
-                <td>{inExam && student.student_status === "in progress" ?
-                  <div className="qe-attempt-controls">
-                    <button type="button" disabled={working} onClick={() => control(student.student_report_id, "reset_session")}>Reset device</button>
-                    {exam.timing_mode !== "time" && <button type="button" disabled={working}
-                      onClick={() => control(student.student_report_id, "extend_time", 5)}>+5 min</button>}
-                    <button type="button" className="qe-attempt-danger" disabled={working}
-                      onClick={() => control(student.student_report_id, "revoke")}>Revoke</button>
-                  </div> : <span className="qe-ops-placeholder">
-                    {completedExam ? "Read-only" : "No action needed"}</span>}</td>
-              </tr>)}
-              {!visibleStudents.length && <tr><td colSpan={4} className="qe-empty-table">
-                {students.length ? "No students match your search or status." : "No students have registered for this examination."}
-              </td></tr>}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <details className="qe-activity-details" open={activityOpen}
-        onToggle={event => setActivityOpen(event.currentTarget.open)}>
-        <summary className="qe-activity-summary">
-          <span className="qe-activity-summary-icon"><FiActivity aria-hidden="true" /></span>
-          <span><strong>Exam activity log</strong><small>Browser and attempt events · {activityOpen ? `${events.length} events loaded` : "Open to review"}</small></span>
-          <span className="qe-activity-expand">{activityOpen ? "Hide" : "View"} activity</span>
-        </summary>
-        <div className="qe-activity-content">
-          <div className="qe-activity-toolbar">
+      <div className="qe-attempt-workspace">
+        <section className="qe-ops-panel qe-directory-panel" aria-labelledby="qe-students-title">
+          <header className="qe-ops-panel-head">
+            <div><h3 id="qe-students-title">Student directory</h3>
+              <p>Search students, manage attempts and inspect individual activity.</p></div>
+            <span className="qe-counter">{visibleStudents.length} of {students.length}</span>
+          </header>
+          <div className="qe-ops-toolbar">
             <label className="qe-ops-search"><FiSearch aria-hidden="true" />
-              <input type="search" aria-label="Search activity logs" placeholder="Search student or event"
-                value={activitySearch} onChange={e => setActivitySearch(e.target.value)} />
+              <input type="search" aria-label="Search registered students"
+                placeholder="Search name, roll no. or email"
+                value={studentSearch} onChange={e => setStudentSearch(e.target.value)} />
             </label>
-            <div className="qe-activity-actions">
-              <span>{events.length} events · Latest 300 matches</span>
-              {completedExam && !isDemo && <button type="button" className="qe-delete-log" disabled={working}
-                onClick={clearActivity}>Delete activity log</button>}
-            </div>
+            <label className="qe-ops-select">Status
+              <select aria-label="Filter by student status" value={filter}
+                onChange={e => setFilter(e.target.value)}>
+                {STATUSES.map(s =>
+                  <option key={s.value} value={s.value}>{s.title}</option>)}
+              </select>
+            </label>
           </div>
-          <div className="qe-ops-table-scroll qe-activity-scroll" role="region" aria-label="Exam activity" tabIndex={0}>
-            <table className="qe-ops-table">
-              <thead><tr><th>Student</th><th>Event</th><th>When</th></tr></thead>
+          {inExam && counts.offline > 0 && <div className="qe-ops-attention">
+            <FiAlertCircle aria-hidden="true" /> {counts.offline} active attempt{counts.offline === 1 ? "" : "s"} may have lost connection. Check activity before taking action.
+          </div>}
+          <div className="qe-ops-table-scroll qe-directory-scroll" role="region" aria-label="Student attempts" tabIndex={0}>
+            <table className="qe-ops-table qe-directory-table">
+              <thead><tr><th>Student</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody>
-                {events.map((event, index) => <tr key={`${event.created_at}-${index}`}>
-                  <td><div className="qe-student-name">{event.student_name || "Student"}</div>
-                    <span className="qe-student-sub">{event.roll_no || "—"}</span></td>
-                  <td><span className="qe-activity-kind">{String(event.kind || "event").replaceAll("_", " ")}</span></td>
-                  <td className="qe-ops-time">{event.created_at ? new Date(event.created_at).toLocaleString("en-IN") : "—"}</td>
+                {visibleStudents.map(student => <tr key={student.student_report_id}
+                  className={selectedStudentId === student.student_report_id ? "is-inspected" : ""}>
+                  <td><div className="qe-student-name">{student.student_name || "Unnamed student"}</div>
+                    <span className="qe-student-sub">{student.roll_no || "—"}{student.email ? ` · ${student.email}` : ""}</span></td>
+                  <td><span className={`qe-attempt-status qe-attempt-status--${cleanStatus(student.student_status)}`}>
+                    <span aria-hidden="true" />{student.student_status || "Unknown"}</span></td>
+                  <td><div className="qe-attempt-controls">
+                    <button type="button" className={`qe-view-activity${selectedStudentId === student.student_report_id ? " is-selected" : ""}`}
+                      onClick={() => viewStudentActivity(student)}
+                      aria-controls="qe-student-activity"
+                      aria-pressed={selectedStudentId === student.student_report_id}
+                      title={`View exam activity for ${student.student_name}`}>
+                      <FiEye aria-hidden="true" /> View activity
+                    </button>
+                    {inExam && student.student_status === "in progress" && <>
+                      <button type="button" disabled={working} onClick={() => control(student.student_report_id, "reset_session")}>Reset device</button>
+                      {exam.timing_mode !== "time" && <button type="button" disabled={working}
+                        onClick={() => control(student.student_report_id, "extend_time", 5)}>+5 min</button>}
+                      <button type="button" className="qe-attempt-danger" disabled={working}
+                        onClick={() => control(student.student_report_id, "revoke")}>Revoke</button>
+                    </>}
+                  </div></td>
                 </tr>)}
-                {!events.length && <tr><td colSpan={3} className="qe-empty-table">No activity events found.</td></tr>}
+                {!visibleStudents.length && <tr><td colSpan={3} className="qe-empty-table">
+                  {students.length ? "No students match your search or status." : "No students have registered for this examination."}
+                </td></tr>}
               </tbody>
             </table>
           </div>
+          <footer className="qe-directory-footer">
+            <FiShield aria-hidden="true" />{inExam
+              ? "Student controls apply only to active attempts."
+              : "Completed attempts are read-only. Activity can still be reviewed."}
+          </footer>
+        </section>
+
+        <section id="qe-student-activity" className="qe-activity-details qe-activity-panel"
+          aria-labelledby="qe-activity-title">
+          <header className="qe-activity-summary">
+            <span className="qe-activity-summary-icon"><FiActivity aria-hidden="true" /></span>
+            <span className="qe-activity-heading">
+              <strong id="qe-activity-title">Exam activity log</strong>
+              <small>{selectedStudent ? "Activity for selected student" : "Activity from all students"}</small>
+            </span>
+            {selectedStudent && <button type="button" className="qe-show-all-activity"
+              onClick={() => setSelectedStudentId(null)} title="Return to all student activity">
+              <FiX aria-hidden="true" /> Show all
+            </button>}
+          </header>
+
+          {selectedStudent && <div className="qe-activity-student" role="status">
+            <div><strong>{selectedStudent.student_name || "Unnamed student"}</strong>
+              <span>{selectedStudent.roll_no || "No roll number"}{selectedStudent.email ? ` · ${selectedStudent.email}` : ""}</span></div>
+            <span className={`qe-attempt-status qe-attempt-status--${cleanStatus(selectedStudent.student_status)}`}>
+              <span aria-hidden="true" />{selectedStudent.student_status}</span>
+          </span>
+          </div>}
+
+          <div className="qe-activity-toolbar">
+            {!selectedStudent ? <label className="qe-ops-search"><FiSearch aria-hidden="true" />
+              <input type="search" aria-label="Search all exam activity" placeholder="Search student or event"
+                value={activitySearch} onChange={e => setActivitySearch(e.target.value)} />
+            </label> : <span className="qe-activity-selection-label">Showing {selectedStudent.roll_no}'s event history</span>}
+            <div className="qe-activity-actions">
+              <span>{activityLoading ? "Loading…" : `${activeEvents.length} event${activeEvents.length === 1 ? "" : "s"}`}</span>
+              {completedExam && !isDemo && !selectedStudent && <button type="button"
+                className="qe-delete-log" disabled={working} onClick={clearActivity}>Delete all activity</button>}
+            </div>
+          </div>
+
+          <div className="qe-activity-feed" role="region" aria-label={selectedStudent
+            ? `Exam activity for ${selectedStudent.student_name}` : "All exam activity"} tabIndex={0}>
+            {activityLoading ? <p className="qe-activity-empty">Loading exam events…</p>
+              : activeEvents.length ? <ol className="qe-event-list">
+                {activeEvents.map((event, index) => <li key={`${event.created_at}-${index}`} className="qe-event">
+                  <span className="qe-event-dot" aria-hidden="true" />
+                  <div className="qe-event-copy">
+                    <strong>{String(event.kind || "event").replaceAll("_", " ")}</strong>
+                    {!selectedStudent && <span className="qe-event-student">
+                      {event.student_name || event.roll_no || "Student"}
+                      {event.roll_no ? ` · ${event.roll_no}` : ""}
+                    </span>}
+                    <time>{event.created_at
+                      ? new Date(event.created_at).toLocaleString("en-IN", {dateStyle:"medium",timeStyle:"short"})
+                      : "Unknown time"}</time>
+                  </div>
+                </li>)}
+              </ol> : <div className="qe-activity-empty">
+                <FiActivity aria-hidden="true" />
+                <strong>No activity yet</strong>
+                <span>{selectedStudent
+                  ? "This student has no recorded examination events."
+                  : "Exam events will appear here as students start and interact with their attempts."}</span>
+              </div>}
+          </div>
           <p className="qe-activity-note"><FiShield aria-hidden="true" />
-            Browser activity is context for review, not definitive evidence of cheating.
-            {completedExam ? " Deleting these logs will not change student results." : ""}
+            Browser events are signals for review, not definitive evidence of cheating.
+            {completedExam ? " Deleting the activity log does not change results." : ""}
           </p>
-        </div>
-      </details>
+        </section>
+      </div>
     </>}
 
     {view === "results" && completedExam && <>
