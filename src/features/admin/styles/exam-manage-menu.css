@@ -103,33 +103,24 @@
  .qualify-exam-detail .qe-header-top-actions:not(:empty){flex:0 0 auto;justify-content:flex-end}
 }
 
-/* Exam hero: screenshot-matched deep blue with understated layered arcs.
-   This is visual-only; the existing Manage Exam menu stays functional. */
+/* Header treatment: draw all decorative shapes as BACKGROUND layers.
+   Background painting is clipped by border-radius even though the header
+   itself must keep overflow: visible for the Manage Exam popover. No tall,
+   absolutely positioned pseudo-elements are allowed to escape the card. */
 .qualify-exam-detail .qe-header,
 .qualify-exam-detail .qe-header--active,
 .qualify-exam-detail .qe-header--completed{
- isolation:isolate;
  background:
-  radial-gradient(ellipse 66% 130% at 46% 105%,rgba(4,32,100,.45) 0%,rgba(5,39,112,.22) 58%,transparent 76%),
-  linear-gradient(108deg,#103777 0%,#0c3180 40%,#0950d9 100%);
- box-shadow:0 10px 26px rgba(21,61,145,.15);
+   radial-gradient(ellipse 75% 135% at 49% 120%, rgba(3,26,83,.36) 0%, rgba(3,26,83,.23) 58%, transparent 59%),
+   radial-gradient(ellipse 72% 125% at 33% -48%, rgba(19,76,173,.22) 0%, rgba(19,76,173,.14) 59%, transparent 60%),
+   linear-gradient(108deg,#143b7d 0%,#103b91 47%,#0751d5 100%);
  border-radius:17px;
+ box-shadow:0 10px 26px rgba(21,61,145,.15);
 }
-.qualify-exam-detail .qe-header::before{
- content:"";position:absolute;pointer-events:none;z-index:-1;
- width:72%;height:185%;left:4%;top:6%;border-radius:50%;
- background:linear-gradient(145deg,rgba(6,31,83,.24),rgba(5,54,154,.22));
- transform:rotate(13deg);
-}
-.qualify-exam-detail .qe-header::after{
- content:"";position:absolute;pointer-events:none;z-index:-1;
- width:74%;height:240%;left:7%;top:-112%;border-radius:50%;
- border:36px solid rgba(35,91,182,.13);
- transform:rotate(-11deg);
-}
-.qualify-exam-detail .qe-header-top{
- padding:23px 28px 0;
-}
+/* Defensive reset: no pseudo-element art can overlap the tabs or results. */
+.qualify-exam-detail .qe-header::before,
+.qualify-exam-detail .qe-header::after{content:none!important}
+.qualify-exam-detail .qe-header-top{padding:23px 28px 0}
 .qualify-exam-detail .qe-back{
  min-height:44px;
  background:rgba(255,255,255,.16);
