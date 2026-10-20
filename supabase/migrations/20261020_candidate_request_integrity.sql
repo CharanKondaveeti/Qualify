@@ -59,8 +59,8 @@ BEGIN
     RETURN jsonb_build_object('saved', false, 'expired', true, 'student_status', 'submitted');
   END IF;
 
-  IF jsonb_typeof(p_answers) <> 'object'
-    OR jsonb_typeof(p_review) <> 'object'
+  IF jsonb_typeof(p_answers) IS DISTINCT FROM 'object'
+    OR jsonb_typeof(p_review) IS DISTINCT FROM 'object'
     OR length(p_answers::text) > 100000
     OR length(p_review::text) > 30000 THEN
     RAISE EXCEPTION 'Invalid answer data';
@@ -121,7 +121,7 @@ BEGIN
     RAISE EXCEPTION 'Invalid event session';
   END IF;
 
-  IF p_kind NOT IN (
+  IF p_kind IS NULL OR p_kind NOT IN (
     'tab_hidden', 'fullscreen_exit', 'copy_attempt',
     'paste_attempt', 'offline', 'online'
   ) THEN
