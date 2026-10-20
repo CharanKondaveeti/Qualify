@@ -28,7 +28,7 @@ export default function ExamHeader({
     </div>
     <div className="qe-header-main">
       <div className="qe-header-title">
-        <h1>{exam.title}</h1>
+        <h1>{String(exam.title || "").replace(/\s+[—–-]\s+(?:Upcoming|Active|Completed)\s*$/i, "")}</h1>
         <div className="qe-header-meta">
           <span><FiBookOpen aria-hidden="true" /> {exam.course || "Examination"}</span>
           {showResponsibleStaff && <span title={responsibleStaff?.email || undefined}>
