@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FiCheckCircle, FiDownload, FiFileText, FiSearch, FiShield } from "react-icons/fi";
 import { useQueryClient } from "@tanstack/react-query";
 import { updatePassMark } from "../../../services/examService";
+import { escapeCsv } from "../../../utils/safeCsv";
 import { useAdminWorkspace } from "../../admin/context/AdminWorkspaceContext";
 import "../styles/student-table.css";
 import "../../admin/styles/exam-students-results.css";
@@ -15,11 +16,6 @@ function resultFor(student, qualifyingMark) {
   const score = recordedScore(student);
   if (score === null) return "not submitted";
   return score >= qualifyingMark ? "passed" : "failed";
-}
-function escapeCsv(value) {
-  let text = String(value ?? "");
-  if (/^[=+@\-\t\r]/.test(text)) text = "'" + text;
-  return `"${text.replace(/"/g, '""')}"`;
 }
 function saveCsv(filename, records) {
   const content = records.map(record => record.map(escapeCsv).join(",")).join("\r\n");
