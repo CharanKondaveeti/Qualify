@@ -876,7 +876,7 @@ export default function ExamPage({ demoExamId, demoStudentId }) {
   // ------------------------------------------
 
   return (
-    <div className="exam-container">
+    <div className="exam-container qualify-active-exam" onContextMenu={(event) => event.preventDefault()} onSelectStart={(event) => event.preventDefault()}>
       <ExamHeader
         studentExamDetails={{
           ...details,
