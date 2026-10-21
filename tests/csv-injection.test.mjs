@@ -11,7 +11,7 @@ test("CSV exports quote commas, quotes and newlines", () => {
 test("CSV exports prevent spreadsheet formula evaluation after invisible prefixes", () => {
   for (const prefix of ["=", "+", "-", "@", "  =",
     "\t=", "\r+", "\n@", "\uFEFF=", "\u200B+", "\u2060-"]) {
-    assert.equal(escapeCsv(prefix + "1+1"), `"'\${prefix}1+1"`);
+    assert.equal(escapeCsv(prefix + "1+1"), `"'${prefix}1+1"`);
   }
 });
 test("CSV exports retain ordinary text and existing apostrophes", () => {
