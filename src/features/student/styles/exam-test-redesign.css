@@ -308,3 +308,14 @@
 @media (prefers-reduced-motion: reduce) {
   .exam-container .progress-fill, .exam-container .question-number, .exam-container .option-item { transition: none; }
 }
+
+
+/* Active candidate exam only: prevent drag-selection of question and option text.
+   CSS complements the active interface's selectstart/contextmenu guards.
+   Do not apply to login, registration, instructions or results pages. */
+.qualify-active-exam,
+.qualify-active-exam * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
