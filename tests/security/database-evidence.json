@@ -1,0 +1,1652 @@
+{
+  "date": "2026-10-21",
+  "project": "mziobiiocozbiasmufzp",
+  "baseCommit": "f508ba4690a9b64c4505c118bdbc569e03ee8149",
+  "method": "Rollback-only SQL role simulation; not authenticated HTTP",
+  "results": [
+    {
+      "test": "actor 2 forbidden exam column created_by",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 2 forbidden exam column exam_status",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 2 forbidden exam column grading_revision",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 2 forbidden exam column total_marks",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 2 forbidden exam column total_questions",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 3 forbidden exam column created_by",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 3 forbidden exam column exam_status",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 3 forbidden exam column grading_revision",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 3 forbidden exam column total_marks",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 3 forbidden exam column total_questions",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 3 membership management denied",
+      "passed": true,
+      "observed": "P0001: Institution manager access required",
+      "unchanged": true
+    },
+    {
+      "test": "actor 5 forbidden exam column created_by",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 5 forbidden exam column exam_status",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 5 forbidden exam column grading_revision",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 5 forbidden exam column total_marks",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 5 forbidden exam column total_questions",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 5 membership management denied",
+      "passed": true,
+      "observed": "P0001: Institution manager access required",
+      "unchanged": true
+    },
+    {
+      "test": "actor 6 forbidden exam column created_by",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 6 forbidden exam column exam_status",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 6 forbidden exam column grading_revision",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 6 forbidden exam column total_marks",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 6 forbidden exam column total_questions",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 6 membership management denied",
+      "passed": true,
+      "observed": "P0001: Institution manager access required",
+      "unchanged": true
+    },
+    {
+      "test": "actor 7 forbidden exam column created_by",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 7 forbidden exam column exam_status",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 7 forbidden exam column grading_revision",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 7 forbidden exam column total_marks",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 7 forbidden exam column total_questions",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor 7 membership management denied",
+      "passed": true,
+      "observed": "P0001: Institution manager access required",
+      "unchanged": true
+    },
+    {
+      "test": "actor None forbidden exam column created_by",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor None forbidden exam column exam_status",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor None forbidden exam column grading_revision",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor None forbidden exam column total_marks",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor None forbidden exam column total_questions",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "actor None membership management denied",
+      "passed": true,
+      "observed": "42501: permission denied for function qualify_manage_institution_member",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous bank edit 501",
+      "passed": true,
+      "observed": "42501: permission denied for table qualify_named_banks",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous bank edit 502",
+      "passed": true,
+      "observed": "42501: permission denied for table qualify_named_banks",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous bank read 501",
+      "passed": true,
+      "observed": "42501: permission denied for table qualify_named_banks",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous bank read 502",
+      "passed": true,
+      "observed": "42501: permission denied for table qualify_named_banks",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous cannot read access_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous cannot read answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous cannot read session_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous cannot self promote",
+      "passed": true,
+      "observed": "42501: permission denied for table institution_members",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous foreign events RPC 201",
+      "passed": true,
+      "observed": "42501: permission denied for function qualify_admin_events",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous foreign events RPC 202",
+      "passed": true,
+      "observed": "42501: permission denied for function qualify_admin_events",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous foreign events RPC 203",
+      "passed": true,
+      "observed": "42501: permission denied for function qualify_admin_events",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read \"studentReport\" 201",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read \"studentReport\" 202",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read \"studentReport\" 203",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read exams 201",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read exams 202",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read exams 203",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read questions 201",
+      "passed": true,
+      "observed": "42501: permission denied for table questions",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read questions 202",
+      "passed": true,
+      "observed": "42501: permission denied for table questions",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous read questions 203",
+      "passed": true,
+      "observed": "42501: permission denied for table questions",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous update exam 201",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous update exam 202",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "anonymous update exam 203",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "bank cannot forge institution",
+      "passed": true,
+      "observed": "42501: permission denied for table qualify_named_banks",
+      "unchanged": true
+    },
+    {
+      "test": "bank cannot forge owner",
+      "passed": true,
+      "observed": "42501: permission denied for table qualify_named_banks",
+      "unchanged": true
+    },
+    {
+      "test": "candidate direct report answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "candidate direct report deadline",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "candidate direct report exam_id",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "candidate direct report marks_scored",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "candidate direct report student_status",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "candidate foreign attempt qualify_begin",
+      "passed": true,
+      "observed": "P0001: Invalid private exam link",
+      "unchanged": true
+    },
+    {
+      "test": "candidate foreign attempt qualify_student_state",
+      "passed": true,
+      "observed": "P0001: Invalid or expired private exam link",
+      "unchanged": true
+    },
+    {
+      "test": "candidate foreign results denied",
+      "passed": true,
+      "observed": "P0001: Invalid private result link",
+      "unchanged": true
+    },
+    {
+      "test": "candidate injected answer []",
+      "passed": true,
+      "observed": "P0001: Invalid answer data",
+      "unchanged": true
+    },
+    {
+      "test": "candidate injected answer {\"a0212026-0000-4000-8000-000000000302\":0}",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate injected answer {\"marks_scored\":100}",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate injected answer null",
+      "passed": true,
+      "observed": "P0001: Invalid answer data",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid answer -1",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid answer \"0\"",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid answer []",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid answer {}",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid answer 1.5",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid answer 2",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid answer null",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid answer true",
+      "passed": true,
+      "observed": "P0001: Invalid answer index or question",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid review []",
+      "passed": true,
+      "observed": "P0001: Invalid answer data",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid review {\"a0212026-0000-4000-8000-000000000301\":\"true\"}",
+      "passed": true,
+      "observed": "P0001: Invalid question review flag",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid review {\"a0212026-0000-4000-8000-000000000302\":true}",
+      "passed": true,
+      "observed": "P0001: Invalid question review flag",
+      "unchanged": true
+    },
+    {
+      "test": "candidate invalid review null",
+      "passed": true,
+      "observed": "P0001: Invalid answer data",
+      "unchanged": true
+    },
+    {
+      "test": "candidate no session state locked",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "candidate premature results pending",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "candidate second device begin denied",
+      "passed": true,
+      "observed": "P0001: Another device is already using this exam attempt",
+      "unchanged": true
+    },
+    {
+      "test": "candidate second device state locked",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "candidate valid resume excludes answer key",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "candidate valid save accepted",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "candidate valid submit accepted",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "candidate wrong save session",
+      "passed": true,
+      "observed": "P0001: Session expired or used on another device",
+      "unchanged": true
+    },
+    {
+      "test": "foreign staff admin control",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "owner bank edit 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner bank edit 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner bank read 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner bank read 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner cannot read access_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "owner cannot read answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "owner cannot read session_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "owner cannot self promote",
+      "passed": true,
+      "observed": "42501: permission denied for table institution_members",
+      "unchanged": true
+    },
+    {
+      "test": "owner foreign events RPC 201",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "owner foreign events RPC 202",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "owner foreign events RPC 203",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "owner read \"studentReport\" 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner read \"studentReport\" 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner read \"studentReport\" 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner read exams 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner read exams 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner read exams 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner read questions 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner read questions 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner read questions 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner update exam 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner update exam 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "owner update exam 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A bank edit 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A bank edit 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A bank read 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A bank read 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A cannot read access_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A cannot read answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A cannot read session_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A cannot self promote",
+      "passed": true,
+      "observed": "42501: permission denied for table institution_members",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A foreign events RPC 201",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A foreign events RPC 203",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read \"studentReport\" 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read \"studentReport\" 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read \"studentReport\" 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read exams 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read exams 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read exams 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read questions 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read questions 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A read questions 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A update exam 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "peer_A update exam 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "peer_A update exam 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "platform owner can suspend fixture institution",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "platform owner recognized",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "publish upcoming exam denied",
+      "passed": true,
+      "observed": "P0001: Close the exam before publishing results",
+      "unchanged": true
+    },
+    {
+      "test": "server grades correct answer as one mark",
+      "passed": true,
+      "observed": "database verification",
+      "unchanged": true
+    },
+    {
+      "test": "staff active question correct_option",
+      "passed": true,
+      "observed": "P0001: Questions cannot be edited after the exam starts",
+      "unchanged": true
+    },
+    {
+      "test": "staff active question marks",
+      "passed": true,
+      "observed": "P0001: Questions cannot be edited after the exam starts",
+      "unchanged": true
+    },
+    {
+      "test": "staff active question options",
+      "passed": true,
+      "observed": "P0001: Questions cannot be edited after the exam starts",
+      "unchanged": true
+    },
+    {
+      "test": "staff active question question_text",
+      "passed": true,
+      "observed": "P0001: Questions cannot be edited after the exam starts",
+      "unchanged": true
+    },
+    {
+      "test": "staff cannot use transfer RPC",
+      "passed": true,
+      "observed": "P0001: Only an active institution Super Admin can transfer exams",
+      "unchanged": true
+    },
+    {
+      "test": "staff emergency stop denied",
+      "passed": true,
+      "observed": "P0001: Only an active institution Super Admin can stop this exam",
+      "unchanged": true
+    },
+    {
+      "test": "staff forged extension -5",
+      "passed": true,
+      "observed": "P0001: Invalid action for attempt",
+      "unchanged": true
+    },
+    {
+      "test": "staff forged extension 0",
+      "passed": true,
+      "observed": "P0001: Invalid action for attempt",
+      "unchanged": true
+    },
+    {
+      "test": "staff forged extension 120",
+      "passed": true,
+      "observed": "P0001: Invalid action for attempt",
+      "unchanged": true
+    },
+    {
+      "test": "staff valid five minute extension",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "staff_A bank edit 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "staff_A bank edit 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "staff_A bank read 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A bank read 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A cannot read access_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A cannot read answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A cannot read session_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A cannot self promote",
+      "passed": true,
+      "observed": "42501: permission denied for table institution_members",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A foreign events RPC 202",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A foreign events RPC 203",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read \"studentReport\" 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read \"studentReport\" 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read \"studentReport\" 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read exams 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read exams 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read exams 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read questions 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read questions 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A read questions 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A update exam 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "staff_A update exam 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "staff_A update exam 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "submitted answers immutable on replay",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "submitted results remain unpublished",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super cannot forge foreign exam creator",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "super cannot reparent question",
+      "passed": true,
+      "observed": "42501: permission denied for table questions",
+      "unchanged": true
+    },
+    {
+      "test": "super cannot transfer institution",
+      "passed": true,
+      "observed": "42501: permission denied for table exams",
+      "unchanged": true
+    },
+    {
+      "test": "super emergency stop allowed",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "super foreign transfer RPC denied",
+      "passed": true,
+      "observed": "P0001: New owner must be active staff of the same institution",
+      "unchanged": true
+    },
+    {
+      "test": "super valid transfer RPC preserved",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "super_A bank edit 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A bank edit 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A bank read 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A bank read 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A cannot read access_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "super_A cannot read answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "super_A cannot read session_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "super_A cannot self promote",
+      "passed": true,
+      "observed": "42501: permission denied for table institution_members",
+      "unchanged": true
+    },
+    {
+      "test": "super_A foreign events RPC 203",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read \"studentReport\" 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read \"studentReport\" 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read \"studentReport\" 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read exams 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read exams 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read exams 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read questions 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read questions 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A read questions 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_A update exam 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "super_A update exam 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "super_A update exam 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B bank edit 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B bank edit 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B bank read 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B bank read 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B cannot read access_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "super_B cannot read answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "super_B cannot read session_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "super_B cannot self promote",
+      "passed": true,
+      "observed": "42501: permission denied for table institution_members",
+      "unchanged": true
+    },
+    {
+      "test": "super_B foreign events RPC 201",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "super_B foreign events RPC 202",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read \"studentReport\" 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read \"studentReport\" 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read \"studentReport\" 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read exams 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read exams 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read exams 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read questions 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read questions 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B read questions 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B update exam 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B update exam 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "super_B update exam 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": false
+    },
+    {
+      "test": "suspended institution denies candidate save",
+      "passed": true,
+      "observed": "P0001: This institution is suspended",
+      "unchanged": true
+    },
+    {
+      "test": "suspended institution denies existing super session",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A bank edit 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A bank edit 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A bank read 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A bank read 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A cannot read access_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A cannot read answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A cannot read session_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A cannot self promote",
+      "passed": true,
+      "observed": "42501: permission denied for table institution_members",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A foreign events RPC 201",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A foreign events RPC 202",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A foreign events RPC 203",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read \"studentReport\" 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read \"studentReport\" 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read \"studentReport\" 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read exams 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read exams 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read exams 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read questions 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read questions 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A read questions 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A update exam 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A update exam 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "suspended_A update exam 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated bank edit 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated bank edit 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated bank read 501",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated bank read 502",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated forged metadata does not grant owner",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user cannot read access_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user cannot read answers",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user cannot read session_hash",
+      "passed": true,
+      "observed": "42501: permission denied for table studentReport",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user cannot self promote",
+      "passed": true,
+      "observed": "42501: permission denied for table institution_members",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user foreign events RPC 201",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user foreign events RPC 202",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user foreign events RPC 203",
+      "passed": true,
+      "observed": "P0001: Administrator access required",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read \"studentReport\" 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read \"studentReport\" 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read \"studentReport\" 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read exams 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read exams 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read exams 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read questions 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read questions 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user read questions 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user update exam 201",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user update exam 202",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    },
+    {
+      "test": "unrelated_user update exam 203",
+      "passed": true,
+      "observed": "00000",
+      "unchanged": true
+    }
+  ]
+}
