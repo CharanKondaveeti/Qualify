@@ -30,6 +30,7 @@ export default function PreviewQuestions({
 
   const dispatch = useDispatch();
   const [editingQuestion, setEditingQuestion] = useState(null);
+  const [collapsedIds, setCollapsedIds] = useState([]);
   const [newQuestion, setNewQuestion] = useState(emptyQuestion);
 
   const validQuestion = (question) =>
@@ -123,7 +124,12 @@ export default function PreviewQuestions({
             key={q.question_id ?? index}
             q={q}
             index={index}
-            isExpanded={true}
+            isExpanded={!collapsedIds.includes(q.question_id ?? index)}
+            onToggleExpand={() => setCollapsedIds((previous) => {
+              const id = q.question_id ?? index;
+              return previous.includes(id) ? previous.filter((value) => value !== id) : [...previous, id];
+            })}
+            showActions={true}
             marks={
               markingMode === "automatic" ? automaticMarks?.[index] : q.marks
             }
